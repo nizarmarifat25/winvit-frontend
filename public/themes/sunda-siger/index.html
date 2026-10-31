@@ -1,0 +1,2785 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sampurasun — Undangan Pernikahan Arkana & Aurora, Minggu 14 Juni 2026 di Kab. Bandung. Wilujeng sumping.">
+    <meta name="theme-color" content="#2f5d3f">
+    <meta property="og:title" content="The Wedding of Arkana & Aurora">
+    <meta property="og:description" content="Sampurasun — Minggu, 14 Juni 2026, Kab. Bandung">
+    <meta property="og:image" content="../../asset/img/pre1.jpeg">
+    <link rel="icon" type="image/png" href="../../asset/img/pre1.jpeg">
+
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Great+Vibes&family=Nunito:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Sans+Sundanese&family=Amiri&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <title>The Wedding of Arkana & Aurora — 14.06.2026</title>
+
+    <style>
+        /* =========================================================
+           THEME: SIGER PRIANGAN — undangan adat Sunda
+           hijau sawah & gunung, siger emas, anyaman bambu (tampah)
+           Ganti warna tema cukup di :root
+        ========================================================== */
+        :root {
+            --hejo-deep: #1c3a2a;
+            --hejo: #2f5d3f;
+            --hejo-soft: #6f9a52;
+            --pucuk: #dfe8bd;
+            --tint: #eef2dc;
+            --emas: #c9973a;
+            --emas-light: #f0d089;
+            --krim: #f8f1de;
+            --paper: #fffaf0;
+            --tanah: #8a4b2a;
+            --senja: #f6c98f;
+            --ink: #24301f;
+            --ink-mid: #55604b;
+            --ink-dim: #8c9680;
+            --gold-grad: linear-gradient(135deg, #9a6f1e 0%, #f0d089 38%, #c9973a 62%, #8a5f18 100%);
+            --sky: linear-gradient(180deg, #f7cf95 0%, #fbe3bb 38%, #fbf0d6 70%, #f8f1de 100%);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --peak: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0 60V40L120 25 220 42 340 12 460 38 560 22 700 48 820 18 940 40 1060 10 1180 36 1300 20 1440 44V60Z'/%3E%3C/svg%3E");
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--krim);
+            color: var(--ink);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body.locked {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        p {
+            color: var(--ink-mid);
+            font-size: 0.97rem;
+            line-height: 1.9;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--emas);
+            outline-offset: 3px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .narrow {
+            max-width: 760px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .serif {
+            font-family: 'Young Serif', serif;
+            font-weight: 400;
+        }
+
+        .script {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+        }
+
+        .aksara {
+            font-family: 'Noto Sans Sundanese', 'Nunito', sans-serif;
+            letter-spacing: 0.1em;
+        }
+
+        .gold-text {
+            background: var(--gold-grad);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 7s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* ── Sections ── */
+        .section {
+            padding: 6.5rem 0;
+            position: relative;
+        }
+
+        .section.tint {
+            background: var(--tint);
+        }
+
+        .section.dark {
+            background: var(--hejo);
+            color: var(--krim);
+            z-index: 2;
+        }
+
+        .section.dark.deep {
+            background: var(--hejo-deep);
+        }
+
+        .section.dark::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -59px;
+            height: 60px;
+            background: inherit;
+            -webkit-mask: var(--peak) 0 100% / 100% 100% no-repeat;
+            mask: var(--peak) 0 100% / 100% 100% no-repeat;
+            pointer-events: none;
+        }
+
+        .section.dark p {
+            color: rgba(248, 241, 222, 0.78);
+        }
+
+        .section-head {
+            text-align: center;
+            margin-bottom: 3.6rem;
+        }
+
+        .eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--tanah);
+        }
+
+        .dark .eyebrow {
+            color: var(--emas-light);
+        }
+
+        .section-head h2 {
+            font-family: 'Young Serif', serif;
+            font-weight: 400;
+            font-size: clamp(2.2rem, 5.6vw, 3.5rem);
+            line-height: 1.1;
+            color: var(--hejo);
+            margin: 0.7rem 0 0.2rem;
+        }
+
+        .dark .section-head h2 {
+            color: var(--krim);
+        }
+
+        .section-head .sub {
+            display: block;
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.9rem, 4vw, 2.6rem);
+            color: var(--emas);
+            line-height: 1.2;
+        }
+
+        .section-head p {
+            max-width: 540px;
+            margin: 0.8rem auto 0;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 1.4rem auto;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            height: 1px;
+            width: 80px;
+            background: linear-gradient(90deg, transparent, var(--emas));
+        }
+
+        .divider::after {
+            transform: scaleX(-1);
+        }
+
+        .divider svg {
+            width: 36px;
+            height: 20px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 30px;
+            border-radius: 999px;
+            border: 1.5px solid transparent;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), background 0.3s, color 0.3s;
+        }
+
+        .btn-hejo {
+            background: var(--hejo);
+            color: var(--krim);
+            box-shadow: 0 12px 26px -12px rgba(28, 58, 42, 0.9);
+        }
+
+        .btn-hejo:hover {
+            transform: translateY(-3px);
+            background: var(--hejo-deep);
+        }
+
+        .btn-emas {
+            background: var(--gold-grad);
+            background-size: 200% auto;
+            color: var(--hejo-deep);
+            box-shadow: 0 12px 26px -12px rgba(201, 151, 58, 0.95);
+        }
+
+        .btn-emas:hover {
+            transform: translateY(-3px);
+            background-position: right center;
+        }
+
+        .btn-line {
+            background: transparent;
+            border-color: var(--hejo);
+            color: var(--hejo);
+        }
+
+        .btn-line:hover {
+            background: var(--hejo);
+            color: var(--krim);
+            transform: translateY(-3px);
+        }
+
+        .dark .btn-line {
+            border-color: var(--emas-light);
+            color: var(--emas-light);
+        }
+
+        .dark .btn-line:hover {
+            background: var(--emas-light);
+            color: var(--hejo-deep);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            transform: none;
+        }
+
+        .btn-sm {
+            padding: 9px 18px;
+            font-size: 0.66rem;
+        }
+
+        .btn.copied {
+            background: var(--hejo-soft);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        /* ── Tampah (anyaman bambu) ring ── */
+        .tampah {
+            position: relative;
+            border-radius: 50%;
+            padding: 14px;
+            background: repeating-conic-gradient(var(--emas) 0 9deg, var(--tanah) 9deg 18deg);
+            box-shadow: 0 24px 40px -18px rgba(36, 48, 31, 0.6);
+        }
+
+        .tampah::before {
+            content: '';
+            position: absolute;
+            inset: 7px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(var(--tanah) 0 9deg, var(--emas-light) 9deg 18deg);
+        }
+
+        .tampah .in {
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            aspect-ratio: 1;
+            border: 5px solid var(--krim);
+            background: var(--hejo-deep);
+        }
+
+        .tampah .in img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ── Bamboo bar ── */
+        .bamboo {
+            height: 18px;
+            border-radius: 9px;
+            background:
+                repeating-linear-gradient(90deg, transparent 0 118px, rgba(28, 58, 42, 0.55) 118px 121px, transparent 121px 122px),
+                linear-gradient(180deg, #a5c46d 0%, #6f9a52 45%, #4d7f38 100%);
+            box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.2), 0 6px 10px -6px rgba(0, 0, 0, 0.5);
+        }
+
+        /* =========================================================
+           LANDSCAPE
+        ========================================================== */
+        .scene {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .scene svg {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            display: block;
+            transition: transform 2s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        .scene .far {
+            height: 100%;
+            color: #8fb1a0;
+            opacity: 0.8;
+        }
+
+        .scene .mid {
+            height: 80%;
+            color: #5e8e72;
+        }
+
+        .scene .sawah {
+            height: 62%;
+        }
+
+        .sun {
+            position: absolute;
+            width: clamp(120px, 22vw, 220px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #fff3cf, #f9d07a 55%, #f0a64b);
+            box-shadow: 0 0 80px 30px rgba(249, 208, 122, 0.55);
+            animation: sunPulse 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes sunPulse {
+            to {
+                box-shadow: 0 0 110px 44px rgba(249, 208, 122, 0.7);
+                transform: scale(1.04);
+            }
+        }
+
+        .cloud {
+            position: absolute;
+            width: 220px;
+            height: 60px;
+            border-radius: 60px;
+            background: rgba(255, 255, 255, 0.7);
+            filter: blur(6px);
+            animation: drift linear infinite;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .cloud::before {
+            width: 90px;
+            height: 90px;
+            left: 28px;
+            top: -38px;
+        }
+
+        .cloud::after {
+            width: 70px;
+            height: 70px;
+            left: 110px;
+            top: -26px;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateX(-30vw);
+            }
+
+            to {
+                transform: translateX(130vw);
+            }
+        }
+
+        .awi {
+            position: absolute;
+            width: clamp(150px, 24vw, 280px);
+            aspect-ratio: 1;
+            transform-origin: 10% 95%;
+            animation: awiSway 5s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .awi.r {
+            transform: scaleX(-1);
+            animation-name: awiSwayR;
+        }
+
+        @keyframes awiSway {
+            from {
+                transform: rotate(-3deg);
+            }
+
+            to {
+                transform: rotate(3deg);
+            }
+        }
+
+        @keyframes awiSwayR {
+            from {
+                transform: scaleX(-1) rotate(-3deg);
+            }
+
+            to {
+                transform: scaleX(-1) rotate(3deg);
+            }
+        }
+
+        /* =========================================================
+           COVER
+        ========================================================== */
+        #cover {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 1.2rem;
+            background: var(--sky);
+            overflow: hidden;
+            transition: opacity 1.3s ease 1.1s, visibility 0s linear 2.4s;
+        }
+
+        #cover.open {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #cover.gone {
+            display: none;
+        }
+
+        #cover .scene {
+            height: 42vh;
+        }
+
+        #cover.open .scene .far {
+            transform: translateY(40%);
+        }
+
+        #cover.open .scene .mid {
+            transform: translateY(70%);
+        }
+
+        #cover.open .scene .sawah {
+            transform: translateY(100%);
+        }
+
+        #cover .sun {
+            top: 7vh;
+            right: 12vw;
+            transition: transform 2s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        #cover.open .sun {
+            transform: translateY(-120%);
+        }
+
+        .cover-card {
+            position: relative;
+            z-index: 3;
+            width: min(440px, 100%);
+            text-align: center;
+            padding: 5.2rem 1.8rem 2.2rem;
+            margin-top: 3.4rem;
+            background: rgba(255, 250, 240, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1.5px solid var(--emas);
+            border-radius: 28px;
+            box-shadow: 0 30px 60px -28px rgba(28, 58, 42, 0.6), inset 0 0 0 6px rgba(255, 250, 240, 0.7), inset 0 0 0 7px rgba(201, 151, 58, 0.4);
+            transition: opacity 0.7s ease, transform 0.9s var(--ease);
+        }
+
+        #cover.open .cover-card {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.95);
+            pointer-events: none;
+        }
+
+        .siger {
+            position: absolute;
+            left: 50%;
+            top: -3.6rem;
+            width: 190px;
+            height: 88px;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 8px 10px rgba(138, 95, 24, 0.5));
+        }
+
+        .cover-aksara {
+            font-size: 1.4rem;
+            color: var(--tanah);
+        }
+
+        .cover-sampurasun {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.3rem;
+            color: var(--emas);
+            line-height: 1.2;
+        }
+
+        .cover-label {
+            margin-top: 0.8rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--ink-dim);
+        }
+
+        .cover-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(3.6rem, 15vw, 5rem);
+            line-height: 1.1;
+            margin: 0.2rem 0 1rem;
+            color: var(--hejo);
+        }
+
+        .cover-guest {
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.5rem;
+            border-top: 1px solid rgba(201, 151, 58, 0.55);
+            border-bottom: 1px solid rgba(201, 151, 58, 0.55);
+        }
+
+        .cover-guest small {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--ink-mid);
+            font-style: italic;
+        }
+
+        #guest-name {
+            display: block;
+            margin-top: 0.2rem;
+            font-family: 'Young Serif', serif;
+            font-size: 1.3rem;
+            color: var(--hejo-deep);
+        }
+
+        .cover-hint {
+            margin-top: 1rem;
+            font-size: 0.72rem;
+            font-style: italic;
+            color: var(--ink-dim);
+        }
+
+        /* =========================================================
+           FALLING LEAVES
+        ========================================================== */
+        .leaf-fall {
+            position: fixed;
+            top: -30px;
+            z-index: 60;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        .leaf-fall i {
+            display: block;
+            width: 16px;
+            height: 9px;
+            border-radius: 0 100% 0 100%;
+            background: linear-gradient(135deg, #8bb85c, #3f6f45);
+            opacity: 0.8;
+            animation: tumble ease-in-out infinite alternate;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(112vh);
+            }
+        }
+
+        @keyframes tumble {
+            from {
+                transform: translateX(-34px) rotate(-30deg);
+            }
+
+            to {
+                transform: translateX(34px) rotate(260deg);
+            }
+        }
+
+        /* =========================================================
+           HERO
+        ========================================================== */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 6rem 0 14rem;
+            background: var(--sky);
+            overflow: hidden;
+        }
+
+        .hero .scene {
+            height: 36vh;
+            min-height: 220px;
+        }
+
+        .hero .sun {
+            top: 9vh;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0.9;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-aksara {
+            font-size: 1.2rem;
+            color: var(--tanah);
+        }
+
+        .hero-sub {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+            margin: 0.4rem 0 2rem;
+        }
+
+        .hero-tampah {
+            width: min(290px, 66vw);
+            margin: 0 auto 1.8rem;
+        }
+
+        .hero-tampah .in img {
+            transform: scale(1.14);
+            animation: zoomOut 16s ease-in-out infinite alternate;
+        }
+
+        @keyframes zoomOut {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .hero-names {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: clamp(4.4rem, 15vw, 8.4rem);
+            line-height: 1;
+            color: var(--hejo);
+            text-shadow: 0 4px 24px rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.2rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 999px;
+            background: var(--hejo);
+            color: var(--krim);
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            box-shadow: 0 14px 26px -12px rgba(28, 58, 42, 0.8);
+        }
+
+        .hero-date i {
+            color: var(--emas-light);
+        }
+
+        /* =========================================================
+           SALAM + AYAT
+        ========================================================== */
+        .salam {
+            text-align: center;
+        }
+
+        .salam .aksara {
+            font-size: 1.6rem;
+            color: var(--tanah);
+        }
+
+        .salam-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(3.4rem, 10vw, 5.6rem);
+            line-height: 1.1;
+            color: var(--hejo);
+        }
+
+        .salam-welcome {
+            font-family: 'Young Serif', serif;
+            font-size: 1.2rem;
+            color: var(--tanah);
+        }
+
+        .salam p.lead {
+            max-width: 620px;
+            margin: 1rem auto 0;
+        }
+
+        .ayat-card {
+            position: relative;
+            margin-top: 3rem;
+            padding: 3.4rem 2.4rem 3rem;
+            background: var(--paper);
+            border-radius: 30px;
+            border: 1.5px solid var(--emas);
+            box-shadow: 0 30px 60px -34px rgba(28, 58, 42, 0.55);
+        }
+
+        .ayat-card::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 23px;
+            border: 1px dashed rgba(138, 75, 42, 0.45);
+            pointer-events: none;
+        }
+
+        .ayat-card .bamboo {
+            position: absolute;
+            left: 2rem;
+            right: 2rem;
+            top: -9px;
+        }
+
+        .arabic {
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            font-size: clamp(1.4rem, 3.4vw, 1.9rem);
+            line-height: 2.2;
+            color: var(--hejo);
+        }
+
+        .ayat-quote {
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.95;
+            color: var(--ink);
+        }
+
+        .ayat-src {
+            margin-top: 1.1rem;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--tanah);
+        }
+
+        /* =========================================================
+           PANGANTEN
+        ========================================================== */
+        .couple {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .person {
+            text-align: center;
+        }
+
+        .person .tampah {
+            width: min(250px, 66vw);
+            margin: 0 auto 1.8rem;
+            transition: transform 0.9s var(--ease);
+        }
+
+        .person:hover .tampah {
+            transform: rotate(8deg) scale(1.03);
+        }
+
+        .person h3 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: 3.2rem;
+            line-height: 1.1;
+            color: var(--hejo);
+        }
+
+        .person .full {
+            font-family: 'Young Serif', serif;
+            font-size: 1.1rem;
+            color: var(--tanah);
+        }
+
+        .person p {
+            margin-top: 0.8rem;
+            font-size: 0.92rem;
+        }
+
+        .person p strong {
+            display: block;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .amp {
+            font-family: 'Great Vibes', cursive;
+            font-size: 6.4rem;
+            line-height: 1;
+        }
+
+        /* =========================================================
+           ACARA
+        ========================================================== */
+        .event-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .event-card {
+            position: relative;
+            padding: 3.2rem 1.8rem 2.4rem;
+            text-align: center;
+            background: var(--hejo-deep);
+            border-radius: 26px;
+            border: 1.5px solid rgba(240, 208, 137, 0.6);
+            box-shadow: 0 30px 50px -26px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .event-card .bamboo {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            border-radius: 0;
+            height: 20px;
+        }
+
+        .event-ico {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 1.3rem;
+            color: var(--hejo-deep);
+            background: var(--gold-grad);
+        }
+
+        .event-card h3 {
+            font-family: 'Young Serif', serif;
+            font-weight: 400;
+            font-size: 1.7rem;
+            color: var(--emas-light);
+        }
+
+        .event-time {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3rem;
+            color: var(--krim);
+            line-height: 1.2;
+            margin: 0.4rem 0 0.2rem;
+        }
+
+        .event-day {
+            font-size: 0.78rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(248, 241, 222, 0.7);
+        }
+
+        .venue {
+            max-width: 860px;
+            margin: 2.4rem auto 0;
+            padding: 2.2rem 1.6rem;
+            text-align: center;
+            border-radius: 26px;
+            border: 1.5px dashed rgba(240, 208, 137, 0.6);
+        }
+
+        .venue .pin {
+            font-size: 1.5rem;
+            color: var(--emas-light);
+            margin-bottom: 0.8rem;
+        }
+
+        .venue p {
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .venue .acts {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.6rem;
+        }
+
+        /* =========================================================
+           CARITA CINTA — bamboo spine
+        ========================================================== */
+        .story {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-left: 84px;
+        }
+
+        .story::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 22px;
+            border-radius: 11px;
+            background:
+                repeating-linear-gradient(180deg, transparent 0 98px, rgba(28, 58, 42, 0.55) 98px 101px, transparent 101px 102px),
+                linear-gradient(90deg, #4d7f38, #a5c46d 45%, #6f9a52 70%, #3f6f45);
+            box-shadow: 0 8px 14px -8px rgba(0, 0, 0, 0.6);
+        }
+
+        .chapter {
+            position: relative;
+            margin-bottom: 2.4rem;
+            padding: 2.2rem 2rem 2rem;
+            background: var(--paper);
+            border-radius: 24px;
+            border: 1.5px solid rgba(201, 151, 58, 0.6);
+            box-shadow: 0 24px 46px -30px rgba(28, 58, 42, 0.5);
+            transition: transform 0.6s var(--ease);
+        }
+
+        .chapter:hover {
+            transform: translateX(8px);
+        }
+
+        .chapter::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 2.2rem;
+            width: 30px;
+            height: 3px;
+            background: #6f9a52;
+        }
+
+        .chapter-no {
+            position: absolute;
+            left: -84px;
+            top: 1.2rem;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-family: 'Young Serif', serif;
+            font-size: 1.2rem;
+            color: var(--krim);
+            background: var(--hejo);
+            border: 3px solid var(--emas);
+            box-shadow: 0 8px 14px -6px rgba(28, 58, 42, 0.7);
+        }
+
+        .chapter small {
+            font-size: 0.66rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--tanah);
+        }
+
+        .chapter h4 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: 2.7rem;
+            line-height: 1.2;
+            color: var(--hejo);
+            margin: 0.1rem 0 0.4rem;
+        }
+
+        /* =========================================================
+           GALLERY — poto dijemur
+        ========================================================== */
+        .rope {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(var(--per, 4), 1fr);
+            gap: 1.4rem;
+            padding-top: 36px;
+            margin-bottom: 2.4rem;
+        }
+
+        .rope::before {
+            content: '';
+            position: absolute;
+            left: -1%;
+            right: -1%;
+            top: 0;
+            height: 32px;
+            border-bottom: 3px solid var(--tanah);
+            border-radius: 0 0 50% 50% / 0 0 100% 100%;
+            opacity: 0.85;
+        }
+
+        .g-item {
+            position: relative;
+            padding: 10px 10px 40px;
+            background: #fff;
+            border-radius: 4px;
+            cursor: zoom-in;
+            box-shadow: 0 18px 30px -16px rgba(36, 48, 31, 0.6);
+            transform: rotate(var(--r, 0deg));
+            transform-origin: 50% 0;
+            transition: transform 0.7s var(--ease), box-shadow 0.5s;
+        }
+
+        .g-item::before {
+            content: '';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            width: 12px;
+            height: 32px;
+            margin-left: -6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #e2b56a, #b9843a);
+            box-shadow: 0 3px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .g-item:hover {
+            transform: rotate(0) translateY(-8px);
+            box-shadow: 0 28px 40px -16px rgba(36, 48, 31, 0.7);
+        }
+
+        .g-item .g-in {
+            aspect-ratio: 0.8;
+            overflow: hidden;
+        }
+
+        .g-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s var(--ease);
+        }
+
+        .g-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .g-item .cap {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 8px;
+            text-align: center;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.35rem;
+            color: var(--hejo);
+        }
+
+        /* Lightbox */
+        .lb {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(14, 30, 21, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .lb.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .lb-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4.5rem 1rem;
+        }
+
+        #lb-img {
+            max-width: min(92vw, 940px);
+            max-height: 80vh;
+            object-fit: contain;
+            border: 10px solid #fff;
+            border-radius: 4px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+            transition: opacity 0.25s;
+        }
+
+        .lb-btn {
+            position: fixed;
+            z-index: 100000;
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: 1.5px solid var(--emas-light);
+            background: rgba(28, 58, 42, 0.7);
+            color: var(--emas-light);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lb-btn:hover {
+            background: var(--emas-light);
+            color: var(--hejo-deep);
+        }
+
+        .lb-prev {
+            left: 1.4rem;
+            top: 50%;
+            margin-top: -23px;
+        }
+
+        .lb-next {
+            right: 1.4rem;
+            top: 50%;
+            margin-top: -23px;
+        }
+
+        .lb-close {
+            top: 1.2rem;
+            right: 1.4rem;
+        }
+
+        .lb-counter {
+            position: fixed;
+            top: 1.9rem;
+            left: 1.6rem;
+            font-family: 'Young Serif', serif;
+            color: var(--emas-light);
+        }
+
+        .lb-strip {
+            position: fixed;
+            bottom: 1.4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .lb-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid var(--emas-light);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lb-dot.active {
+            background: var(--emas-light);
+            width: 22px;
+            border-radius: 4px;
+        }
+
+        /* =========================================================
+           COUNTDOWN
+        ========================================================== */
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: clamp(0.8rem, 3vw, 2rem);
+            flex-wrap: wrap;
+        }
+
+        .cd {
+            width: clamp(84px, 21vw, 134px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            padding: 8px;
+            background: repeating-conic-gradient(var(--emas) 0 9deg, var(--tanah) 9deg 18deg);
+            box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.6);
+            transition: transform 0.8s var(--ease);
+        }
+
+        .cd:hover {
+            transform: rotate(20deg) scale(1.05);
+        }
+
+        .cd-in {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--hejo-deep);
+            border: 3px solid var(--krim);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cd-num {
+            font-family: 'Young Serif', serif;
+            font-size: clamp(1.7rem, 5.6vw, 2.8rem);
+            line-height: 1;
+            color: var(--emas-light);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cd-label {
+            margin-top: 0.3rem;
+            font-size: 0.56rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(248, 241, 222, 0.75);
+        }
+
+        .cd-done {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.4rem;
+            color: var(--emas-light);
+        }
+
+        /* =========================================================
+           GIFT
+        ========================================================== */
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 1.8rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .gift-card {
+            position: relative;
+            padding: 3rem 2rem 2.2rem;
+            text-align: center;
+            background: var(--paper);
+            border-radius: 26px;
+            border: 1.5px solid var(--emas);
+            box-shadow: 0 26px 44px -28px rgba(28, 58, 42, 0.6);
+            overflow: hidden;
+            transition: transform 0.6s var(--ease);
+        }
+
+        .gift-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .gift-card .bamboo {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            border-radius: 0;
+            height: 20px;
+        }
+
+        .gift-card img {
+            height: 30px;
+            width: auto;
+            margin: 0 auto 1rem;
+        }
+
+        .gift-number {
+            font-family: 'Young Serif', serif;
+            font-size: 1.65rem;
+            letter-spacing: 0.08em;
+            color: var(--hejo);
+        }
+
+        .gift-owner {
+            margin: 0.3rem 0 1.2rem;
+            color: var(--ink-mid);
+            font-style: italic;
+        }
+
+        /* =========================================================
+           FAQ
+        ========================================================== */
+        .faq details {
+            background: var(--paper);
+            border: 1.5px solid rgba(201, 151, 58, 0.6);
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: box-shadow 0.4s;
+        }
+
+        .faq details[open] {
+            box-shadow: 0 22px 40px -28px rgba(28, 58, 42, 0.6);
+        }
+
+        .faq summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.3rem 1.5rem;
+            font-family: 'Young Serif', serif;
+            font-size: 1.1rem;
+            color: var(--hejo);
+        }
+
+        .faq summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq summary::after {
+            content: '+';
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.3rem;
+            background: var(--hejo);
+            color: var(--krim);
+            transition: transform 0.4s var(--ease);
+        }
+
+        .faq details[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .faq details p {
+            padding: 0 1.5rem 1.5rem;
+            animation: fadeDown 0.5s var(--ease);
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+        }
+
+        /* =========================================================
+           UCAPAN
+        ========================================================== */
+        .ucapan-grid {
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: 1.8rem;
+        }
+
+        .panel {
+            position: relative;
+            padding: 2.6rem 2.2rem 2.2rem;
+            background: var(--paper);
+            border-radius: 26px;
+            border: 1.5px solid rgba(201, 151, 58, 0.6);
+            box-shadow: 0 24px 46px -32px rgba(28, 58, 42, 0.5);
+            overflow: hidden;
+        }
+
+        .panel .bamboo {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            border-radius: 0;
+            height: 16px;
+        }
+
+        .panel h3 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: 2.8rem;
+            line-height: 1.2;
+            color: var(--hejo);
+        }
+
+        .panel>p {
+            font-size: 0.88rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.66rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--tanah);
+            margin-bottom: 0.5rem;
+        }
+
+        .field {
+            width: 100%;
+            background: #fff;
+            border: 1.5px solid rgba(138, 75, 42, 0.35);
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1.1rem;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .field:focus {
+            border-color: var(--hejo);
+            box-shadow: 0 0 0 4px rgba(47, 93, 63, 0.14);
+        }
+
+        .field::placeholder {
+            color: var(--ink-dim);
+        }
+
+        textarea.field {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .attend-opts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .attend-opts input {
+            display: none;
+        }
+
+        .attend-opts label {
+            cursor: pointer;
+            text-align: center;
+            padding: 0.8rem 0.3rem;
+            border-radius: 14px;
+            border: 1.5px solid rgba(138, 75, 42, 0.35);
+            background: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink-mid);
+            transition: all 0.3s var(--ease);
+        }
+
+        .attend-opts label i {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--hejo-soft);
+        }
+
+        .attend-opts input:checked+label {
+            background: var(--hejo);
+            border-color: var(--hejo);
+            color: var(--krim);
+            transform: translateY(-2px);
+        }
+
+        .attend-opts input:checked+label i {
+            color: var(--emas-light);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.7rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 0.8rem 0.3rem;
+            border-radius: 16px;
+            background: var(--tint);
+        }
+
+        .stat b {
+            display: block;
+            font-family: 'Young Serif', serif;
+            font-weight: 400;
+            font-size: 1.8rem;
+            color: var(--hejo);
+            line-height: 1.2;
+        }
+
+        .stat span {
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink-dim);
+        }
+
+        .ucapan-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .ucapan-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ucapan-list::-webkit-scrollbar-thumb {
+            background: var(--hejo-soft);
+            border-radius: 4px;
+        }
+
+        .wish {
+            display: grid;
+            grid-template-columns: 42px 1fr;
+            gap: 0.9rem;
+            padding: 1rem;
+            border-radius: 18px;
+            background: var(--tint);
+            animation: fadeDown 0.5s var(--ease) both;
+        }
+
+        .wish-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-family: 'Young Serif', serif;
+            font-size: 1.05rem;
+            color: var(--krim);
+        }
+
+        .wish-head {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .wish-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--ink);
+        }
+
+        .wish-attend {
+            font-size: 0.58rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 99px;
+        }
+
+        .wish-attend.hadir {
+            background: #d7e8c3;
+            color: #3f6a24;
+        }
+
+        .wish-attend.mungkin {
+            background: #f6e5bd;
+            color: #8a6420;
+        }
+
+        .wish-attend.tidak {
+            background: #f1d6cd;
+            color: #8a3a22;
+        }
+
+        .wish p {
+            margin-top: 0.3rem;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            word-break: break-word;
+        }
+
+        .ucapan-empty {
+            text-align: center;
+            color: var(--ink-dim);
+            font-style: italic;
+            padding: 2.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================== */
+        footer {
+            position: relative;
+            z-index: 2;
+            padding: 7rem 0 9rem;
+            text-align: center;
+            background: var(--hejo-deep);
+            color: var(--krim);
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -59px;
+            height: 60px;
+            background: var(--hejo-deep);
+            -webkit-mask: var(--peak) 0 100% / 100% 100% no-repeat;
+            mask: var(--peak) 0 100% / 100% 100% no-repeat;
+        }
+
+        footer p {
+            color: rgba(248, 241, 222, 0.8);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        footer .siger-f {
+            width: 150px;
+            height: 70px;
+            margin: 0 auto 1rem;
+            display: block;
+            filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4));
+        }
+
+        .footer-thanks {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(4.4rem, 13vw, 7rem);
+            line-height: 1.05;
+            margin: 0.6rem 0 0.2rem;
+        }
+
+        .footer-rampes {
+            font-family: 'Young Serif', serif;
+            font-size: 1.15rem;
+            letter-spacing: 0.1em;
+            color: var(--emas-light);
+        }
+
+        .footer-wassalam {
+            margin-top: 1.4rem;
+            font-style: italic;
+        }
+
+        .footer-family {
+            max-width: 520px;
+            margin: 2.4rem auto 0;
+            padding-top: 1.6rem;
+            border-top: 1px solid rgba(240, 208, 137, 0.35);
+        }
+
+        .footer-family small {
+            font-size: 0.66rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--emas-light);
+        }
+
+        .footer-family p {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-sign {
+            margin-top: 2.4rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.4em;
+            color: var(--emas);
+        }
+
+        /* =========================================================
+           DOCK + TOAST + PROGRESS
+        ========================================================== */
+        .dock {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translate(-50%, 150%);
+            z-index: 900;
+            display: flex;
+            gap: 4px;
+            padding: 6px;
+            border-radius: 999px;
+            background: rgba(28, 58, 42, 0.94);
+            border: 1.5px solid var(--emas);
+            box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7);
+            transition: transform 0.9s var(--ease);
+        }
+
+        .dock.show {
+            transform: translate(-50%, 0);
+        }
+
+        .dock a,
+        .dock button {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: rgba(248, 241, 222, 0.78);
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.92rem;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .dock a:hover {
+            color: var(--emas-light);
+        }
+
+        .dock a.active {
+            background: var(--gold-grad);
+            color: var(--hejo-deep);
+        }
+
+        .dock .sep {
+            width: 1px;
+            margin: 10px 4px;
+            background: rgba(240, 208, 137, 0.45);
+        }
+
+        .dock #audioControl {
+            color: var(--emas-light);
+        }
+
+        .dock #audioControl.playing i {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            top: 22px;
+            transform: translate(-50%, -30px);
+            padding: 12px 24px;
+            border-radius: 999px;
+            background: var(--hejo-deep);
+            color: var(--emas-light);
+            border: 1.5px solid var(--emas);
+            font-size: 0.85rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.45s var(--ease);
+            z-index: 100001;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: var(--gold-grad);
+            z-index: 1000;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================== */
+        @media (max-width: 820px) {
+            .section {
+                padding: 5.5rem 0;
+            }
+
+            .couple {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .amp {
+                font-size: 4.6rem;
+            }
+
+            .event-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ucapan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story {
+                padding-left: 66px;
+            }
+
+            .story::before {
+                left: 12px;
+                width: 18px;
+            }
+
+            .chapter-no {
+                left: -66px;
+                width: 46px;
+                height: 46px;
+                font-size: 1rem;
+            }
+
+            .chapter::before {
+                left: -24px;
+                width: 24px;
+            }
+
+            .hero .sun {
+                margin-left: -80px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .cover-card {
+                padding: 5rem 1.2rem 1.8rem;
+            }
+
+            .ayat-card {
+                padding: 3rem 1.3rem 2.4rem;
+            }
+
+            .panel {
+                padding: 2.4rem 1.3rem 2rem;
+            }
+
+            .chapter {
+                padding: 1.8rem 1.3rem 1.6rem;
+            }
+
+            .gift-number {
+                font-size: 1.4rem;
+            }
+
+            .rope {
+                gap: 1rem;
+            }
+
+            .lb-prev {
+                left: 0.6rem;
+            }
+
+            .lb-next {
+                right: 0.6rem;
+            }
+
+            .dock a,
+            .dock button {
+                width: 42px;
+                height: 42px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .leaf-fall {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="locked">
+
+    <!-- ===== SVG library ===== -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <linearGradient id="goldg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#9a6f1e" />
+                <stop offset=".4" stop-color="#f0d089" />
+                <stop offset=".7" stop-color="#c9973a" />
+                <stop offset="1" stop-color="#8a5f18" />
+            </linearGradient>
+
+            <!-- gunung -->
+            <g id="mtn-far">
+                <path fill="currentColor"
+                    d="M0 300V170C120 120 200 90 300 130C400 170 470 70 600 60C740 50 800 150 920 140C1040 130 1100 60 1220 80C1320 96 1390 140 1440 120V300Z" />
+            </g>
+            <g id="mtn-mid">
+                <path fill="currentColor"
+                    d="M0 300V210C100 190 180 130 280 150C380 170 430 210 540 190C660 168 720 100 840 110C960 120 1020 190 1140 180C1260 170 1350 120 1440 160V300Z" />
+            </g>
+            <!-- sawah terasering -->
+            <g id="sawah">
+                <path fill="#9cc06a" d="M0 300V170Q240 140 480 165T960 160T1440 150V300Z" />
+                <path fill="#82ad57" d="M0 300V200Q260 172 520 196T1040 188T1440 182V300Z" />
+                <path fill="#679646" d="M0 300V232Q300 208 600 228T1200 222T1440 218V300Z" />
+                <path fill="#4d7f38" d="M0 300V262Q320 244 640 258T1440 252V300Z" />
+            </g>
+
+            <!-- daun bambu -->
+            <path id="lf" d="M0 0C10 -7 44 -11 70 0C44 11 10 7 0 0Z" />
+            <!-- siger spike -->
+            <path id="sp" d="M-8 0C-9 -22 -3 -40 0 -52C3 -40 9 -22 8 0Z" />
+        </defs>
+
+        <!-- Siger (mahkota Sunda) -->
+        <symbol id="siger" viewBox="0 0 200 92">
+            <g fill="url(#goldg)">
+                <use href="#sp" transform="translate(100 73) scale(1 1.25)" />
+                <use href="#sp" transform="translate(76 75) rotate(-10) scale(1 1.1)" />
+                <use href="#sp" transform="translate(124 75) rotate(10) scale(1 1.1)" />
+                <use href="#sp" transform="translate(54 78) rotate(-20) scale(1 .9)" />
+                <use href="#sp" transform="translate(146 78) rotate(20) scale(1 .9)" />
+                <use href="#sp" transform="translate(34 80) rotate(-32) scale(1 .7)" />
+                <use href="#sp" transform="translate(166 80) rotate(32) scale(1 .7)" />
+                <use href="#sp" transform="translate(18 82) rotate(-45) scale(1 .45)" />
+                <use href="#sp" transform="translate(182 82) rotate(45) scale(1 .45)" />
+                <path d="M6 82Q100 60 194 82L194 90Q100 68 6 90Z" />
+            </g>
+            <circle cx="100" cy="76" r="4.2" fill="#8f1d1d" stroke="#f0d089" stroke-width="1" />
+            <g fill="#8f1d1d">
+                <circle cx="62" cy="80" r="2" />
+                <circle cx="138" cy="80" r="2" />
+                <circle cx="30" cy="85" r="1.8" />
+                <circle cx="170" cy="85" r="1.8" />
+            </g>
+        </symbol>
+
+        <!-- dahan awi -->
+        <symbol id="awi" viewBox="0 0 200 200">
+            <path d="M14 196C44 146 86 100 170 22" fill="none" stroke="#3f6f45" stroke-width="3" stroke-linecap="round" />
+            <g fill="#4d7f38">
+                <use href="#lf" transform="translate(40 152) rotate(-62)" />
+                <use href="#lf" transform="translate(40 152) rotate(18)" fill="#6f9a52" />
+                <use href="#lf" transform="translate(70 118) rotate(-70)" fill="#3f6f45" />
+                <use href="#lf" transform="translate(70 118) rotate(8)" />
+                <use href="#lf" transform="translate(104 82) rotate(-78)" fill="#6f9a52" />
+                <use href="#lf" transform="translate(104 82) rotate(-6)" fill="#3f6f45" />
+                <use href="#lf" transform="translate(138 50) rotate(-84)" />
+                <use href="#lf" transform="translate(138 50) rotate(-14)" fill="#6f9a52" />
+                <use href="#lf" transform="translate(168 24) rotate(-60)" fill="#3f6f45" />
+            </g>
+        </symbol>
+
+        <!-- ornamen daun (divider) -->
+        <symbol id="leafv" viewBox="0 0 40 22">
+            <path fill="url(#goldg)" d="M20 20C14 12 6 8 0 10C4 18 12 22 20 20Z" />
+            <path fill="url(#goldg)" d="M20 20C26 12 34 8 40 10C36 18 28 22 20 20Z" />
+            <circle cx="20" cy="8" r="2.4" fill="#c9973a" />
+        </symbol>
+    </svg>
+
+    <audio src="../../asset/audio/audio.mp3" id="myAudio" loop></audio>
+    <div class="progress" id="progress"></div>
+    <div class="toast" id="toast" role="status"></div>
+
+    <!-- ================= COVER ================= -->
+    <div id="cover">
+        <div class="sun" aria-hidden="true"></div>
+        <div class="cloud" style="top:14vh;animation-duration:70s;" aria-hidden="true"></div>
+        <div class="cloud" style="top:30vh;animation-duration:95s;animation-delay:-40s;transform:scale(.7);"
+            aria-hidden="true"></div>
+        <svg class="awi" style="left:-2vw;bottom:30vh;" aria-hidden="true"><use href="#awi" /></svg>
+        <svg class="awi r" style="right:-2vw;bottom:30vh;" aria-hidden="true"><use href="#awi" /></svg>
+
+        <div class="scene" aria-hidden="true">
+            <svg class="far" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#mtn-far" /></svg>
+            <svg class="mid" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#mtn-mid" /></svg>
+            <svg class="sawah" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#sawah" /></svg>
+        </div>
+
+        <div class="cover-card" data-aos="zoom-in" data-aos-duration="1400">
+            <svg class="siger" aria-hidden="true"><use href="#siger" /></svg>
+            <div class="cover-aksara aksara" lang="su">ᮞᮙ᮪ᮕᮥᮛᮞᮥᮔ᮪</div>
+            <div class="cover-sampurasun">Sampurasun</div>
+            <p class="cover-label">The Wedding Of</p>
+            <div class="cover-names">Arkana &amp; Aurora</div>
+            <div class="cover-guest">
+                <small>Kepada Yth. Bapak/Ibu/Saudara/i</small>
+                <span id="guest-name">Tamu Undangan</span>
+            </div>
+            <button class="btn btn-hejo" id="btn-open" onclick="openInvitation()">
+                <i class="fas fa-envelope-open-text"></i> Buka Undangan
+            </button>
+            <p class="cover-hint">Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</p>
+        </div>
+    </div>
+
+    <main>
+        <!-- ================= HERO ================= -->
+        <header class="hero" id="home">
+            <div class="sun" aria-hidden="true"></div>
+            <div class="cloud" style="top:16vh;animation-duration:80s;" aria-hidden="true"></div>
+            <div class="cloud" style="top:34vh;animation-duration:110s;animation-delay:-55s;transform:scale(.7);"
+                aria-hidden="true"></div>
+            <svg class="awi" style="left:-2vw;top:10vh;" aria-hidden="true"><use href="#awi" /></svg>
+            <svg class="awi r" style="right:-2vw;top:10vh;" aria-hidden="true"><use href="#awi" /></svg>
+
+            <div class="scene" aria-hidden="true">
+                <svg class="far" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#mtn-far" /></svg>
+                <svg class="mid" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#mtn-mid" /></svg>
+                <svg class="sawah" viewBox="0 0 1440 300" preserveAspectRatio="none"><use href="#sawah" /></svg>
+            </div>
+
+            <div class="container" data-aos="fade-up" data-aos-duration="1600">
+                <div class="hero-aksara aksara" lang="su">ᮞᮙ᮪ᮕᮥᮛᮞᮥᮔ᮪</div>
+                <p class="hero-sub">Wilujeng Sumping · Undangan Pernikahan</p>
+                <div class="hero-tampah tampah">
+                    <div class="in"><img src="../../asset/img/pre3.jpeg" alt="Arkana dan Aurora"></div>
+                </div>
+                <h1 class="hero-names">Arkana &amp; Aurora</h1>
+                <div class="hero-date"><i class="fas fa-leaf"></i> Minggu · 14 Juni 2026 <i
+                        class="fas fa-leaf"></i></div>
+            </div>
+        </header>
+
+        <!-- ================= SALAM + AYAT ================= -->
+        <section class="section salam" id="salam">
+            <div class="container narrow">
+                <div data-aos="fade-up" data-aos-duration="1200">
+                    <div class="salam-title">Sampurasun</div>
+                    <div class="salam-welcome">Wilujeng sumping di hari bahagia kami</div>
+                    <div class="divider"><svg aria-hidden="true"><use href="#leafv" /></svg></div>
+                    <p><em>Assalamu'alaikum Warahmatullahi Wabarakatuh</em></p>
+                    <p class="lead">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengundang
+                        Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan putra-putri kami.</p>
+                </div>
+
+                <div class="ayat-card" data-aos="fade-up" data-aos-duration="1200">
+                    <div class="bamboo"></div>
+                    <p class="arabic">وَمِنْ ءَايَٰتِهِۦٓ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَٰجًا لِّتَسْكُنُوٓا۟
+                        إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً</p>
+                    <div class="divider"><svg aria-hidden="true"><use href="#leafv" /></svg></div>
+                    <p class="ayat-quote">"Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan
+                        pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram
+                        kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."</p>
+                    <p class="ayat-src">Q.S. Ar-Rum · 21</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PANGANTEN ================= -->
+        <section class="section tint" id="mempelai">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Panganten</span>
+                    <h2>Sang Mempelai</h2>
+                    <span class="sub">dua hati, satu niat suci</span>
+                </div>
+
+                <div class="couple">
+                    <article class="person" data-aos="fade-right" data-aos-duration="1200">
+                        <div class="tampah">
+                            <div class="in"><img src="../../asset/img/crop1.jpeg" alt="Aurora Callista"></div>
+                        </div>
+                        <h3>Aurora</h3>
+                        <div class="full">Aurora Callista</div>
+                        <p>Putri dari<strong>Bpk. Rendi &amp; Ibu Nia Siti Munijar</strong></p>
+                    </article>
+
+                    <div class="amp gold-text" data-aos="zoom-in" aria-hidden="true">&amp;</div>
+
+                    <article class="person" data-aos="fade-left" data-aos-duration="1200">
+                        <div class="tampah">
+                            <div class="in"><img src="../../asset/img/crop2.jpeg" alt="Arkana Danendra"></div>
+                        </div>
+                        <h3>Arkana</h3>
+                        <div class="full">Arkana Danendra</div>
+                        <p>Putra dari<strong>Bpk. Ujang Firmansyah &amp; Ibu Tiur Andini</strong></p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ACARA ================= -->
+        <section class="section dark" id="acara">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Save The Date</span>
+                    <h2>Rangkaian Acara</h2>
+                    <span class="sub">Minggu, 14 Juni 2026</span>
+                </div>
+
+                <div class="event-grid">
+                    <div class="event-card" data-aos="fade-up" data-aos-duration="1200">
+                        <div class="bamboo"></div>
+                        <div class="event-ico"><i class="fas fa-ring"></i></div>
+                        <h3>Akad Nikah</h3>
+                        <div class="event-time">08.00 WIB</div>
+                        <div class="event-day">Minggu · 14 Juni 2026</div>
+                    </div>
+                    <div class="event-card" data-aos="fade-up" data-aos-duration="1200" data-aos-delay="150">
+                        <div class="bamboo"></div>
+                        <div class="event-ico"><i class="fas fa-champagne-glasses"></i></div>
+                        <h3>Resepsi</h3>
+                        <div class="event-time">11.00 — Selesai</div>
+                        <div class="event-day">Minggu · 14 Juni 2026</div>
+                    </div>
+                </div>
+
+                <div class="venue" data-aos="fade-up">
+                    <i class="fas fa-location-dot pin"></i>
+                    <p>Jln. Jati Arum Gang Gemah Ripah No. 23, RT 01 RW 09, Desa Jatiendah, Kec. Cilengkrang,
+                        Kab. Bandung</p>
+                    <div class="acts">
+                        <a href="https://maps.app.goo.gl/h4HwgWeuijSPEZwT6" target="_blank" rel="noopener"
+                            class="btn btn-emas" id="btn-maps"><i class="fas fa-map-location-dot"></i> Petunjuk
+                            Lokasi</a>
+                        <a class="btn btn-line" id="btn-calendar" target="_blank" rel="noopener"><i
+                                class="far fa-calendar-plus"></i> Simpan ke Kalender</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CARITA CINTA ================= -->
+        <section class="section" id="story">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Carita Cinta</span>
+                    <h2>Kisah Cinta Kami</h2>
+                    <span class="sub">perjalanan dua hati menuju satu tujuan</span>
+                </div>
+
+                <div class="story">
+                    <article class="chapter" data-aos="fade-up">
+                        <div class="chapter-no">1</div>
+                        <small>Bagian Pertama</small>
+                        <h4>Awal Bertemu</h4>
+                        <p>Di dunia yang luas ini, kami percaya bahwa tidak ada pertemuan yang benar-benar
+                            kebetulan. Bukan karena bertemu lalu berjodoh, tapi karena berjodoh maka kami
+                            dipertemukan. Tuhan mempertemukan dua hati pada waktu yang tepat dengan cara yang
+                            sederhana, namun bermakna.</p>
+                    </article>
+                    <article class="chapter" data-aos="fade-up">
+                        <div class="chapter-no">2</div>
+                        <small>Bagian Kedua</small>
+                        <h4>Menyatakan Cinta</h4>
+                        <p>Perjalanan kami dimulai dari sapa yang sederhana dan membawa kehangatan. Waktu demi
+                            waktu kami belajar tentang arti cinta, tentang menerima, memahami, dan tumbuh bersama.
+                            Sejak itu kami saling menyadari bahwa satu sama lain adalah bagian takdir yang telah
+                            lama dicari.</p>
+                    </article>
+                    <article class="chapter" data-aos="fade-up">
+                        <div class="chapter-no">3</div>
+                        <small>Bagian Ketiga · Januari 2026</small>
+                        <h4>Lamaran</h4>
+                        <p>Kehendak-Nya menuntun kami pada sebuah ikatan suci yang dicintai-Nya. Kami
+                            melangsungkan acara lamaran di bulan Januari 2026 lalu. Inilah sepenggal kisah cinta
+                            kami yang kami bagikan dengan penuh syukur dan sukacita.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GALERI ================= -->
+        <section class="section tint" id="galeri">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Galeri Poto</span>
+                    <h2>Kenangan Kami</h2>
+                    <span class="sub">dijemur dulu biar awet</span>
+                </div>
+                <div id="gallery" data-aos="fade-up" data-aos-duration="1000"></div>
+            </div>
+        </section>
+
+        <div class="lb" id="lb-backdrop" onclick="closeLbOutside(event)">
+            <div class="lb-inner"><img id="lb-img" src="" alt="Foto galeri"></div>
+            <span class="lb-counter" id="lb-counter">1 / 8</span>
+            <button class="lb-btn lb-close" onclick="closeLb()" aria-label="Tutup"><i
+                    class="fas fa-xmark"></i></button>
+            <button class="lb-btn lb-prev" onclick="lbNav(-1)" aria-label="Sebelumnya"><i
+                    class="fas fa-chevron-left"></i></button>
+            <button class="lb-btn lb-next" onclick="lbNav(1)" aria-label="Berikutnya"><i
+                    class="fas fa-chevron-right"></i></button>
+            <div class="lb-strip" id="lb-strip"></div>
+        </div>
+
+        <!-- ================= COUNTDOWN ================= -->
+        <section class="section dark deep" id="countdown-section">
+            <div class="container center" data-aos="fade-up">
+                <div class="section-head" style="margin-bottom:3rem;">
+                    <span class="eyebrow">Menuju Hari Bahagia</span>
+                    <h2>Hitung Mundur</h2>
+                    <p>Siang dan malam berganti, kami nantikan kehadiran Anda menjadi saksi ikrar suci kami.</p>
+                </div>
+                <div id="countdown">
+                    <div class="cd">
+                        <div class="cd-in">
+                            <div class="cd-num" id="cd-days">00</div>
+                            <div class="cd-label">Hari</div>
+                        </div>
+                    </div>
+                    <div class="cd">
+                        <div class="cd-in">
+                            <div class="cd-num" id="cd-hours">00</div>
+                            <div class="cd-label">Jam</div>
+                        </div>
+                    </div>
+                    <div class="cd">
+                        <div class="cd-in">
+                            <div class="cd-num" id="cd-min">00</div>
+                            <div class="cd-label">Menit</div>
+                        </div>
+                    </div>
+                    <div class="cd">
+                        <div class="cd-in">
+                            <div class="cd-num" id="cd-sec">00</div>
+                            <div class="cd-label">Detik</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:2.8rem;">
+                    <a class="btn btn-line" id="btn-calendar-cd" target="_blank" rel="noopener"><i
+                            class="far fa-bell"></i> Ingatkan Saya</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GIFT ================= -->
+        <section class="section" id="gift">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Amplop Digital</span>
+                    <h2>Wedding Gift</h2>
+                    <span class="sub">tanda kasih untuk kami</span>
+                    <p>Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika memberi adalah
+                        ungkapan tanda kasih, Anda dapat mengirimkannya melalui:</p>
+                </div>
+                <div class="gift-grid" data-aos="fade-up" data-aos-delay="100">
+                    <div class="gift-card">
+                        <div class="bamboo"></div>
+                        <img src="../../asset/img/bca.png" alt="BCA">
+                        <div class="gift-number">283 315 4681</div>
+                        <div class="gift-owner">a.n. Aurora Callista</div>
+                        <button class="btn btn-hejo btn-sm" id="copy-aurora" onclick="copyText('2833154681', this)"><i
+                                class="far fa-copy"></i> Salin Nomor</button>
+                    </div>
+                    <div class="gift-card">
+                        <div class="bamboo"></div>
+                        <img src="../../asset/img/bca.png" alt="BCA">
+                        <div class="gift-number">138 137 5639</div>
+                        <div class="gift-owner">a.n. Arkana Danendra</div>
+                        <button class="btn btn-hejo btn-sm" id="copy-arkana" onclick="copyText('1381375639', this)"><i
+                                class="far fa-copy"></i> Salin Nomor</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= FAQ ================= -->
+        <section class="section tint" id="faq">
+            <div class="container narrow">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">Good To Know</span>
+                    <h2>Informasi Tambahan</h2>
+                </div>
+                <div class="faq" data-aos="fade-up">
+                    <details name="faq" id="faq-1">
+                        <summary>Apakah tersedia area parkir?</summary>
+                        <p>Ya, tempat kami memiliki area parkir yang cukup luas untuk mobil dan motor, serta dibantu
+                            petugas parkir di lokasi.</p>
+                    </details>
+                    <details name="faq" id="faq-2">
+                        <summary>Apakah ada ketentuan pakaian?</summary>
+                        <p>Untuk keselarasan acara, kami merekomendasikan pakaian bernuansa Hijau, Krem, atau Coklat
+                            tanah — boleh juga kebaya &amp; batik khas Priangan.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= UCAPAN ================= -->
+        <section class="section" id="ucapan">
+            <div class="container">
+                <div class="section-head" data-aos="fade-up">
+                    <span class="eyebrow">RSVP &amp; Wishes</span>
+                    <h2>Ucapan &amp; Doa</h2>
+                    <span class="sub">sampaikan doa terbaik untuk kami</span>
+                </div>
+
+                <div class="ucapan-grid">
+                    <div class="panel" data-aos="fade-up">
+                        <div class="bamboo"></div>
+                        <h3>Kirim Ucapan</h3>
+                        <p>Konfirmasi kehadiran sekaligus titipkan doa terbaikmu.</p>
+
+                        <label class="field-label" for="uc-name">Nama</label>
+                        <input type="text" class="field" id="uc-name" placeholder="Nama kamu" maxlength="60">
+
+                        <span class="field-label">Kehadiran</span>
+                        <div class="attend-opts">
+                            <input type="radio" name="attend" id="att-hadir" value="hadir">
+                            <label for="att-hadir"><i class="fas fa-check"></i>Hadir</label>
+                            <input type="radio" name="attend" id="att-mungkin" value="mungkin">
+                            <label for="att-mungkin"><i class="fas fa-question"></i>Mungkin</label>
+                            <input type="radio" name="attend" id="att-tidak" value="tidak">
+                            <label for="att-tidak"><i class="fas fa-xmark"></i>Tidak</label>
+                        </div>
+
+                        <label class="field-label" for="uc-msg">Ucapan</label>
+                        <textarea class="field" id="uc-msg" placeholder="Tulis ucapan dan doa terbaikmu..."
+                            maxlength="300"></textarea>
+
+                        <button class="btn btn-hejo" id="btn-kirim" onclick="kirimUcapan()" style="width:100%;">
+                            <i class="fas fa-paper-plane"></i> Kirim Ucapan
+                        </button>
+                    </div>
+
+                    <div class="panel" data-aos="fade-up" data-aos-delay="120">
+                        <div class="bamboo"></div>
+                        <h3>Ucapan Tamu</h3>
+                        <p>Doa-doa baik dari orang tersayang.</p>
+                        <div class="stats">
+                            <div class="stat"><b id="st-hadir">0</b><span>Hadir</span></div>
+                            <div class="stat"><b id="st-mungkin">0</b><span>Mungkin</span></div>
+                            <div class="stat"><b id="st-tidak">0</b><span>Tidak</span></div>
+                        </div>
+                        <div class="ucapan-list" id="ucapan-list">
+                            <div class="ucapan-empty">Belum ada ucapan. Jadilah yang pertama!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <div class="container" data-aos="fade-up">
+            <svg class="siger-f" aria-hidden="true"><use href="#siger" /></svg>
+            <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir
+                dan memberikan doa restu kepada kedua mempelai.</p>
+            <div class="footer-thanks gold-text">Hatur Nuhun</div>
+            <div class="footer-rampes">Rampes.</div>
+            <p class="footer-wassalam">Wassalamu'alaikum Warahmatullahi Wabarakatuh</p>
+            <div class="footer-family">
+                <small>Nu Boga Hajat</small>
+                <p>Kulawarga Besar Bpk. Rendi &amp; Ibu Nia Siti Munijar<br>serta<br>Kulawarga Besar Bpk. Ujang
+                    Firmansyah &amp; Ibu Tiur Andini</p>
+            </div>
+            <div class="footer-sign">ARKANA &amp; AURORA · 14 · 06 · 2026</div>
+        </div>
+    </footer>
+
+    <!-- ================= DOCK ================= -->
+    <nav class="dock" id="dock" aria-label="Navigasi undangan">
+        <a href="#home" data-target="home" aria-label="Beranda"><i class="fas fa-house"></i></a>
+        <a href="#mempelai" data-target="mempelai" aria-label="Mempelai"><i class="fas fa-heart"></i></a>
+        <a href="#acara" data-target="acara" aria-label="Acara"><i class="far fa-calendar"></i></a>
+        <a href="#galeri" data-target="galeri" aria-label="Galeri"><i class="far fa-images"></i></a>
+        <a href="#ucapan" data-target="ucapan" aria-label="Ucapan"><i class="far fa-comment-dots"></i></a>
+        <span class="sep"></span>
+        <button id="audioControl" onclick="toggleAudio()" aria-label="Putar / jeda musik"><i
+                class="fas fa-compact-disc"></i></button>
+    </nav>
+
+    <script>
+        /* =========================================================
+           CONFIG — ubah data di sini untuk klien lain
+        ========================================================== */
+        const CONFIG = {
+            couple: 'Arkana & Aurora',
+            eventStart: '2026-06-14T08:00:00+07:00',
+            eventEnd: '2026-06-14T14:00:00+07:00',
+            location: 'Jln. Jati Arum Gang Gemah Ripah No. 23, Desa Jatiendah, Kec. Cilengkrang, Kab. Bandung',
+            apiUrl: 'https://be-undangan-chi.vercel.app/api/ucapan',
+            audioStart: 60,
+            gallery: [
+                '../../asset/img/pre1.jpeg', '../../asset/img/pre3.jpeg',
+                '../../asset/img/pre6.jpeg', '../../asset/img/pre8.jpeg',
+                '../../asset/img/pre2.jpeg', '../../asset/img/pre4.jpeg',
+                '../../asset/img/pre7.jpeg', '../../asset/img/pre9.jpeg'
+            ]
+        };
+
+        /* ---------- Guest name ---------- */
+        const toName = new URLSearchParams(location.search).get('to');
+        if (toName) document.getElementById('guest-name').textContent = toName;
+
+        /* ---------- Calendar ---------- */
+        (function () {
+            const fmt = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+                + '&text=' + encodeURIComponent('Pernikahan ' + CONFIG.couple)
+                + '&dates=' + fmt(CONFIG.eventStart) + '/' + fmt(CONFIG.eventEnd)
+                + '&details=' + encodeURIComponent('Akad 08.00 WIB · Resepsi 11.00 WIB')
+                + '&location=' + encodeURIComponent(CONFIG.location);
+            ['btn-calendar', 'btn-calendar-cd'].forEach(id => { document.getElementById(id).href = url; });
+        })();
+
+        /* ---------- Falling leaves ---------- */
+        function startLeaves() {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const count = innerWidth < 600 ? 9 : 15;
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'leaf-fall';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (12 + Math.random() * 10) + 's';
+                p.style.animationDelay = (Math.random() * 12) + 's';
+                const s = 0.7 + Math.random() * 0.9;
+                p.innerHTML = '<i style="transform:scale(' + s + ');animation-duration:' + (2.8 + Math.random() * 3) + 's"></i>';
+                document.body.appendChild(p);
+            }
+        }
+
+        /* ---------- Open invitation + audio ---------- */
+        let isPlaying = false;
+        let opened = false;
+
+        function openInvitation() {
+            if (opened) return;
+            opened = true;
+            const audio = document.getElementById('myAudio');
+            audio.currentTime = CONFIG.audioStart;
+            audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+
+            const cover = document.getElementById('cover');
+            cover.classList.add('open');
+            document.body.classList.remove('locked');
+            window.scrollTo(0, 0);
+
+            setTimeout(() => {
+                cover.classList.add('gone');
+                document.getElementById('dock').classList.add('show');
+                startLeaves();
+                AOS.refresh();
+            }, 2500);
+        }
+
+        function setPlaying(state) {
+            isPlaying = state;
+            const ctrl = document.getElementById('audioControl');
+            ctrl.classList.toggle('playing', state);
+            ctrl.innerHTML = state ? '<i class="fas fa-compact-disc"></i>' : '<i class="fas fa-volume-xmark"></i>';
+        }
+
+        function toggleAudio() {
+            const audio = document.getElementById('myAudio');
+            if (isPlaying) { audio.pause(); setPlaying(false); }
+            else { audio.play(); setPlaying(true); }
+        }
+
+        /* ---------- Progress + dock active ---------- */
+        const progress = document.getElementById('progress');
+        addEventListener('scroll', () => {
+            const h = document.documentElement.scrollHeight - innerHeight;
+            progress.style.width = (h > 0 ? (scrollY / h) * 100 : 0) + '%';
+        }, { passive: true });
+
+        const dockLinks = document.querySelectorAll('.dock a');
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(en => {
+                if (en.isIntersecting) dockLinks.forEach(a => a.classList.toggle('active', a.dataset.target === en.target.id));
+            });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        dockLinks.forEach(a => { const s = document.getElementById(a.dataset.target); if (s) io.observe(s); });
+
+        /* ---------- Gallery (poto dijemur) + lightbox ---------- */
+        const lbImages = CONFIG.gallery;
+        let lbCurrent = 0;
+        const gallery = document.getElementById('gallery');
+        const strip = document.getElementById('lb-strip');
+        const tilts = [-3, 2, -2, 3, 2, -3, 3, -2];
+        let galleryPer = 0;
+
+        function buildGallery() {
+            const per = innerWidth < 700 ? 2 : 4;
+            if (per === galleryPer) return;
+            galleryPer = per;
+            gallery.innerHTML = '';
+            for (let r = 0; r < lbImages.length; r += per) {
+                const rope = document.createElement('div');
+                rope.className = 'rope';
+                rope.style.setProperty('--per', per);
+                lbImages.slice(r, r + per).forEach((src, k) => {
+                    const i = r + k;
+                    const item = document.createElement('div');
+                    item.className = 'g-item';
+                    item.style.setProperty('--r', tilts[i % tilts.length] + 'deg');
+                    item.onclick = () => openLb(i);
+                    item.innerHTML = '<div class="g-in"><img src="' + src + '" alt="Galeri ' + (i + 1) + '" loading="lazy"></div>'
+                        + '<span class="cap">' + String(i + 1).padStart(2, '0') + '</span>';
+                    rope.appendChild(item);
+                });
+                gallery.appendChild(rope);
+            }
+        }
+        buildGallery();
+        let rz;
+        addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(buildGallery, 200); });
+
+        lbImages.forEach((_, i) => {
+            const d = document.createElement('span');
+            d.className = 'lb-dot' + (i === 0 ? ' active' : '');
+            d.onclick = e => { e.stopPropagation(); lbCurrent = i; updateLb(false); };
+            strip.appendChild(d);
+        });
+
+        const lbEl = document.getElementById('lb-backdrop');
+
+        function openLb(idx) {
+            lbCurrent = idx;
+            lbEl.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateLb(true);
+        }
+        function closeLb() {
+            lbEl.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function closeLbOutside(e) {
+            if (e.target === lbEl || e.target.classList.contains('lb-inner')) closeLb();
+        }
+        function lbNav(dir) {
+            lbCurrent = (lbCurrent + dir + lbImages.length) % lbImages.length;
+            updateLb(false);
+        }
+        function updateLb(instant) {
+            const img = document.getElementById('lb-img');
+            if (!instant) img.style.opacity = '0';
+            setTimeout(() => { img.src = lbImages[lbCurrent]; img.style.opacity = '1'; }, instant ? 0 : 200);
+            document.getElementById('lb-counter').textContent = (lbCurrent + 1) + ' / ' + lbImages.length;
+            document.querySelectorAll('.lb-dot').forEach((d, i) => d.classList.toggle('active', i === lbCurrent));
+        }
+
+        let touchStartX = 0;
+        lbEl.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        lbEl.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(dx) > 50) lbNav(dx < 0 ? 1 : -1);
+        }, { passive: true });
+        document.addEventListener('keydown', e => {
+            if (!lbEl.classList.contains('active')) return;
+            if (e.key === 'ArrowRight') lbNav(1);
+            if (e.key === 'ArrowLeft') lbNav(-1);
+            if (e.key === 'Escape') closeLb();
+        });
+
+        /* ---------- Toast + copy ---------- */
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function copyText(text, btn) {
+            const done = () => {
+                showToast('Nomor rekening berhasil disalin');
+                if (btn) {
+                    const orig = btn.innerHTML;
+                    btn.classList.add('copied');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+                    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 2000);
+                }
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(done);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                done();
+            }
+        }
+
+        /* ---------- Ucapan ---------- */
+        const AVATAR_COLORS = ['#2f5d3f', '#8a4b2a', '#6f9a52', '#a8782a', '#3f6f45', '#7a5a3a'];
+
+        function escHtml(s) {
+            return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function renderUcapan(data) {
+            const list = document.getElementById('ucapan-list');
+            const count = { hadir: 0, mungkin: 0, tidak: 0 };
+            if (!Array.isArray(data) || data.length === 0) {
+                list.innerHTML = '<div class="ucapan-empty">Belum ada ucapan. Jadilah yang pertama!</div>';
+            } else {
+                list.innerHTML = '';
+                data.forEach((u, idx) => {
+                    const key = u.kehadiran === 'hadir' ? 'hadir' : u.kehadiran === 'mungkin' ? 'mungkin' : 'tidak';
+                    count[key]++;
+                    const label = key === 'hadir' ? 'Hadir' : key === 'mungkin' ? 'Mungkin Hadir' : 'Tidak Hadir';
+                    const initial = (String(u.nama || '?').trim()[0] || '?').toUpperCase();
+                    const color = AVATAR_COLORS[initial.charCodeAt(0) % AVATAR_COLORS.length];
+                    const el = document.createElement('div');
+                    el.className = 'wish';
+                    el.style.animationDelay = Math.min(idx * 0.05, 0.6) + 's';
+                    el.innerHTML = '<div class="wish-avatar" style="background:' + color + '">' + escHtml(initial) + '</div>'
+                        + '<div><div class="wish-head"><span class="wish-name">' + escHtml(u.nama) + '</span>'
+                        + '<span class="wish-attend ' + key + '">' + label + '</span></div>'
+                        + '<p>' + escHtml(u.pesan) + '</p></div>';
+                    list.appendChild(el);
+                });
+            }
+            document.getElementById('st-hadir').textContent = count.hadir;
+            document.getElementById('st-mungkin').textContent = count.mungkin;
+            document.getElementById('st-tidak').textContent = count.tidak;
+        }
+
+        async function fetchUcapan() {
+            try {
+                const res = await fetch(CONFIG.apiUrl);
+                renderUcapan(await res.json());
+            } catch (err) { console.error('Gagal mengambil ucapan:', err); }
+        }
+
+        async function kirimUcapan() {
+            const name = document.getElementById('uc-name').value.trim();
+            const attendEl = document.querySelector('input[name="attend"]:checked');
+            const msg = document.getElementById('uc-msg').value.trim();
+            if (!name) { showToast('Mohon isi nama kamu dulu ya'); return; }
+            if (!attendEl) { showToast('Mohon pilih konfirmasi kehadiran'); return; }
+            if (!msg) { showToast('Mohon tulis ucapannya dulu ya'); return; }
+
+            const btn = document.getElementById('btn-kirim');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            try {
+                const res = await fetch(CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nama: name, kehadiran: attendEl.value, pesan: msg })
+                });
+                if (res.ok) {
+                    await fetchUcapan();
+                    document.getElementById('uc-name').value = '';
+                    document.getElementById('uc-msg').value = '';
+                    attendEl.checked = false;
+                    document.getElementById('ucapan-list').scrollTop = 0;
+                    showToast('Hatur nuhun atas ucapan & doanya');
+                } else { showToast('Gagal mengirim, coba lagi nanti'); }
+            } catch (err) {
+                console.error('Error:', err);
+                showToast('Terjadi kesalahan jaringan');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Ucapan';
+            }
+        }
+
+        if (toName) document.getElementById('uc-name').value = toName;
+        fetchUcapan();
+
+        /* ---------- Countdown ---------- */
+        const target = new Date(CONFIG.eventStart).getTime();
+        let cdTimer;
+        function tick() {
+            const diff = target - Date.now();
+            if (diff < 0) {
+                document.getElementById('countdown').innerHTML = '<p class="cd-done">Hari bahagia telah tiba</p>';
+                clearInterval(cdTimer);
+                return;
+            }
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById('cd-days').textContent = pad(Math.floor(diff / 86400000));
+            document.getElementById('cd-hours').textContent = pad(Math.floor((diff % 86400000) / 3600000));
+            document.getElementById('cd-min').textContent = pad(Math.floor((diff % 3600000) / 60000));
+            document.getElementById('cd-sec').textContent = pad(Math.floor((diff % 60000) / 1000));
+        }
+        tick();
+        cdTimer = setInterval(tick, 1000);
+    </script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>AOS.init({ once: true, offset: 60, duration: 1000, easing: 'ease-out-cubic' });</script>
+
+</body>
+
+</html>

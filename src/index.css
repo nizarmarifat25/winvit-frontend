@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 39 62% 43%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+    --gold: #b3822a;
+    --gold-light: #dfb253;
+    --gold-gradient: linear-gradient(135deg, #c59336 0%, #e0b85a 50%, #b3822a 100%);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc;
+    color: #0f172a;
+    background-image:
+      radial-gradient(at 50% 0%, rgba(224, 242, 254, 0.5) 0px, transparent 65%),
+      radial-gradient(at 100% 15%, rgba(254, 243, 199, 0.3) 0px, transparent 50%),
+      radial-gradient(at 0% 30%, rgba(241, 245, 249, 0.8) 0px, transparent 60%);
+  }
+}
+
+.font-serif-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+/* ========================================================
+   3D DEVICE MOCKUP FRAMES FOR CATALOG CARDS
+   ======================================================== */
+.mockup-stage {
+  position: relative;
+  height: 275px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 25%, #ffffff 0%, #f8fafc 65%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  perspective: 1200px;
+  user-select: none;
+}
+
+.mockup-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.065) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.mockup-corner-ribbon {
+  position: absolute;
+  top: 18px;
+  right: -38px;
+  width: 140px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 5px 0;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.35);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.phone-frame {
+  position: relative;
+  border-radius: 26px;
+  background: #1e1e24;
+  border: 3.5px solid #2e2e36;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+    0 18px 36px -8px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+}
+
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #0d0d11;
+}
+
+.phone-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.8s var(--ease);
+}
+
+.theme-card:hover .phone-screen img {
+  transform: scale(1.05);
+}
+
+.phone-island {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32%;
+  height: 8.5px;
+  background: #000000;
+  border-radius: 999px;
+  z-index: 6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.phone-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 30%, transparent 55%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.phone-home-bar {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  z-index: 6;
+}
+
+.phone-trio {
+  width: 94px;
+  height: 192px;
+  position: absolute;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.phone-left {
+  transform: translateX(-42px) rotateY(18deg) rotateZ(-6deg) scale(0.92);
+  z-index: 1;
+  opacity: 0.95;
+}
+
+.phone-center {
+  position: relative;
+  z-index: 3;
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+    0 22px 42px -10px rgba(0, 0, 0, 0.42);
+}
+
+.phone-right {
+  transform: translateX(42px) rotateY(-18deg) rotateZ(6deg) scale(0.92);
+  z-index: 1;
+  opacity: 0.95;
+}
+
+.theme-card:hover .phone-left {
+  transform: translateX(-50px) rotateY(12deg) rotateZ(-4deg) translateY(-5px) scale(0.94);
+}
+
+.theme-card:hover .phone-center {
+  transform: translateY(-8px) scale(1.08);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+    0 28px 50px -10px rgba(0, 0, 0, 0.48);
+}
+
+.theme-card:hover .phone-right {
+  transform: translateX(50px) rotateY(-12deg) rotateZ(4deg) translateY(-5px) scale(0.94);
+}
+
+.tablet-frame {
+  position: relative;
+  width: 205px;
+  height: 158px;
+  border-radius: 16px;
+  background: #1c1c20;
+  border: 6px solid #232328;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 20px 42px -10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s var(--ease);
+}
+
+.theme-card:hover .tablet-frame {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.tablet-cam {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #3a3a42;
+  z-index: 6;
+}
+
+.tablet-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d0d11;
+}
+
+.tablet-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.tablet-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 30%, transparent 60%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.laptop-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.5s var(--ease);
+}
+
+.theme-card:hover .laptop-frame {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.laptop-lid {
+  position: relative;
+  width: 210px;
+  height: 132px;
+  border-radius: 9px 9px 0 0;
+  background: #141417;
+  border: 5px solid #1c1c20;
+  border-bottom: 7px solid #141417;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  overflow: hidden;
+}
+
+.laptop-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 4px;
+  background: #000;
+  border-radius: 0 0 3px 3px;
+  z-index: 6;
+}
+
+.laptop-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #08080a;
+}
+
+.laptop-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.laptop-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 35%, transparent 65%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.laptop-base {
+  width: 242px;
+  height: 10px;
+  background: linear-gradient(to bottom, #cfd3dc 0%, #9aa0ac 100%);
+  border-radius: 0 0 7px 7px;
+  position: relative;
+  box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.35);
+}
+
+.laptop-groove {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 3px;
+  background: #626772;
+  border-radius: 0 0 3px 3px;
+}
+
+@keyframes float-left {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-right {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+.animate-float-left {
+  animation: float-left 4s ease-in-out infinite;
+}
+
+.animate-float-right {
+  animation: float-right 4.5s ease-in-out infinite;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
