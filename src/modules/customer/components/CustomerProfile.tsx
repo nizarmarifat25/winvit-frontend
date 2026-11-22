@@ -14,6 +14,8 @@ import {
   updateUserApi,
   clearTokens,
 } from "@/lib/api"
+import { DEFAULT_INVITATION } from "@/data/themes"
+import { LogoutConfirmDialog } from "@/components/LogoutConfirmDialog"
 
 interface CustomerProfileProps {
   draft: InvitationData
@@ -32,6 +34,7 @@ export default function CustomerProfile({
   const [profileSaved, setProfileSaved] = useState(false)
   const [saving, setSaving] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
   useEffect(() => {
     const token = getAccessToken()
@@ -89,6 +92,7 @@ export default function CustomerProfile({
 
   const handleLogout = () => {
     clearTokens()
+    setInvitation(DEFAULT_INVITATION)
     navigate("/login")
   }
 
@@ -176,7 +180,7 @@ export default function CustomerProfile({
             <Button
               type="button"
               variant="outline"
-              onClick={handleLogout}
+              onClick={() => setLogoutDialogOpen(true)}
               className="w-full h-10 rounded-xl text-red-600 hover:text-red-700 gap-2"
             >
               <LogOut className="w-4 h-4" />
@@ -185,6 +189,12 @@ export default function CustomerProfile({
           </div>
         </CardContent>
       </Card>
+
+      <LogoutConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={handleLogout}
+      />
     </div>
   )
 }

@@ -29,13 +29,16 @@ import {
   updateUserApi,
   uploadMediaFile,
 } from "@/lib/api"
+import { DEFAULT_INVITATION } from "@/data/themes"
+import { LogoutConfirmDialog } from "@/components/LogoutConfirmDialog"
 
 type AdminTab = "approval" | "template" | "users" | "revenue"
 
 export function AdminDashboard() {
   const navigate = useNavigate()
-  const { themes, refreshPublicThemes, orders: localOrders } = useWinvit()
+  const { themes, refreshPublicThemes, orders: localOrders, setInvitation } = useWinvit()
   const [activeTab, setActiveTab] = useState<AdminTab>("approval")
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
   // 1. ORDERS STATE
   const [backendOrders, setBackendOrders] = useState<any[]>([])
@@ -260,6 +263,7 @@ export function AdminDashboard() {
 
   const handleLogout = () => {
     clearTokens()
+    setInvitation(DEFAULT_INVITATION)
     navigate("/login")
   }
 
@@ -331,7 +335,7 @@ export function AdminDashboard() {
           </Link>
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => setLogoutDialogOpen(true)}
             className="text-xs font-medium text-red-600"
           >
             Logout
@@ -414,7 +418,7 @@ export function AdminDashboard() {
           </Link>
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => setLogoutDialogOpen(true)}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 text-left"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -1070,6 +1074,12 @@ export function AdminDashboard() {
           })}
         </nav>
       </div>
+
+      <LogoutConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={handleLogout}
+      />
     </div>
   )
 }

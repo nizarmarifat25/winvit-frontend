@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useWinvit } from "@/context/WinvitContext"
 import type { ThemeItem } from "@/types/winvit"
-import { FEATURES_14 } from "@/data/themes"
+import { DEFAULT_INVITATION, FEATURES_14 } from "@/data/themes"
+import { LogoutConfirmDialog } from "@/components/LogoutConfirmDialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -31,12 +32,13 @@ import {
 import { getAuthUser, clearTokens, type AuthUser } from "@/lib/api"
 
 export default function LandingPage() {
-  const { themes } = useWinvit()
+  const { themes, setInvitation } = useWinvit()
   const navigate = useNavigate()
 
   const [authUser, setAuthUserState] = useState<AuthUser | null>(() =>
     getAuthUser()
   )
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -140,10 +142,7 @@ export default function LandingPage() {
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => {
-                    clearTokens()
-                    setAuthUserState(null)
-                  }}
+                  onClick={() => setLogoutDialogOpen(true)}
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   Logout
@@ -194,9 +193,8 @@ export default function LandingPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    clearTokens()
-                    setAuthUserState(null)
                     setMobileMenuOpen(false)
+                    setLogoutDialogOpen(true)
                   }}
                   className="text-left font-semibold py-1.5 text-red-600"
                 >
@@ -987,6 +985,16 @@ export default function LandingPage() {
           <span>{toastMsg}</span>
         </div>
       )}
+
+      <LogoutConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={() => {
+          clearTokens()
+          setInvitation(DEFAULT_INVITATION)
+          setAuthUserState(null)
+        }}
+      />
     </div>
   )
 }

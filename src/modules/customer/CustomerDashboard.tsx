@@ -24,6 +24,7 @@ import { useInvitationDraft } from "@/modules/customer/hooks/useInvitationDraft"
 import type { DetailSubTab } from "@/modules/customer/types"
 import { getAccessToken, clearTokens } from "@/lib/api"
 import { DEFAULT_INVITATION } from "@/data/themes"
+import { LogoutConfirmDialog } from "@/components/LogoutConfirmDialog"
 
 type SidebarMenu = "detail" | "share" | "profile"
 
@@ -55,6 +56,7 @@ export function CustomerDashboard() {
 
   // Main Menu: Detail Undangan | Sebar Undangan | Profile
   const [sidebarMenu, setSidebarMenu] = useState<SidebarMenu>("detail")
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
 
   // Sub-menu inside Detail Undangan (Starts directly at "couple")
   const [detailTab, setDetailTab] = useState<DetailSubTab>("couple")
@@ -277,7 +279,7 @@ export function CustomerDashboard() {
             </Link>
             <button
               type="button"
-              onClick={handleLogout}
+              onClick={() => setLogoutDialogOpen(true)}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 text-left font-medium transition cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -434,6 +436,12 @@ export function CustomerDashboard() {
           })}
         </nav>
       </div>
+
+      <LogoutConfirmDialog
+        open={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+        onConfirm={handleLogout}
+      />
     </div>
   )
 }
