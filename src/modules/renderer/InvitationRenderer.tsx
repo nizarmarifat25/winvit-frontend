@@ -11,13 +11,13 @@ import {
   ArrowLeft,
   ChevronDown,
   ExternalLink,
+  Laptop,
   MessageSquareHeart,
   X,
   Send,
   Loader2,
   Smartphone,
   Tablet,
-  Monitor,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -58,6 +58,16 @@ function parseIsoDateAndTime(isoStr?: string | null): {
   }
 }
 
+type ViewportMode = "mobile" | "tablet" | "desktop"
+type ScreenCategory = "phone" | "tablet" | "desktop"
+
+function getScreenCategory(): ScreenCategory {
+  if (typeof window === "undefined") return "desktop"
+  if (window.innerWidth < 768) return "phone"
+  if (window.innerWidth < 1024) return "tablet"
+  return "desktop"
+}
+
 export default function InvitationRenderer({
   previewData,
   previewThemePath,
@@ -75,9 +85,12 @@ export default function InvitationRenderer({
   const [isDraftPreview, setIsDraftPreview] = useState(false)
   const [loadingPublic, setLoadingPublic] = useState(!embedded && Boolean(slug))
   const [publicError, setPublicError] = useState<string | null>(null)
-  const [viewportMode, setViewportMode] = useState<"mobile" | "tablet" | "desktop">(
-    "desktop"
-  )
+  const [screenCategory, setScreenCategory] =
+    useState<ScreenCategory>(getScreenCategory)
+  const [viewportMode, setViewportMode] = useState<ViewportMode>(() => {
+    const initial = getScreenCategory()
+    return initial === "phone" ? "mobile" : initial
+  })
   const [isAtBottom, setIsAtBottom] = useState(false)
   const scrollCleanupRef = useRef<(() => void) | null>(null)
   const [wishes, setWishes] = useState<any[]>([])
@@ -447,6 +460,20 @@ export default function InvitationRenderer({
   }, [viewportMode])
 
   useEffect(() => {
+    const handleResize = () => {
+      const nextCat = getScreenCategory()
+      setScreenCategory(nextCat)
+      setViewportMode((prev) => {
+        if (nextCat === "phone") return "mobile"
+        if (nextCat === "tablet" && prev === "desktop") return "tablet"
+        return prev
+      })
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  useEffect(() => {
     return () => {
       scrollCleanupRef.current?.()
     }
@@ -505,9 +532,32 @@ export default function InvitationRenderer({
     )
   }
 
+  const isPhoneScreen = screenCategory === "phone"
+  const effectiveViewport: ViewportMode = isPhoneScreen
+    ? "mobile"
+    : screenCategory === "tablet" && viewportMode === "desktop"
+      ? "tablet"
+      : viewportMode
+
+  const availableModes = (
+    [
+      { id: "mobile" as const, label: "iPhone 17 Pro", Icon: Smartphone },
+      { id: "tablet" as const, label: "iPad Pro M3", Icon: Tablet },
+      { id: "desktop" as const, label: "MacBook Pro", Icon: Laptop },
+    ] as const
+  ).filter((mode) => {
+    if (screenCategory === "phone") return mode.id === "mobile"
+    if (screenCategory === "tablet") return mode.id !== "desktop"
+    return true
+  })
+
+  const showPhoneFrame = !isPhoneScreen && effectiveViewport === "mobile"
+  const showTabletFrame = !isPhoneScreen && effectiveViewport === "tablet"
+  const showLaptopFrame = !isPhoneScreen && effectiveViewport === "desktop"
+
   return (
     <div className="relative w-screen h-dvh overflow-hidden bg-slate-950 flex flex-col">
-      {/* Top SaaS Bar with Mobile / Tablet / Desktop Viewport Switcher */}
+      {/* Top SaaS Bar with Device Frame Switcher (Laptop: All 3 | Tablet: Phone+Tablet | Phone: Mobile only) */}
       <div className="relative z-40 shrink-0 bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-3 sm:px-5 h-13 flex items-center justify-between gap-2 text-xs text-white">
         <div className="flex items-center gap-2 min-w-0">
           <span
@@ -521,39 +571,35 @@ export default function InvitationRenderer({
               Preview (Belum Publish)
             </span>
           )}
-          <span className="hidden sm:inline text-slate-500">|</span>
-          <span className="hidden sm:inline text-amber-300 font-bold truncate">
+          <span className="hidden md:inline text-slate-500">|</span>
+          <span className="hidden md:inline text-amber-300 font-bold truncate">
             {activeTheme.title}
           </span>
         </div>
 
-        {/* Viewport Mode Switcher: Mobile | Tablet | Desktop */}
-        <div className="flex items-center gap-1 rounded-full bg-white/10 p-1 border border-white/10">
-          {(
-            [
-              { id: "mobile", label: "Mobile", Icon: Smartphone },
-              { id: "tablet", label: "Tablet", Icon: Tablet },
-              { id: "desktop", label: "Desktop", Icon: Monitor },
-            ] as const
-          ).map(({ id, label, Icon }) => {
-            const active = viewportMode === id
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setViewportMode(id)}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
-                  active
-                    ? "bg-[#C89B57] text-slate-950 shadow-xs"
-                    : "text-slate-300 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                <span>{label}</span>
-              </button>
-            )
-          })}
-        </div>
+        {/* Device Viewport Switcher (hidden extra tabs on mobile screens) */}
+        {availableModes.length > 1 && (
+          <div className="flex items-center gap-1 rounded-full bg-white/10 p-1 border border-white/10">
+            {availableModes.map(({ id, label, Icon }) => {
+              const active = effectiveViewport === id
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setViewportMode(id)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
+                    active
+                      ? "bg-[#C89B57] text-slate-950 shadow-xs"
+                      : "text-slate-300 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
 
         <div className="flex items-center gap-1.5 shrink-0">
           {authUser && (
@@ -772,37 +818,145 @@ export default function InvitationRenderer({
         </div>
       ) : (
         <div
-          className={`flex-1 w-full overflow-hidden flex items-center justify-center transition-all duration-300 ${
-            viewportMode === "desktop" ? "p-0 bg-black" : "p-4 sm:p-6 bg-slate-950"
+          className={`flex-1 w-full min-h-0 overflow-hidden flex items-center justify-center transition-all duration-300 ${
+            isPhoneScreen
+              ? "p-0 bg-black"
+              : "px-4 py-4 sm:px-14 sm:py-5 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_60%,_#03050a_100%)]"
           }`}
         >
           <div
-            className={`relative transition-all duration-300 ${
-              viewportMode === "mobile"
-                ? "w-[390px] max-w-full h-full max-h-[820px]"
-                : viewportMode === "tablet"
-                  ? "w-[768px] max-w-full h-full max-h-[960px]"
-                  : "w-full h-full"
+            className={`relative flex flex-col items-center transition-all duration-300 ${
+              isPhoneScreen
+                ? "w-full h-full"
+                : showPhoneFrame
+                  ? "w-[396px] max-w-full h-full max-h-[820px]"
+                  : showTabletFrame
+                    ? "w-[768px] max-w-full h-full max-h-[880px]"
+                    : "w-full max-w-[1160px] h-full max-h-[760px]"
             }`}
           >
+            {/* Hardware Metallic Chassis / Display Lid */}
             <div
-              className={`w-full h-full overflow-hidden bg-black ${
-                viewportMode === "mobile"
-                  ? "rounded-[42px] border-[6px] border-slate-800 shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
-                  : viewportMode === "tablet"
-                    ? "rounded-[28px] border-[5px] border-slate-800 shadow-[0_24px_60px_rgba(0,0,0,0.65)]"
-                    : ""
+              className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${
+                isPhoneScreen
+                  ? "w-full h-full bg-black"
+                  : showPhoneFrame
+                    ? "w-full rounded-[52px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.14)_inset]"
+                    : showTabletFrame
+                      ? "w-full rounded-[34px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.12)_inset]"
+                      : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
               }`}
             >
-              <iframe
-                key={publicInvitation?.id || "public"}
-                ref={iframeRef}
-                src={targetUrl}
-                onLoad={handleIframeLoad}
-                title={invitation.meta.title || activeTheme.title}
-                className="w-full h-full border-0 block"
-              />
+              {/* iPhone 17 Pro Titanium Side Buttons */}
+              {showPhoneFrame && (
+                <>
+                  <span className="pointer-events-none absolute -left-[3px] top-[106px] w-[3px] h-[24px] rounded-l-sm bg-[#6e6963]" />
+                  <span className="pointer-events-none absolute -left-[3px] top-[148px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
+                  <span className="pointer-events-none absolute -left-[3px] top-[204px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
+                  <span className="pointer-events-none absolute -right-[3px] top-[168px] w-[3px] h-[68px] rounded-r-sm bg-[#6e6963]" />
+                  <span className="pointer-events-none absolute -right-[3px] bottom-[180px] w-[3px] h-[42px] rounded-r-sm bg-[#5b5752]" />
+                </>
+              )}
+
+              {/* iPad Pro M3 Side Buttons */}
+              {showTabletFrame && (
+                <>
+                  <span className="pointer-events-none absolute -top-[3px] right-[44px] h-[3px] w-[34px] rounded-t-sm bg-[#5c6069]" />
+                  <span className="pointer-events-none absolute -right-[3px] top-[64px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
+                  <span className="pointer-events-none absolute -right-[3px] top-[106px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
+                </>
+              )}
+
+              {/* Inner Black Glass Bezel */}
+              <div
+                className={`relative w-full h-full flex flex-col transition-all duration-300 ${
+                  isPhoneScreen
+                    ? "bg-black"
+                    : showPhoneFrame
+                      ? "rounded-[49px] bg-[#08080a] p-[10px]"
+                      : showTabletFrame
+                        ? "rounded-[31px] bg-[#08080a] p-[14px] pt-[18px]"
+                        : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
+                }`}
+              >
+                {/* iPad Pro M3 Center Stage Camera Sensor */}
+                {showTabletFrame && (
+                  <div className="pointer-events-none absolute top-[6px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#1a1c24] ring-1 ring-white/10" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#111827] ring-1 ring-indigo-400/25 flex items-center justify-center">
+                      <span className="w-1 h-1 rounded-full bg-indigo-400/40" />
+                    </span>
+                  </div>
+                )}
+
+                {/* Display Screen Container (keeps iframe continuously mounted across device switches) */}
+                <div
+                  className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black transition-all duration-300 ${
+                    isPhoneScreen
+                      ? ""
+                      : showPhoneFrame
+                        ? "rounded-[40px]"
+                        : showTabletFrame
+                          ? "rounded-[18px]"
+                          : "rounded-[8px]"
+                  }`}
+                >
+                  {/* iPhone 17 Pro Dynamic Island */}
+                  {showPhoneFrame && (
+                    <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-20 w-[104px] h-[27px] rounded-full bg-black shadow-[0_2px_8px_rgba(0,0,0,0.6)] flex items-center justify-end pr-2.5">
+                      <span className="w-3 h-3 rounded-full bg-[#101422] ring-1 ring-white/10 flex items-center justify-center">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/35" />
+                      </span>
+                    </div>
+                  )}
+
+                  {/* MacBook Pro Display Notch */}
+                  {showLaptopFrame && (
+                    <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[116px] h-[18px] rounded-b-[10px] bg-[#08080a] flex items-center justify-center">
+                      <span className="w-2 h-2 rounded-full bg-[#141926] ring-1 ring-white/10 flex items-center justify-center">
+                        <span className="w-0.5 h-0.5 rounded-full bg-emerald-400/45" />
+                      </span>
+                    </div>
+                  )}
+
+                  <iframe
+                    key={publicInvitation?.id || "public"}
+                    ref={iframeRef}
+                    src={targetUrl}
+                    onLoad={handleIframeLoad}
+                    title={invitation.meta.title || activeTheme.title}
+                    className="w-full h-full border-0 block"
+                  />
+
+                  {/* iPhone 17 Pro / iPad Pro M3 Home Indicator */}
+                  {(showPhoneFrame || showTabletFrame) && (
+                    <div
+                      className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 shadow-xs ${
+                        showPhoneFrame ? "w-[120px]" : "w-[144px]"
+                      }`}
+                    />
+                  )}
+                </div>
+
+                {/* MacBook Pro Chin Label */}
+                {showLaptopFrame && (
+                  <p className="text-[9px] font-medium uppercase tracking-[0.26em] text-white/30 text-center pt-1.5 pb-0.5 select-none">
+                    MacBook Pro
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* MacBook Pro Aluminum Unibody Hinge & Base */}
+            {showLaptopFrame && (
+              <div className="w-full flex flex-col items-center shrink-0 pointer-events-none select-none">
+                <div className="w-[84%] h-[5px] bg-gradient-to-r from-[#14151a] via-[#2c2f37] to-[#14151a] rounded-b-xs" />
+                <div className="relative w-full h-[17px] rounded-b-[14px] rounded-t-[2px] bg-gradient-to-b from-[#9498a1] via-[#5d616a] to-[#32353c] shadow-[0_24px_48px_rgba(0,0,0,0.85)] flex justify-center">
+                  <div className="w-[126px] h-[5px] rounded-b-full bg-gradient-to-b from-[#2b2d34] to-[#4a4e57] shadow-inner" />
+                </div>
+                <div className="w-[92%] h-[3px] rounded-b-full bg-black/70 blur-[1px]" />
+              </div>
+            )}
 
             {/* Animated Mouse Scroll Indicator at the right edge */}
             <button
@@ -815,11 +969,13 @@ export default function InvitationRenderer({
                   ? "opacity-0 pointer-events-none scale-95"
                   : "opacity-100 scale-100"
               } ${
-                viewportMode === "mobile"
-                  ? "right-3 sm:right-auto sm:left-full sm:ml-4"
-                  : viewportMode === "tablet"
-                    ? "right-3 lg:right-auto lg:left-full lg:ml-4"
-                    : "right-3 sm:right-5"
+                isPhoneScreen
+                  ? "right-3"
+                  : showPhoneFrame
+                    ? "left-full ml-4"
+                    : showTabletFrame
+                      ? "right-4 lg:right-auto lg:left-full lg:ml-4"
+                      : "left-[calc(96.5%+12px)]"
               }`}
             >
               <span className="w-[18px] h-[28px] rounded-full border-[1.75px] border-[#C89B57] flex justify-center pt-1.5">
