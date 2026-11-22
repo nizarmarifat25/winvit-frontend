@@ -16,10 +16,14 @@ export type SectionKey =
 
 export interface ThemeItem {
   id: string
+  backendId?: string
   title: string
   tagline: string
   category: ThemeCategory
   categoryName: string
+  tag?: string
+  priceNumber?: number
+  isActive?: boolean
   desc: string
   thumb: string
   thumb2: string
@@ -34,12 +38,58 @@ export interface ThemeItem {
   supportedSections?: SectionKey[]
 }
 
+export interface EventItem {
+  id?: string
+  name: string
+  date: string
+  startTime: string
+  endTime: string
+  locationName: string
+  locationAddress: string
+  locationUrl: string
+  sortOrder: number
+}
+
+export interface StoryItem {
+  id?: string
+  title: string
+  badge: string // maps to date_label in BE
+  storyDate?: string | null // maps to story_date in BE
+  content: string // maps to story in BE
+  photo?: string // maps to image_url in BE
+  sortOrder?: number
+}
+
+export interface GalleryItem {
+  id?: string
+  mediaType: string
+  mediaUrl: string
+  sortOrder: number
+}
+
+export interface GiftBankAccount {
+  id?: string
+  bankName: string // maps to account_name in BE
+  accountNumber: string // maps to account_number in BE
+  accountHolder: string // maps to on_behalf_of in BE
+  sortOrder?: number
+}
+
+export interface GuestItem {
+  id: string
+  invitation_id?: string
+  name: string
+  slug?: string
+}
+
 export interface InvitationData {
   id: string
   slug: string
   status: "PENDING_PAYMENT" | "WAITING_APPROVAL" | "ACTIVE_DRAFT" | "PUBLISHED"
+  isPublished?: boolean
   themeId: string
   customer: {
+    userId?: string
     orderName: string
     phone: string
     email: string
@@ -68,6 +118,7 @@ export interface InvitationData {
       fullName: string
       fatherName: string
       motherName: string
+      info?: string
       photo: string
     }
     groom: {
@@ -75,9 +126,11 @@ export interface InvitationData {
       fullName: string
       fatherName: string
       motherName: string
+      info?: string
       photo: string
     }
   }
+  eventList?: EventItem[]
   events: {
     primaryDate: string
     akad: {
@@ -85,6 +138,7 @@ export interface InvitationData {
       date: string
       startTime: string
       endTime: string
+      locationName?: string
       address: string
       mapsUrl: string
     }
@@ -93,6 +147,7 @@ export interface InvitationData {
       date: string
       startTime: string
       endTime: string
+      locationName?: string
       address: string
       mapsUrl: string
     }
@@ -102,22 +157,14 @@ export interface InvitationData {
       url: string
     }
   }
-  stories: Array<{
-    badge: string
-    title: string
-    content: string
-    photo?: string
-  }>
+  stories: StoryItem[]
+  galleryItems?: GalleryItem[]
   media: {
     gallery: string[]
     videoUrl: string
   }
   gifts: {
-    bankAccounts: Array<{
-      bankName: string
-      accountNumber: string
-      accountHolder: string
-    }>
+    bankAccounts: GiftBankAccount[]
     qrisImage: string
     giftAddress: string
   }

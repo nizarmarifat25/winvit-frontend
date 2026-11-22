@@ -22,16 +22,21 @@ import {
   Tablet,
   Laptop,
   UserCheck,
-  ShieldCheck,
   LayoutDashboard,
+  LogIn,
+  LogOut,
   Menu,
   X,
 } from "lucide-react"
+import { getAuthUser, clearTokens, type AuthUser } from "@/lib/api"
 
 export default function LandingPage() {
   const { themes } = useWinvit()
   const navigate = useNavigate()
 
+  const [authUser, setAuthUserState] = useState<AuthUser | null>(() =>
+    getAuthUser()
+  )
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -82,9 +87,8 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col">
       {/* ==================== NAVBAR ==================== */}
       <header
-        className={`sticky top-0 z-40 w-full bg-white/92 backdrop-blur-xl border-b border-slate-200 transition-all ${
-          scrolled ? "shadow-sm bg-white/98" : ""
-        }`}
+        className={`sticky top-0 z-40 w-full bg-white/92 backdrop-blur-xl border-b border-slate-200 transition-all ${scrolled ? "shadow-sm bg-white/98" : ""
+          }`}
       >
         <div className="max-w-[1360px] mx-auto px-6 h-[74px] flex items-center justify-between">
           <a href="#" className="flex items-center gap-2.5 group">
@@ -125,18 +129,34 @@ export default function LandingPage() {
           </ul>
 
           <div className="hidden md:flex items-center gap-2.5">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/customer">
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                Dashboard Customer
-              </Link>
-            </Button>
-            <Button variant="secondary" size="sm" asChild>
-              <Link to="/admin">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#b3822a]" />
-                Backoffice Admin
-              </Link>
-            </Button>
+            {authUser ? (
+              <>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={authUser.role === "admin" ? "/admin" : "/customer"}>
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    Dashboard ({authUser.name})
+                  </Link>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    clearTokens()
+                    setAuthUserState(null)
+                  }}
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/login">
+                  <LogIn className="w-3.5 h-3.5" />
+                  Masuk / Login
+                </Link>
+              </Button>
+            )}
             <Button size="sm" onClick={() => handleOpenOrder("botanica")}>
               <UserCheck className="w-3.5 h-3.5" />
               Daftar / Pesan
@@ -162,14 +182,38 @@ export default function LandingPage() {
             <a href="#harga" onClick={() => setMobileMenuOpen(false)} className="font-semibold py-1.5 border-b border-slate-100">
               Harga
             </a>
-            <Link to="/customer" className="font-semibold py-1.5 text-[#b3822a]">
-              Dashboard Customer
-            </Link>
-            <Link to="/admin" className="font-semibold py-1.5 text-slate-700">
-              Backoffice Admin WInvit
-            </Link>
+            {authUser ? (
+              <>
+                <Link
+                  to={authUser.role === "admin" ? "/admin" : "/customer"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-semibold py-1.5 text-[#b3822a]"
+                >
+                  Dashboard ({authUser.name})
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearTokens()
+                    setAuthUserState(null)
+                    setMobileMenuOpen(false)
+                  }}
+                  className="text-left font-semibold py-1.5 text-red-600"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="font-semibold py-1.5 text-[#b3822a]"
+              >
+                Masuk / Login
+              </Link>
+            )}
             <Button onClick={() => { setMobileMenuOpen(false); handleOpenOrder("botanica") }}>
-              Daftar / Masuk
+              Daftar / Pesan
             </Button>
           </div>
         )}
@@ -345,11 +389,10 @@ export default function LandingPage() {
               <button
                 key={tab.id}
                 onClick={() => setFeatureCat(tab.id)}
-                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold border transition cursor-pointer inline-flex items-center gap-2 ${
-                  featureCat === tab.id
+                className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold border transition cursor-pointer inline-flex items-center gap-2 ${featureCat === tab.id
                     ? "bg-slate-900 text-white border-slate-900 shadow-sm"
                     : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 <i className={`fas ${tab.icon}`} /> {tab.label}
               </button>
@@ -364,13 +407,12 @@ export default function LandingPage() {
               >
                 <div className="flex items-center justify-between">
                   <div
-                    className={`w-12 h-12 rounded-xl grid place-items-center text-lg ${
-                      f.color === "blue"
+                    className={`w-12 h-12 rounded-xl grid place-items-center text-lg ${f.color === "blue"
                         ? "bg-sky-100 text-sky-600"
                         : f.color === "gold"
-                        ? "bg-amber-100 text-[#b3822a]"
-                        : "bg-emerald-100 text-emerald-600"
-                    }`}
+                          ? "bg-amber-100 text-[#b3822a]"
+                          : "bg-emerald-100 text-emerald-600"
+                      }`}
                   >
                     <i className={`fas ${f.icon}`} />
                   </div>
@@ -380,13 +422,12 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <span
-                    className={`inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-2 ${
-                      f.color === "blue"
+                    className={`inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-2 ${f.color === "blue"
                         ? "bg-sky-50 text-sky-700"
                         : f.color === "gold"
-                        ? "bg-amber-50 text-amber-700"
-                        : "bg-emerald-50 text-emerald-700"
-                    }`}
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-emerald-50 text-emerald-700"
+                      }`}
                   >
                     {f.badge}
                   </span>
@@ -455,11 +496,10 @@ export default function LandingPage() {
               <button
                 key={cat.id}
                 onClick={() => setThemeCat(cat.id)}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer inline-flex items-center gap-2 ${
-                  themeCat === cat.id
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer inline-flex items-center gap-2 ${themeCat === cat.id
                     ? "bg-slate-900 text-white border-slate-900"
                     : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 <i className={`fas ${cat.icon}`} /> {cat.label}
               </button>
@@ -503,11 +543,10 @@ export default function LandingPage() {
                         onClick={() =>
                           setActiveDevices((p) => ({ ...p, [theme.id]: "trio" }))
                         }
-                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${
-                          activeDev === "trio"
+                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "trio"
                             ? "bg-slate-900 text-white shadow-xs"
                             : "text-slate-500 hover:text-slate-900"
-                        }`}
+                          }`}
                       >
                         <i className="fas fa-mobile-screen" />
                       </button>
@@ -517,11 +556,10 @@ export default function LandingPage() {
                         onClick={() =>
                           setActiveDevices((p) => ({ ...p, [theme.id]: "tablet" }))
                         }
-                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${
-                          activeDev === "tablet"
+                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "tablet"
                             ? "bg-slate-900 text-white shadow-xs"
                             : "text-slate-500 hover:text-slate-900"
-                        }`}
+                          }`}
                       >
                         <i className="fas fa-tablet-screen-button" />
                       </button>
@@ -531,11 +569,10 @@ export default function LandingPage() {
                         onClick={() =>
                           setActiveDevices((p) => ({ ...p, [theme.id]: "desktop" }))
                         }
-                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${
-                          activeDev === "desktop"
+                        className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "desktop"
                             ? "bg-slate-900 text-white shadow-xs"
                             : "text-slate-500 hover:text-slate-900"
-                        }`}
+                          }`}
                       >
                         <i className="fas fa-laptop" />
                       </button>
@@ -858,8 +895,21 @@ export default function LandingPage() {
             &copy; 2026 <strong>WInvit SaaS</strong>. Seluruh tema dilengkapi Musik Latar, Countdown, RSVP Live, Maps &amp; Amplop Digital.
           </p>
           <div className="flex gap-4 text-xs font-bold text-slate-700">
-            <Link to="/customer" className="hover:underline">Portal Customer</Link>
-            <Link to="/admin" className="hover:underline">Backoffice Admin</Link>
+            {authUser ? (
+              <Link
+                to={authUser.role === "admin" ? "/admin" : "/customer"}
+                className="hover:underline"
+              >
+                Dashboard ({authUser.name})
+              </Link>
+            ) : (
+              <Link to="/login" className="hover:underline">
+                Login Akun
+              </Link>
+            )}
+            <Link to="/daftar" className="hover:underline">
+              Pesan Undangan
+            </Link>
           </div>
         </div>
       </footer>
@@ -875,25 +925,22 @@ export default function LandingPage() {
             <div className="flex gap-1 bg-slate-100 p-1 rounded-full">
               <button
                 onClick={() => setModalDevice("mobile")}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${
-                  modalDevice === "mobile" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
-                }`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${modalDevice === "mobile" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
+                  }`}
               >
                 <Smartphone className="w-3.5 h-3.5" /> HP
               </button>
               <button
                 onClick={() => setModalDevice("tablet")}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${
-                  modalDevice === "tablet" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
-                }`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${modalDevice === "tablet" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
+                  }`}
               >
                 <Tablet className="w-3.5 h-3.5" /> Tab
               </button>
               <button
                 onClick={() => setModalDevice("desktop")}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${
-                  modalDevice === "desktop" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
-                }`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer ${modalDevice === "desktop" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600"
+                  }`}
               >
                 <Laptop className="w-3.5 h-3.5" /> PC
               </button>
@@ -916,13 +963,12 @@ export default function LandingPage() {
           </div>
           <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
             <div
-              className={`bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-all duration-300 h-[85vh] ${
-                modalDevice === "mobile"
+              className={`bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-all duration-300 h-[85vh] ${modalDevice === "mobile"
                   ? "w-[412px]"
                   : modalDevice === "tablet"
-                  ? "w-[768px]"
-                  : "w-full max-w-[1240px]"
-              }`}
+                    ? "w-[768px]"
+                    : "w-full max-w-[1240px]"
+                }`}
             >
               <iframe
                 src={`${previewTheme.path}?to=${encodeURIComponent(appliedGuest)}`}
