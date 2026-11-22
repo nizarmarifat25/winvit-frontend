@@ -82,11 +82,11 @@ export default function LoginPage() {
         <div className="rounded-3xl border border-[#E5DDD5] bg-white p-6 sm:p-8 shadow-xs space-y-6">
           <div className="text-center space-y-1.5">
             <Link to="/" className="font-serif text-2xl font-bold text-[#2C2018]">
-              W<span className="text-[#C89B57]">Invit</span>
+              Win<span className="text-[#C89B57]">vitaa</span>
             </Link>
             <h1 className="text-xl font-bold">Masuk ke Akun Anda</h1>
             <p className="text-xs text-[#6B5B4E]">
-              Kelola detail undangan digital Anda di dashboard WInvit
+              Kelola detail undangan digital Anda di dashboard Winvitaa
             </p>
           </div>
 

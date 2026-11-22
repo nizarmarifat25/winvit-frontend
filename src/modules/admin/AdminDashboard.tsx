@@ -321,7 +321,7 @@ export function AdminDashboard() {
       <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-[#E5DDD5] px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="font-serif text-lg font-bold text-[#2C2018]">
-            W<span className="text-[#C89B57]">Invit</span>
+            Win<span className="text-[#C89B57]">vitaa</span>
           </Link>
           <span className="text-xs text-[#6B5B4E]">Admin</span>
         </div>
@@ -344,7 +344,7 @@ export function AdminDashboard() {
         <div className="space-y-6">
           <div>
             <Link to="/" className="font-serif text-xl font-bold text-[#2C2018]">
-              W<span className="text-[#C89B57]">Invit</span>
+              Win<span className="text-[#C89B57]">vitaa</span>
             </Link>
             <p className="text-xs text-[#6B5B4E] mt-0.5">Admin Panel</p>
           </div>

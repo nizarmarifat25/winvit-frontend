@@ -117,7 +117,7 @@ export default function RegistrationPage() {
               <p className="text-xs sm:text-sm text-[#6B5B4E] max-w-md mx-auto leading-relaxed">
                 Terima kasih <strong>{customerName}</strong>! Pesanan tema{" "}
                 <strong>{chosenTheme?.name}</strong> telah kami terima. Tim Admin
-                WInvit akan segera memverifikasi pesanan Anda dan menghubungi nomor
+                Winvitaa akan segera memverifikasi pesanan Anda dan menghubungi nomor
                 WhatsApp <strong>{whatsapp}</strong>.
               </p>
               <div className="pt-4 flex flex-col sm:flex-row gap-2.5 justify-center">
@@ -133,7 +133,7 @@ export default function RegistrationPage() {
             <>
               <header className="mb-6">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A8763E]">
-                  WInvit Order
+                  Winvitaa Order
                 </p>
                 <h1 className="mt-1 text-xl sm:text-2xl font-bold text-[#2C2018]">
                   Buat Pesanan Undangan

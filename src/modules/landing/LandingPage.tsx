@@ -97,7 +97,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col leading-tight">
               <span className="text-lg font-extrabold tracking-tight text-slate-900">
-                WInvit
+                Winvitaa
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#b3822a]">
                 Digital Invitation SaaS
@@ -390,8 +390,8 @@ export default function LandingPage() {
                 key={tab.id}
                 onClick={() => setFeatureCat(tab.id)}
                 className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold border transition cursor-pointer inline-flex items-center gap-2 ${featureCat === tab.id
-                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
                   }`}
               >
                 <i className={`fas ${tab.icon}`} /> {tab.label}
@@ -408,10 +408,10 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between">
                   <div
                     className={`w-12 h-12 rounded-xl grid place-items-center text-lg ${f.color === "blue"
-                        ? "bg-sky-100 text-sky-600"
-                        : f.color === "gold"
-                          ? "bg-amber-100 text-[#b3822a]"
-                          : "bg-emerald-100 text-emerald-600"
+                      ? "bg-sky-100 text-sky-600"
+                      : f.color === "gold"
+                        ? "bg-amber-100 text-[#b3822a]"
+                        : "bg-emerald-100 text-emerald-600"
                       }`}
                   >
                     <i className={`fas ${f.icon}`} />
@@ -423,10 +423,10 @@ export default function LandingPage() {
                 <div>
                   <span
                     className={`inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-2 ${f.color === "blue"
-                        ? "bg-sky-50 text-sky-700"
-                        : f.color === "gold"
-                          ? "bg-amber-50 text-amber-700"
-                          : "bg-emerald-50 text-emerald-700"
+                      ? "bg-sky-50 text-sky-700"
+                      : f.color === "gold"
+                        ? "bg-amber-50 text-amber-700"
+                        : "bg-emerald-50 text-emerald-700"
                       }`}
                   >
                     {f.badge}
@@ -497,8 +497,8 @@ export default function LandingPage() {
                 key={cat.id}
                 onClick={() => setThemeCat(cat.id)}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer inline-flex items-center gap-2 ${themeCat === cat.id
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-900 hover:text-slate-900"
                   }`}
               >
                 <i className={`fas ${cat.icon}`} /> {cat.label}
@@ -544,8 +544,8 @@ export default function LandingPage() {
                           setActiveDevices((p) => ({ ...p, [theme.id]: "trio" }))
                         }
                         className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "trio"
-                            ? "bg-slate-900 text-white shadow-xs"
-                            : "text-slate-500 hover:text-slate-900"
+                          ? "bg-slate-900 text-white shadow-xs"
+                          : "text-slate-500 hover:text-slate-900"
                           }`}
                       >
                         <i className="fas fa-mobile-screen" />
@@ -557,8 +557,8 @@ export default function LandingPage() {
                           setActiveDevices((p) => ({ ...p, [theme.id]: "tablet" }))
                         }
                         className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "tablet"
-                            ? "bg-slate-900 text-white shadow-xs"
-                            : "text-slate-500 hover:text-slate-900"
+                          ? "bg-slate-900 text-white shadow-xs"
+                          : "text-slate-500 hover:text-slate-900"
                           }`}
                       >
                         <i className="fas fa-tablet-screen-button" />
@@ -570,8 +570,8 @@ export default function LandingPage() {
                           setActiveDevices((p) => ({ ...p, [theme.id]: "desktop" }))
                         }
                         className={`w-8 h-7 rounded-full inline-flex items-center justify-center text-xs transition cursor-pointer ${activeDev === "desktop"
-                            ? "bg-slate-900 text-white shadow-xs"
-                            : "text-slate-500 hover:text-slate-900"
+                          ? "bg-slate-900 text-white shadow-xs"
+                          : "text-slate-500 hover:text-slate-900"
                           }`}
                       >
                         <i className="fas fa-laptop" />
@@ -836,16 +836,16 @@ export default function LandingPage() {
               Frequently Asked Questions
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              Pertanyaan yang sering diajukan seputar pemesanan dan fitur undangan online WInvit.
+              Pertanyaan yang sering diajukan seputar pemesanan dan fitur undangan online Winvitaa.
             </p>
           </div>
 
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible defaultValue="item-1" className="space-y-3">
               <AccordionItem value="item-1">
-                <AccordionTrigger>Bagaimana alur pemesanan undangan di WInvit?</AccordionTrigger>
+                <AccordionTrigger>Bagaimana alur pemesanan undangan di Winvitaa?</AccordionTrigger>
                 <AccordionContent>
-                  Sangat mudah! Daftar akun &amp; pilih tema favorit Anda, lakukan pembayaran, tunggu verifikasi cepat dari Admin WInvit, lalu Anda bisa langsung mengisi foto, lagu, nomor rekening, dan merilis web undangan Anda!
+                  Sangat mudah! Daftar akun &amp; pilih tema favorit Anda, lakukan pembayaran, tunggu verifikasi cepat dari Admin Winvitaa, lalu Anda bisa langsung mengisi foto, lagu, nomor rekening, dan merilis web undangan Anda!
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
@@ -863,7 +863,7 @@ export default function LandingPage() {
               <AccordionItem value="item-4">
                 <AccordionTrigger>Bisakah saya menyembunyikan section tertentu (misal tanpa Love Story)?</AccordionTrigger>
                 <AccordionContent>
-                  Bisa! Di Dashboard Customer WInvit tersedia fitur pengatur section di mana Anda bebas mengaktifkan atau menyembunyikan section seperti Love Story, Galeri, Amplop Digital, atau FAQ secara fleksibel.
+                  Bisa! Di Dashboard Customer Winvitaa tersedia fitur pengatur section di mana Anda bebas mengaktifkan atau menyembunyikan section seperti Love Story, Galeri, Amplop Digital, atau FAQ secara fleksibel.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -877,7 +877,7 @@ export default function LandingPage() {
               Siap Membuat Undangan Pernikahan Impian Anda?
             </h2>
             <p className="text-slate-300 text-sm sm:text-base max-w-xl">
-              Daftar sekarang, pilih dari {themes.length} tema eksklusif kami, dan kelola undangan digitalmu langsung dari Dashboard WInvit.
+              Daftar sekarang, pilih dari {themes.length} tema eksklusif kami, dan kelola undangan digitalmu langsung dari Dashboard Winvitaa.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -892,7 +892,7 @@ export default function LandingPage() {
       <footer className="py-8 border-t border-slate-200 text-center text-slate-500 text-sm">
         <div className="max-w-[1360px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>
-            &copy; 2026 <strong>WInvit SaaS</strong>. Seluruh tema dilengkapi Musik Latar, Countdown, RSVP Live, Maps &amp; Amplop Digital.
+            &copy; 2026 <strong>Winvitaa</strong>. Seluruh tema dilengkapi Musik Latar, Countdown, RSVP Live, Maps &amp; Amplop Digital.
           </p>
           <div className="flex gap-4 text-xs font-bold text-slate-700">
             {authUser ? (
@@ -964,10 +964,10 @@ export default function LandingPage() {
           <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
             <div
               className={`bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-all duration-300 h-[85vh] ${modalDevice === "mobile"
-                  ? "w-[412px]"
-                  : modalDevice === "tablet"
-                    ? "w-[768px]"
-                    : "w-full max-w-[1240px]"
+                ? "w-[412px]"
+                : modalDevice === "tablet"
+                  ? "w-[768px]"
+                  : "w-full max-w-[1240px]"
                 }`}
             >
               <iframe
