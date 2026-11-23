@@ -226,7 +226,7 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-serif-display text-xl font-bold tracking-tight text-[#2C2018]">
-                Win<span className="text-[#C89B57]">vitaa</span>
+                In<span className="text-[#C89B57]">vitaa</span>
               </span>
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8C7868] mt-0.5">
                 Wedding Invitation
@@ -422,7 +422,7 @@ export default function LandingPage() {
             >
               Dari sentuhan adat Nusantara hingga estetika modern luxury. Kelola
               sendiri foto, acara, musik, dan amplop digital dari dashboard
-              Winvitaa, lalu sebarkan tanpa batas tamu dalam hitungan menit.
+              Invitaa, lalu sebarkan tanpa batas tamu dalam hitungan menit.
             </p>
 
             <div
@@ -524,7 +524,10 @@ export default function LandingPage() {
                     {activeHeroTheme && (
                       <img
                         key={activeHeroTheme.id}
-                        src={`/asset/img/thumbnails/${activeHeroTheme.id}/mobile-2.jpg`}
+                        src={
+                          activeHeroTheme.thumbMobile ||
+                          `/asset/img/thumbnails/${activeHeroTheme.id}/mobile-2.jpg`
+                        }
                         onError={(e) => {
                           e.currentTarget.onerror = null
                           e.currentTarget.src =
@@ -771,11 +774,21 @@ export default function LandingPage() {
               {filteredThemes.map((theme, idx) => {
                 const activeDev = activeDevices[theme.id] || "trio"
                 const targetUrl = `${theme.path}?to=${encodeURIComponent(appliedGuest)}`
-                const thumbMobile = `/asset/img/thumbnails/${theme.id}/mobile.jpg`
-                const thumbMobile2 = `/asset/img/thumbnails/${theme.id}/mobile-2.jpg`
-                const thumbMobile3 = `/asset/img/thumbnails/${theme.id}/mobile-3.jpg`
-                const thumbTablet = `/asset/img/thumbnails/${theme.id}/tablet.jpg`
-                const thumbDesktop = `/asset/img/thumbnails/${theme.id}/desktop.jpg`
+                const thumbMobile =
+                  theme.thumbMobile ||
+                  `/asset/img/thumbnails/${theme.id}/mobile.jpg`
+                const thumbMobile2 =
+                  theme.thumbMobile ||
+                  `/asset/img/thumbnails/${theme.id}/mobile-2.jpg`
+                const thumbMobile3 =
+                  theme.thumbMobile ||
+                  `/asset/img/thumbnails/${theme.id}/mobile-3.jpg`
+                const thumbTablet =
+                  theme.thumbTablet ||
+                  `/asset/img/thumbnails/${theme.id}/tablet.jpg`
+                const thumbDesktop =
+                  theme.thumbDesktop ||
+                  `/asset/img/thumbnails/${theme.id}/desktop.jpg`
                 const cleanPromo = theme.pricePromo.replace(/[^0-9.]/g, "").trim()
 
                 return (
@@ -1052,7 +1065,7 @@ export default function LandingPage() {
                     Contoh Link Personal Tamu
                   </p>
                   <p className="text-xs sm:text-sm font-mono font-semibold text-[#2C2018] truncate mt-0.5">
-                    winvitaa.id/u/ani-budi?to={encodeURIComponent(appliedGuest)}
+                    invitaa.id/u/ani-budi?to={encodeURIComponent(appliedGuest)}
                   </p>
                 </div>
                 <a
@@ -1247,7 +1260,7 @@ export default function LandingPage() {
                 </h2>
                 <p className="text-sm text-white/75 leading-relaxed">
                   Tidak perlu bingung pilih paket bertingkat. Setiap tema di
-                  katalog Winvitaa sudah langsung membuka seluruh fitur premium.
+                  katalog Invitaa sudah langsung membuka seluruh fitur premium.
                 </p>
               </div>
 
@@ -1329,7 +1342,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-sm text-[#6B5B4E] leading-relaxed">
                 Masih ada hal yang ingin ditanyakan seputar pemesanan atau cara
-                mengelola undangan digital di Winvitaa?
+                mengelola undangan digital di Invitaa?
               </p>
             </div>
 
@@ -1349,11 +1362,11 @@ export default function LandingPage() {
                   className="border-[#E5DDD5] bg-white rounded-2xl px-1"
                 >
                   <AccordionTrigger className="text-[#2C2018]">
-                    Bagaimana alur pemesanan undangan di Winvitaa?
+                    Bagaimana alur pemesanan undangan di Invitaa?
                   </AccordionTrigger>
                   <AccordionContent className="text-[#6B5B4E]">
                     Pilih tema favoritmu di katalog, isi form pemesanan, lalu
-                    tunggu verifikasi cepat dari Admin Winvitaa. Setelah aktif,
+                    tunggu verifikasi cepat dari Admin Invitaa. Setelah aktif,
                     kamu bisa langsung login ke Dashboard untuk mengisi data
                     mempelai, acara, galeri foto, musik, rekening, cek preview,
                     dan klik Publish.
@@ -1420,7 +1433,7 @@ export default function LandingPage() {
                 Siap Membuat Undangan Pernikahan Impian?
               </h2>
               <p className="text-white/75 text-sm sm:text-base max-w-xl">
-                Pilih dari {themes.length} tema eksklusif Winvitaa dan mulai
+                Pilih dari {themes.length} tema eksklusif Invitaa dan mulai
                 personalisasi undanganmu hari ini.
               </p>
             </div>
@@ -1451,7 +1464,7 @@ export default function LandingPage() {
                 <Crown className="w-4 h-4" />
               </div>
               <span className="font-serif-display text-xl font-bold text-[#2C2018]">
-                Win<span className="text-[#C89B57]">vitaa</span>
+                In<span className="text-[#C89B57]">vitaa</span>
               </span>
             </div>
             <p className="text-xs sm:text-sm text-[#6B5B4E] max-w-sm leading-relaxed">
@@ -1510,7 +1523,7 @@ export default function LandingPage() {
         </div>
 
         <div className="border-t border-[#E5DDD5] py-4 text-center text-xs text-[#8C7868]">
-          &copy; 2026 <strong className="text-[#2C2018]">Winvitaa</strong>.
+          &copy; 2026 <strong className="text-[#2C2018]">Invitaa</strong>.
           Seluruh hak cipta dilindungi.
         </div>
       </footer>

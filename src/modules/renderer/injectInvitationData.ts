@@ -629,9 +629,9 @@ export function injectInvitationIntoIframe(
         const ics = [
           "BEGIN:VCALENDAR",
           "VERSION:2.0",
-          "PRODID:-//Winvitaa//ID",
+          "PRODID:-//Invitaa//ID",
           "BEGIN:VEVENT",
-          `UID:${activeSlug}@winvitaa`,
+          `UID:${activeSlug}@invitaa`,
           `DTSTART;TZID=Asia/Jakarta:${dtStart}`,
           `DTEND;TZID=Asia/Jakarta:${dtEnd}`,
           `SUMMARY:Pernikahan ${coupleShort}`,

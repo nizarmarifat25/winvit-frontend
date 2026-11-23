@@ -567,6 +567,8 @@ export async function approvalOrderApi(
 export interface BackendThemePayload {
   name: string
   thumbnail_url: string
+  thumbnail_mobile_url?: string | null
+  thumbnail_tab_url?: string | null
   price: number
   tag: string
   is_active?: boolean

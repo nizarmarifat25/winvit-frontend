@@ -162,7 +162,7 @@ export function CustomerDashboard() {
       <header className="lg:hidden sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#E5DDD5] px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Link to="/" className="font-serif text-lg font-bold text-[#2C2018]">
-            Win<span className="text-[#C89B57]">vitaa</span>
+            In<span className="text-[#C89B57]">vitaa</span>
           </Link>
           <Badge
             variant={
@@ -212,7 +212,7 @@ export function CustomerDashboard() {
         <div className="space-y-6">
           <div>
             <Link to="/" className="font-serif text-xl font-bold text-[#2C2018]">
-              Win<span className="text-[#C89B57]">vitaa</span>
+              In<span className="text-[#C89B57]">vitaa</span>
             </Link>
             <div className="mt-2">
               <Badge
@@ -319,7 +319,7 @@ export function CustomerDashboard() {
         {isLocked && (
           <div className="mb-4 p-3.5 rounded-2xl border border-amber-300 bg-amber-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-amber-900">
-              Akun sedang menunggu approval Admin Winvitaa.
+              Akun sedang menunggu approval Admin Invitaa.
             </p>
             <Button
               size="sm"

@@ -82,6 +82,26 @@ export function WinvitProvider({ children }: { children: React.ReactNode }) {
           const formattedRegular = `Rp ${(priceNum * 2).toLocaleString("id-ID")}`
           const { category, categoryName } = mapTagToCategory(bt.tag)
 
+          const isValidImg = (u?: string | null) =>
+            Boolean(
+              u &&
+                typeof u === "string" &&
+                (u.startsWith("http://") ||
+                  u.startsWith("https://") ||
+                  u.startsWith("/") ||
+                  u.startsWith("data:"))
+            )
+
+          const desktopThumb = isValidImg(bt.thumbnail_url)
+            ? bt.thumbnail_url
+            : undefined
+          const mobileThumb = isValidImg(bt.thumbnail_mobile_url)
+            ? bt.thumbnail_mobile_url
+            : undefined
+          const tabletThumb = isValidImg(bt.thumbnail_tab_url)
+            ? bt.thumbnail_tab_url
+            : undefined
+
           if (existingIdx >= 0) {
             next[existingIdx] = {
               ...next[existingIdx],
@@ -90,10 +110,10 @@ export function WinvitProvider({ children }: { children: React.ReactNode }) {
               priceNumber: priceNum,
               pricePromo: formattedPrice,
               isActive: bt.is_active ?? true,
-              thumb:
-                bt.thumbnail_url && bt.thumbnail_url !== "placeholder.png"
-                  ? bt.thumbnail_url
-                  : next[existingIdx].thumb,
+              thumb: desktopThumb || mobileThumb || next[existingIdx].thumb,
+              thumbDesktop: desktopThumb || next[existingIdx].thumbDesktop,
+              thumbMobile: mobileThumb || next[existingIdx].thumbMobile,
+              thumbTablet: tabletThumb || next[existingIdx].thumbTablet,
             }
           } else {
             next.unshift({
@@ -107,12 +127,12 @@ export function WinvitProvider({ children }: { children: React.ReactNode }) {
               priceNumber: priceNum,
               isActive: bt.is_active ?? true,
               desc: `Template undangan digital eksklusif ${bt.name}.`,
-              thumb:
-                bt.thumbnail_url && bt.thumbnail_url !== "placeholder.png"
-                  ? bt.thumbnail_url
-                  : "/asset/img/pre1.jpeg",
-              thumb2: "/asset/img/pre2.jpeg",
-              thumb3: "/asset/img/pre3.jpeg",
+              thumb: desktopThumb || mobileThumb || "/asset/img/pre1.jpeg",
+              thumb2: mobileThumb || desktopThumb || "/asset/img/pre2.jpeg",
+              thumb3: tabletThumb || desktopThumb || "/asset/img/pre3.jpeg",
+              thumbDesktop: desktopThumb,
+              thumbMobile: mobileThumb,
+              thumbTablet: tabletThumb,
               path: `/themes/botanica/index.html`,
               palette: ["#C89B57", "#2C2018", "#FAF6F1"],
               vibeIcon: "fa-star",

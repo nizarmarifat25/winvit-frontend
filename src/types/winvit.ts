@@ -28,6 +28,9 @@ export interface ThemeItem {
   thumb: string
   thumb2: string
   thumb3: string
+  thumbDesktop?: string
+  thumbMobile?: string
+  thumbTablet?: string
   path: string
   palette: string[]
   vibeIcon: string
