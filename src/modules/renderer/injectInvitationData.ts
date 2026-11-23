@@ -36,28 +36,34 @@ export function injectInvitationIntoIframe(
   iframe: HTMLIFrameElement,
   invitation: InvitationData,
   activeSlug: string,
-  onWishesLoaded?: (list: any[]) => void
+  onWishesLoaded?: (list: any[]) => void,
+  hideScrollbar = false
 ) {
   const doc = iframe.contentDocument
   const win = iframe.contentWindow as any
   if (!doc || !doc.body) return
 
-  // Hide native scrollbars inside preview iframe across all browsers
-  if (!doc.getElementById("wv-hide-scrollbar")) {
-    const styleEl = doc.createElement("style")
-    styleEl.id = "wv-hide-scrollbar"
-    styleEl.textContent = `
-      html, body, * {
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
-      }
-      html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
-      }
-    `
-    doc.head?.appendChild(styleEl)
+  // Hide native scrollbars only in device preview mode
+  const existingScrollbarStyle = doc.getElementById("wv-hide-scrollbar")
+  if (hideScrollbar) {
+    if (!existingScrollbarStyle) {
+      const styleEl = doc.createElement("style")
+      styleEl.id = "wv-hide-scrollbar"
+      styleEl.textContent = `
+        html, body, * {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+        html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+      `
+      doc.head?.appendChild(styleEl)
+    }
+  } else if (existingScrollbarStyle) {
+    existingScrollbarStyle.remove()
   }
 
   const brideFull = invitation.couple.bride.fullName.trim()

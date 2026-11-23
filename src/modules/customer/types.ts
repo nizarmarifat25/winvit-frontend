@@ -1,9 +1,5 @@
 import type { Dispatch, SetStateAction, ChangeEventHandler, ChangeEvent } from "react"
-import type {
-  InvitationData,
-  ThemeCategory,
-  ThemeItem,
-} from "@/types/winvit"
+import type { InvitationData, ThemeCategory } from "@/types/winvit"
 
 export type DetailSubTab =
   | "couple"
@@ -11,7 +7,6 @@ export type DetailSubTab =
   | "story"
   | "media"
   | "gift"
-  | "confirm"
 
 export type ThemeCategoryFilter = "all" | ThemeCategory
 
@@ -20,7 +15,6 @@ export interface CustomerEditorStepProps {
   draft: InvitationData
   setDraft: Dispatch<SetStateAction<InvitationData>>
   isLocked: boolean
-  setDetailTab: Dispatch<SetStateAction<DetailSubTab>>
   handleBridePhotoUpload: ChangeEventHandler<HTMLInputElement>
   handleGroomPhotoUpload: ChangeEventHandler<HTMLInputElement>
   handleCoverPhotoUpload: ChangeEventHandler<HTMLInputElement>
@@ -28,14 +22,4 @@ export interface CustomerEditorStepProps {
   handleGalleryPhotosUpload: ChangeEventHandler<HTMLInputElement>
   handleStoryPhotoUpload: (index: number, event: ChangeEvent<HTMLInputElement>) => void
   uploadingField: string | null
-  draftTheme: ThemeItem
-  hasGenerated: boolean
-  generatedNotice: boolean
-  isGenerating: boolean
-  isPublishing: boolean
-  syncError: string | null
-  onGenerateInvitation: () => void
-  onPublishInvitation: () => void
-  onUnpublishInvitation: () => void
-  onGoToShare: () => void
 }

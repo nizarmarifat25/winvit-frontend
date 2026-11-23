@@ -1,5 +1,4 @@
 import type { CustomerEditorStepProps } from "../types"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Camera, ImagePlus, Music, Loader2 } from "lucide-react"
@@ -9,7 +8,6 @@ export default function CoupleStep({
   draft,
   setDraft,
   isLocked,
-  setDetailTab,
   handleBridePhotoUpload,
   handleGroomPhotoUpload,
   handleCoverPhotoUpload,
@@ -326,17 +324,6 @@ export default function CoupleStep({
               }
             />
           </div>
-        </div>
-
-        <div className="pt-2 border-t border-[#E5DDD5] flex justify-end">
-          <Button
-            type="button"
-            variant="gold"
-            className="h-11 rounded-xl w-full sm:w-auto"
-            onClick={() => setDetailTab("events")}
-          >
-            Lanjut: Acara
-          </Button>
         </div>
       </CardContent>
     </Card>

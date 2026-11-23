@@ -8,7 +8,6 @@ export default function GiftStep({
   draft,
   setDraft,
   isLocked,
-  setDetailTab,
 }: CustomerEditorStepProps) {
   if (detailTab !== "gift") return null
 
@@ -133,25 +132,6 @@ export default function GiftStep({
             </div>
           ))
         )}
-
-        <div className="pt-2 border-t border-[#E5DDD5] flex gap-2 justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("media")}
-          >
-            Kembali
-          </Button>
-          <Button
-            type="button"
-            variant="gold"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("confirm")}
-          >
-            Lanjut: Konfirmasi
-          </Button>
-        </div>
       </CardContent>
     </Card>
   )

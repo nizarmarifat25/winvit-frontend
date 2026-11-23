@@ -1,13 +1,24 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import {
   FileText,
   Send,
   User,
-  Check,
   ExternalLink,
   LogIn,
   LogOut,
+  Heart,
+  CalendarDays,
+  BookHeart,
+  Images,
+  Gift,
+  Eye,
+  EyeOff,
+  Globe,
+  Save,
+  Loader2,
+  CheckCircle2,
+  Info,
 } from "lucide-react"
 import { useWinvit } from "@/context/WinvitContext"
 import { Button } from "@/components/ui/button"
@@ -19,7 +30,6 @@ import GiftStep from "@/modules/customer/components/GiftStep"
 import MediaStep from "@/modules/customer/components/MediaStep"
 import CustomerProfile from "@/modules/customer/components/CustomerProfile"
 import ShareInvitation from "@/modules/customer/components/ShareInvitation"
-import ConfirmationStep from "@/modules/customer/components/ConfirmationStep"
 import { useInvitationDraft } from "@/modules/customer/hooks/useInvitationDraft"
 import type { DetailSubTab } from "@/modules/customer/types"
 import { getAccessToken, clearTokens } from "@/lib/api"
@@ -38,7 +48,6 @@ export function CustomerDashboard() {
   const {
     draft,
     setDraft,
-    hasGenerated,
     generatedNotice,
     isGenerating,
     isPublishing,
@@ -57,8 +66,9 @@ export function CustomerDashboard() {
   // Main Menu: Detail Undangan | Sebar Undangan | Profile
   const [sidebarMenu, setSidebarMenu] = useState<SidebarMenu>("detail")
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
+  const [showStatusTooltip, setShowStatusTooltip] = useState(false)
 
-  // Sub-menu inside Detail Undangan (Starts directly at "couple")
+  // Free-jump section tabs inside Detail Undangan
   const [detailTab, setDetailTab] = useState<DetailSubTab>("couple")
   const stepStripRef = useRef<HTMLDivElement>(null)
   const isDraggingRef = useRef(false)
@@ -79,25 +89,51 @@ export function CustomerDashboard() {
   const isLocked =
     invitation.status === "PENDING_PAYMENT" ||
     invitation.status === "WAITING_APPROVAL"
+  const isPublished =
+    invitation.status === "PUBLISHED" || Boolean(invitation.isPublished)
 
   const slugPath = invitation.slug || draft.slug || "undangan"
-  const detailSubMenus: Array<{ id: DetailSubTab; label: string; step: number }> =
-    [
-      { id: "couple", label: "Mempelai", step: 1 },
-      { id: "events", label: "Acara", step: 2 },
-      { id: "story", label: "Love Story", step: 3 },
-      { id: "media", label: "Galeri", step: 4 },
-      { id: "gift", label: "Rekening", step: 5 },
-      { id: "confirm", label: "Konfirmasi", step: 6 },
-    ]
+  const editorTabs: Array<{
+    id: DetailSubTab
+    label: string
+    Icon: typeof Heart
+    count?: number
+  }> = [
+    { id: "couple", label: "Mempelai", Icon: Heart },
+    {
+      id: "events",
+      label: "Acara",
+      Icon: CalendarDays,
+      count: (draft.eventList || []).length,
+    },
+    {
+      id: "story",
+      label: "Love Story",
+      Icon: BookHeart,
+      count: draft.stories.length,
+    },
+    {
+      id: "media",
+      label: "Galeri",
+      Icon: Images,
+      count: draft.media.gallery.length,
+    },
+    {
+      id: "gift",
+      label: "Rekening",
+      Icon: Gift,
+      count: draft.gifts.bankAccounts.length,
+    },
+  ]
 
   const draftTheme =
     themes.find(
       (t) => t.id === draft.themeId || t.backendId === draft.themeId
     ) || themes[0]
-  const currentStep =
-    detailSubMenus.find((s) => s.id === detailTab)?.step || 1
-  const progressPercent = (currentStep / detailSubMenus.length) * 100
+  const hasUnsavedChanges = useMemo(
+    () => JSON.stringify(draft) !== JSON.stringify(invitation),
+    [draft, invitation]
+  )
   const isLoggedIn = Boolean(getAccessToken())
 
   const handleLogout = () => {
@@ -111,7 +147,6 @@ export function CustomerDashboard() {
     draft,
     setDraft,
     isLocked,
-    setDetailTab,
     handleBridePhotoUpload,
     handleGroomPhotoUpload,
     handleCoverPhotoUpload,
@@ -119,16 +154,6 @@ export function CustomerDashboard() {
     handleStoryPhotoUpload,
     handleGalleryPhotosUpload,
     uploadingField,
-    draftTheme,
-    hasGenerated,
-    generatedNotice,
-    isGenerating,
-    isPublishing,
-    syncError,
-    onGenerateInvitation: () => handleGenerateInvitation(() => { }),
-    onPublishInvitation: () => handleSetPublishStatus(true),
-    onUnpublishInvitation: () => handleSetPublishStatus(false),
-    onGoToShare: () => setSidebarMenu("share"),
   }
 
   return (
@@ -175,7 +200,7 @@ export function CustomerDashboard() {
             className="h-8 px-2.5 text-xs rounded-full"
             asChild
           >
-            <Link to={`/u/${slugPath}`} target="_blank">
+            <Link to={`/preview/${slugPath}`} target="_blank">
               Preview Web <ExternalLink className="w-3 h-3" />
             </Link>
           </Button>
@@ -265,7 +290,7 @@ export function CustomerDashboard() {
           </div>
 
           <Button variant="outline" size="sm" className="w-full" asChild>
-            <Link to={`/u/${slugPath}`} target="_blank">
+            <Link to={`/preview/${slugPath}`} target="_blank">
               Lihat Preview Web
             </Link>
           </Button>
@@ -290,10 +315,7 @@ export function CustomerDashboard() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 overflow-x-hidden">
-        {syncError && (
-          <p className="mb-3 text-xs font-medium text-red-600">{syncError}</p>
-        )}
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-28 lg:pb-8 overflow-x-clip">
         {isLocked && (
           <div className="mb-4 p-3.5 rounded-2xl border border-amber-300 bg-amber-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-amber-900">
@@ -312,76 +334,222 @@ export function CustomerDashboard() {
           </div>
         )}
 
-        {/* MENU 1: DETAIL UNDANGAN */}
+        {/* MENU 1: DETAIL UNDANGAN (TAB EDITOR + STICKY ACTION BAR) */}
         {sidebarMenu === "detail" && (
           <div className="w-full space-y-4 min-w-0">
-            {/* App-like Step Header + Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h1 className="text-lg sm:text-xl font-bold">
-                  Detail Undangan
-                </h1>
-                <span className="text-xs font-semibold text-[#A8763E] bg-[#C89B57]/15 px-2.5 py-1 rounded-full">
-                  Step {currentStep} / {detailSubMenus.length}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-[#E5DDD5] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#C89B57] rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
+            {/* Sticky Editor Header + Free-Jump Section Tabs */}
+            <div className="sticky top-14 lg:top-0 z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 -mt-4 pt-4 sm:-mt-6 sm:pt-5 lg:-mt-8 lg:pt-6 pb-3 bg-[#FAF6F1]/95 backdrop-blur-md space-y-3">
+              <div className="bg-white rounded-2xl border border-[#E5DDD5] p-3.5 sm:px-4 sm:py-3 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={`/asset/img/thumbnails/${draftTheme.id}/mobile-2.jpg`}
+                    onError={(e) => {
+                      e.currentTarget.src = draftTheme.thumb
+                    }}
+                    alt={draftTheme.title}
+                    className="hidden sm:block w-10 h-12 rounded-xl object-cover object-top border border-[#E5DDD5] shrink-0"
+                  />
+                  <div className="min-w-0 space-y-0.5">
+                    <div className="relative flex flex-wrap items-center gap-2">
+                      <h1 className="text-base sm:text-lg font-bold leading-tight">
+                        Detail Undangan
+                      </h1>
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                          isPublished
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-amber-50 text-amber-800 border border-amber-200"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            isPublished ? "bg-emerald-500" : "bg-amber-500"
+                          }`}
+                        />
+                        {isPublished ? "Live" : "Draft"}
+                      </span>
 
-            {/* Swipeable Horizontal Step Pills */}
-            <div
-              ref={stepStripRef}
-              onMouseDown={(e) => {
-                if (!stepStripRef.current) return
-                isDraggingRef.current = true
-                startXRef.current = e.pageX - stepStripRef.current.offsetLeft
-                scrollLeftRef.current = stepStripRef.current.scrollLeft
-              }}
-              onMouseLeave={() => {
-                isDraggingRef.current = false
-              }}
-              onMouseUp={() => {
-                isDraggingRef.current = false
-              }}
-              onMouseMove={(e) => {
-                if (!isDraggingRef.current || !stepStripRef.current) return
-                e.preventDefault()
-                const x = e.pageX - stepStripRef.current.offsetLeft
-                const walk = (x - startXRef.current) * 1.5
-                stepStripRef.current.scrollLeft = scrollLeftRef.current - walk
-              }}
-              className="flex items-center gap-1.5 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-1.5 sm:py-1.5 sm:rounded-2xl sm:bg-[#F2ECE4] no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none cursor-grab active:cursor-grabbing"
-            >
-              {detailSubMenus.map((sub) => {
-                const active = detailTab === sub.id
-                const passed = sub.step < currentStep
-                return (
-                  <button
-                    key={sub.id}
-                    data-step-tab={sub.id}
+                      <button
+                        type="button"
+                        aria-label="Info editor undangan"
+                        onMouseEnter={() => setShowStatusTooltip(true)}
+                        onMouseLeave={() => setShowStatusTooltip(false)}
+                        onClick={() => setShowStatusTooltip((prev) => !prev)}
+                        onBlur={() => setShowStatusTooltip(false)}
+                        className="p-0.5 rounded-full text-[#6B5B4E] hover:text-[#2C2018] hover:bg-[#F2ECE4] transition cursor-pointer"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+
+                      {showStatusTooltip && (
+                        <div
+                          role="tooltip"
+                          className="absolute left-0 top-full mt-2 z-30 w-64 sm:w-80 p-3 rounded-xl bg-[#2C2018] text-white text-xs leading-relaxed shadow-lg pointer-events-none"
+                        >
+                          {isPublished
+                            ? "Undangan sedang Live dan bisa diakses tamu. Anda bebas edit tab mana saja lalu klik Simpan Perubahan, atau Unpublish untuk kembali ke Draft."
+                            : "Undangan masih Draft. Edit bagian mana saja, klik Simpan Perubahan, cek hasil lewat Preview, lalu klik Publish agar undangan dapat dibuka tamu."}
+                        </div>
+                      )}
+
+                      {generatedNotice ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Tersimpan
+                        </span>
+                      ) : hasUnsavedChanges ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          Belum disimpan
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className="text-xs text-[#6B5B4E] truncate">
+                      <span>{draftTheme.title}</span>
+                      <span className="mx-1.5 text-[#C8BBAE]">•</span>
+                      <span className="text-[#A8763E] font-medium">
+                        /u/{slugPath}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <Button
                     type="button"
-                    onClick={() => setDetailTab(sub.id)}
-                    className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 rounded-full sm:rounded-xl text-xs font-medium transition active:scale-95 ${active
-                        ? "bg-[#2C2018] text-white sm:bg-white sm:text-[#2C2018] shadow-sm"
-                        : passed
-                          ? "bg-[#C89B57]/15 text-[#A8763E] sm:bg-transparent"
-                          : "bg-white sm:bg-transparent text-[#6B5B4E] border border-[#E5DDD5] sm:border-0"
-                      }`}
+                    variant="outline"
+                    size="sm"
+                    className="h-9 rounded-xl bg-white gap-1.5"
+                    asChild
                   >
-                    {passed ? (
-                      <Check className="w-3 h-3 text-[#A8763E]" />
+                    <Link to={`/preview/${slugPath}`} target="_blank">
+                      <Eye className="w-3.5 h-3.5 text-[#A8763E]" />
+                      Preview
+                    </Link>
+                  </Button>
+
+                  {isPublished ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-9 rounded-xl border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 gap-1.5"
+                      disabled={isLocked || isPublishing || isGenerating}
+                      onClick={() => handleSetPublishStatus(false)}
+                    >
+                      {isPublishing ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5" />
+                      )}
+                      Unpublish
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                      disabled={isLocked || isPublishing || isGenerating}
+                      onClick={() => handleSetPublishStatus(true)}
+                    >
+                      {isPublishing ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Globe className="w-3.5 h-3.5" />
+                      )}
+                      Publish
+                    </Button>
+                  )}
+
+                  <Button
+                    type="button"
+                    variant="gold"
+                    size="sm"
+                    className="h-9 rounded-xl px-4 gap-1.5"
+                    disabled={isLocked || isGenerating}
+                    onClick={() => handleGenerateInvitation(() => {})}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Menyimpan...
+                      </>
                     ) : (
-                      <span>{sub.step}.</span>
+                      <>
+                        <Save className="w-3.5 h-3.5" />
+                        Simpan Perubahan
+                      </>
                     )}
-                    <span>{sub.label}</span>
-                  </button>
-                )
-              })}
+                  </Button>
+                </div>
+              </div>
+
+              {syncError && (
+                <p className="text-xs font-medium text-red-600 px-1">
+                  {syncError}
+                </p>
+              )}
+
+              {/* Free-Jump Section Tabs */}
+              <div
+                ref={stepStripRef}
+                onMouseDown={(e) => {
+                  if (!stepStripRef.current) return
+                  isDraggingRef.current = true
+                  startXRef.current = e.pageX - stepStripRef.current.offsetLeft
+                  scrollLeftRef.current = stepStripRef.current.scrollLeft
+                }}
+                onMouseLeave={() => {
+                  isDraggingRef.current = false
+                }}
+                onMouseUp={() => {
+                  isDraggingRef.current = false
+                }}
+                onMouseMove={(e) => {
+                  if (!isDraggingRef.current || !stepStripRef.current) return
+                  e.preventDefault()
+                  const x = e.pageX - stepStripRef.current.offsetLeft
+                  const walk = (x - startXRef.current) * 1.5
+                  stepStripRef.current.scrollLeft = scrollLeftRef.current - walk
+                }}
+                className="flex items-center gap-1.5 overflow-x-auto p-1.5 rounded-2xl bg-[#F2ECE4] no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none cursor-grab active:cursor-grabbing"
+              >
+                {editorTabs.map(({ id, label, Icon, count }) => {
+                  const active = detailTab === id
+                  return (
+                    <button
+                      key={id}
+                      data-step-tab={id}
+                      type="button"
+                      onClick={() => setDetailTab(id)}
+                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs transition active:scale-95 cursor-pointer ${
+                        active
+                          ? "bg-white text-[#2C2018] shadow-xs font-semibold"
+                          : "text-[#6B5B4E] hover:text-[#2C2018] hover:bg-white/60 font-medium"
+                      }`}
+                    >
+                      <Icon
+                        className={`w-3.5 h-3.5 ${
+                          active ? "text-[#A8763E]" : "text-[#8A796B]"
+                        }`}
+                      />
+                      <span>{label}</span>
+                      {typeof count === "number" && (
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded-full leading-none font-semibold ${
+                            active
+                              ? "bg-[#C89B57]/15 text-[#A8763E]"
+                              : "bg-white/70 text-[#6B5B4E]"
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             <CoupleStep {...editorStepProps} />
@@ -389,7 +557,6 @@ export function CustomerDashboard() {
             <StoryStep {...editorStepProps} />
             <MediaStep {...editorStepProps} />
             <GiftStep {...editorStepProps} />
-            <ConfirmationStep {...editorStepProps} />
           </div>
         )}
 

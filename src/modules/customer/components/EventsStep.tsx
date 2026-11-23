@@ -10,7 +10,6 @@ export default function EventsStep({
   draft,
   setDraft,
   isLocked,
-  setDetailTab,
 }: CustomerEditorStepProps) {
   if (detailTab !== "events") return null
 
@@ -199,25 +198,6 @@ export default function EventsStep({
               />
             </div>
           ))}
-        </div>
-
-        <div className="pt-2 border-t border-[#E5DDD5] flex gap-2 justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("couple")}
-          >
-            Kembali
-          </Button>
-          <Button
-            type="button"
-            variant="gold"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("story")}
-          >
-            Lanjut: Love Story
-          </Button>
         </div>
       </CardContent>
     </Card>

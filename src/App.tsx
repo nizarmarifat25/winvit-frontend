@@ -17,7 +17,11 @@ export function App() {
           <Route path="/daftar" element={<RegistrationPage />} />
           <Route path="/customer" element={<CustomerDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/u/:slug" element={<InvitationRenderer />} />
+          <Route path="/u/:slug" element={<InvitationRenderer mode="public" />} />
+          <Route
+            path="/preview/:slug"
+            element={<InvitationRenderer mode="preview" />}
+          />
         </Routes>
       </BrowserRouter>
     </WinvitProvider>

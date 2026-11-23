@@ -10,7 +10,6 @@ export default function StoryStep({
   draft,
   setDraft,
   isLocked,
-  setDetailTab,
   handleStoryPhotoUpload,
   uploadingField,
 }: CustomerEditorStepProps) {
@@ -185,25 +184,6 @@ export default function StoryStep({
             })}
           </div>
         )}
-
-        <div className="pt-2 border-t border-[#E5DDD5] flex gap-2 justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("events")}
-          >
-            Kembali
-          </Button>
-          <Button
-            type="button"
-            variant="gold"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("media")}
-          >
-            Lanjut: Galeri Foto
-          </Button>
-        </div>
       </CardContent>
     </Card>
   )

@@ -8,7 +8,6 @@ export default function MediaStep({
   draft,
   setDraft,
   isLocked,
-  setDetailTab,
   handleGalleryPhotosUpload,
   uploadingField,
 }: CustomerEditorStepProps) {
@@ -97,25 +96,6 @@ export default function MediaStep({
               ))}
             </div>
           )}
-        </div>
-
-        <div className="pt-2 border-t border-[#E5DDD5] flex gap-2 justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("story")}
-          >
-            Kembali
-          </Button>
-          <Button
-            type="button"
-            variant="gold"
-            className="h-11 rounded-xl"
-            onClick={() => setDetailTab("gift")}
-          >
-            Lanjut: Rekening
-          </Button>
         </div>
       </CardContent>
     </Card>

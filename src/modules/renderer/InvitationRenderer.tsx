@@ -37,6 +37,7 @@ import { DEFAULT_INVITATION } from "@/data/themes"
 import { injectInvitationIntoIframe } from "./injectInvitationData"
 
 interface InvitationRendererProps {
+  mode?: "public" | "preview"
   previewData?: InvitationData
   previewThemePath?: string
   embedded?: boolean
@@ -69,11 +70,13 @@ function getScreenCategory(): ScreenCategory {
 }
 
 export default function InvitationRenderer({
+  mode = "public",
   previewData,
   previewThemePath,
   embedded = false,
   renderKey = 0,
 }: InvitationRendererProps) {
+  const isPreviewMode = mode === "preview"
   const { slug } = useParams<{ slug: string }>()
   const [searchParams] = useSearchParams()
   const guestNameParam = searchParams.get("to") || "Bapak / Ibu / Saudara/i"
@@ -206,25 +209,25 @@ export default function InvitationRenderer({
             ...DEFAULT_INVITATION.events,
             akad: akadEv
               ? {
-                  title: akadEv.name,
-                  date: akadEv.date,
-                  startTime: akadEv.startTime,
-                  endTime: akadEv.endTime,
-                  locationName: akadEv.locationName,
-                  address: akadEv.locationAddress,
-                  mapsUrl: akadEv.locationUrl,
-                }
+                title: akadEv.name,
+                date: akadEv.date,
+                startTime: akadEv.startTime,
+                endTime: akadEv.endTime,
+                locationName: akadEv.locationName,
+                address: akadEv.locationAddress,
+                mapsUrl: akadEv.locationUrl,
+              }
               : DEFAULT_INVITATION.events.akad,
             resepsi: resepsiEv
               ? {
-                  title: resepsiEv.name,
-                  date: resepsiEv.date,
-                  startTime: resepsiEv.startTime,
-                  endTime: resepsiEv.endTime,
-                  locationName: resepsiEv.locationName,
-                  address: resepsiEv.locationAddress,
-                  mapsUrl: resepsiEv.locationUrl,
-                }
+                title: resepsiEv.name,
+                date: resepsiEv.date,
+                startTime: resepsiEv.startTime,
+                endTime: resepsiEv.endTime,
+                locationName: resepsiEv.locationName,
+                address: resepsiEv.locationAddress,
+                mapsUrl: resepsiEv.locationUrl,
+              }
               : DEFAULT_INVITATION.events.resepsi,
           },
           stories: mappedStories,
@@ -242,8 +245,8 @@ export default function InvitationRenderer({
       })
       .catch(async (err: any) => {
         if (!isMounted) return
-        // If unpublished (404 on public endpoint) but the owner is logged in, load authenticated draft for Preview!
-        if (getAccessToken()) {
+        // Only in /preview/:slug mode: if unpublished (404 on public endpoint) and owner is logged in, load authenticated draft!
+        if (isPreviewMode && getAccessToken()) {
           try {
             const invRes = await getInvitationsApi()
             const list = Array.isArray(invRes)
@@ -372,12 +375,12 @@ export default function InvitationRenderer({
           : res?.items || res?.wishes || res?.data || []
         if (Array.isArray(list)) setWishes(list)
       })
-      .catch(() => {})
+      .catch(() => { })
 
     return () => {
       isMounted = false
     }
-  }, [embedded, slug])
+  }, [embedded, slug, isPreviewMode])
 
   const invitation = previewData || publicInvitation || ctxInvitation
   const activeTheme =
@@ -442,9 +445,12 @@ export default function InvitationRenderer({
       iframeRef.current,
       invitation,
       activeSlug,
-      (list) => setWishes(list)
+      (list) => setWishes(list),
+      isPreviewMode
     )
-    attachIframeScrollListener()
+    if (isPreviewMode) {
+      attachIframeScrollListener()
+    }
   }
 
   useEffect(() => {
@@ -532,6 +538,62 @@ export default function InvitationRenderer({
     )
   }
 
+  // PUBLIC GUEST VIEW (/u/:slug): 100% clean full-screen invitation without SaaS chrome or device frames
+  if (!isPreviewMode) {
+    if (loadingPublic) {
+      return (
+        <div className="w-screen h-dvh bg-[#FAF6F1] text-[#2C2018] flex items-center justify-center text-sm gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-[#C89B57]" />
+          <span>Memuat undangan...</span>
+        </div>
+      )
+    }
+
+    if (publicError) {
+      return (
+        <div className="w-screen h-dvh flex items-center justify-center p-6 bg-[#FAF6F1] text-[#2C2018]">
+          <div className="max-w-md w-full rounded-3xl bg-white border border-[#E5DDD5] p-6 sm:p-8 text-center space-y-4 shadow-xs">
+            <h2 className="text-lg font-bold text-[#2C2018]">
+              Undangan Tidak Tersedia
+            </h2>
+            <p className="text-xs sm:text-sm text-red-600 font-medium">
+              {publicError}
+            </p>
+            <p className="text-xs text-[#6B5B4E]">
+              Pastikan tautan <span className="font-mono font-semibold">/u/{activeSlug}</span> sudah benar dan undangan sudah berstatus publish.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl"
+                onClick={() => window.location.reload()}
+              >
+                Coba Lagi
+              </Button>
+              <Button variant="gold" size="sm" className="rounded-xl" asChild>
+                <Link to="/">Kembali ke Beranda</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="w-screen h-dvh overflow-hidden bg-black">
+        <iframe
+          key={publicInvitation?.id || "public"}
+          ref={iframeRef}
+          src={targetUrl}
+          onLoad={handleIframeLoad}
+          title={invitation.meta.title || activeTheme.title}
+          className="w-full h-full border-0 block"
+        />
+      </div>
+    )
+  }
+
   const isPhoneScreen = screenCategory === "phone"
   const effectiveViewport: ViewportMode = isPhoneScreen
     ? "mobile"
@@ -541,9 +603,9 @@ export default function InvitationRenderer({
 
   const availableModes = (
     [
-      { id: "mobile" as const, label: "iPhone 17 Pro", Icon: Smartphone },
-      { id: "tablet" as const, label: "iPad Pro M3", Icon: Tablet },
-      { id: "desktop" as const, label: "MacBook Pro", Icon: Laptop },
+      { id: "mobile" as const, label: "Mobile", Icon: Smartphone },
+      { id: "tablet" as const, label: "Tablet", Icon: Tablet },
+      { id: "desktop" as const, label: "Desktop", Icon: Laptop },
     ] as const
   ).filter((mode) => {
     if (screenCategory === "phone") return mode.id === "mobile"
@@ -561,9 +623,8 @@ export default function InvitationRenderer({
       <div className="relative z-40 shrink-0 bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-3 sm:px-5 h-13 flex items-center justify-between gap-2 text-xs text-white">
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className={`inline-block h-2 w-2 rounded-full animate-pulse shrink-0 ${
-              isDraftPreview ? "bg-amber-400" : "bg-emerald-400"
-            }`}
+            className={`inline-block h-2 w-2 rounded-full animate-pulse shrink-0 ${isDraftPreview ? "bg-amber-400" : "bg-emerald-400"
+              }`}
           />
           <span className="font-semibold truncate">/{activeSlug}</span>
           {isDraftPreview && (
@@ -587,11 +648,10 @@ export default function InvitationRenderer({
                   key={id}
                   type="button"
                   onClick={() => setViewportMode(id)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${
-                    active
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${active
                       ? "bg-[#C89B57] text-slate-950 shadow-xs"
                       : "text-slate-300 hover:text-white hover:bg-white/10"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
                   <span>{label}</span>
@@ -610,14 +670,15 @@ export default function InvitationRenderer({
               <ArrowLeft className="h-3 w-3" /> Dashboard
             </Link>
           )}
-          <a
-            href={targetUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 hover:bg-white/20 transition"
-          >
-            Full <ExternalLink className="h-3 w-3" />
-          </a>
+          {!isDraftPreview && (
+            <Link
+              to={`/u/${activeSlug}`}
+              target="_blank"
+              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 hover:bg-white/20 transition"
+            >
+              Link Public <ExternalLink className="h-3 w-3" />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -761,11 +822,10 @@ export default function InvitationRenderer({
                           {w.guest_name || "Tamu Undangan"}
                         </span>
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                            w.status === "attending"
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${w.status === "attending"
                               ? "bg-emerald-50 text-emerald-700"
                               : "bg-slate-100 text-slate-600"
-                          }`}
+                            }`}
                         >
                           {w.status === "attending"
                             ? `Hadir (${w.pax || 1})`
@@ -818,34 +878,31 @@ export default function InvitationRenderer({
         </div>
       ) : (
         <div
-          className={`flex-1 w-full min-h-0 overflow-hidden flex items-center justify-center transition-all duration-300 ${
-            isPhoneScreen
+          className={`flex-1 w-full min-h-0 overflow-hidden flex items-center justify-center transition-all duration-300 ${isPhoneScreen
               ? "p-0 bg-black"
               : "px-4 py-4 sm:px-14 sm:py-5 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_60%,_#03050a_100%)]"
-          }`}
+            }`}
         >
           <div
-            className={`relative flex flex-col items-center transition-all duration-300 ${
-              isPhoneScreen
+            className={`relative flex flex-col items-center transition-all duration-300 ${isPhoneScreen
                 ? "w-full h-full"
                 : showPhoneFrame
                   ? "w-[396px] max-w-full h-full max-h-[820px]"
                   : showTabletFrame
                     ? "w-[768px] max-w-full h-full max-h-[880px]"
                     : "w-full max-w-[1160px] h-full max-h-[760px]"
-            }`}
+              }`}
           >
             {/* Hardware Metallic Chassis / Display Lid */}
             <div
-              className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${
-                isPhoneScreen
+              className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${isPhoneScreen
                   ? "w-full h-full bg-black"
                   : showPhoneFrame
                     ? "w-full rounded-[52px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.14)_inset]"
                     : showTabletFrame
                       ? "w-full rounded-[34px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.12)_inset]"
                       : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
-              }`}
+                }`}
             >
               {/* iPhone 17 Pro Titanium Side Buttons */}
               {showPhoneFrame && (
@@ -869,15 +926,14 @@ export default function InvitationRenderer({
 
               {/* Inner Black Glass Bezel */}
               <div
-                className={`relative w-full h-full flex flex-col transition-all duration-300 ${
-                  isPhoneScreen
+                className={`relative w-full h-full flex flex-col transition-all duration-300 ${isPhoneScreen
                     ? "bg-black"
                     : showPhoneFrame
                       ? "rounded-[49px] bg-[#08080a] p-[10px]"
                       : showTabletFrame
                         ? "rounded-[31px] bg-[#08080a] p-[14px] pt-[18px]"
                         : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
-                }`}
+                  }`}
               >
                 {/* iPad Pro M3 Center Stage Camera Sensor */}
                 {showTabletFrame && (
@@ -891,15 +947,14 @@ export default function InvitationRenderer({
 
                 {/* Display Screen Container (keeps iframe continuously mounted across device switches) */}
                 <div
-                  className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black transition-all duration-300 ${
-                    isPhoneScreen
+                  className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black transition-all duration-300 ${isPhoneScreen
                       ? ""
                       : showPhoneFrame
                         ? "rounded-[40px]"
                         : showTabletFrame
                           ? "rounded-[18px]"
                           : "rounded-[8px]"
-                  }`}
+                    }`}
                 >
                   {/* iPhone 17 Pro Dynamic Island */}
                   {showPhoneFrame && (
@@ -931,9 +986,8 @@ export default function InvitationRenderer({
                   {/* iPhone 17 Pro / iPad Pro M3 Home Indicator */}
                   {(showPhoneFrame || showTabletFrame) && (
                     <div
-                      className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 shadow-xs ${
-                        showPhoneFrame ? "w-[120px]" : "w-[144px]"
-                      }`}
+                      className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 shadow-xs ${showPhoneFrame ? "w-[120px]" : "w-[144px]"
+                        }`}
                     />
                   )}
                 </div>
@@ -964,19 +1018,17 @@ export default function InvitationRenderer({
               onClick={handleScrollDown}
               title="Scroll ke bawah"
               aria-label="Scroll ke bawah"
-              className={`absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 px-2 py-3 rounded-full bg-slate-900/75 hover:bg-slate-900/95 backdrop-blur-md border border-white/15 hover:border-[#C89B57]/60 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 cursor-pointer ${
-                isAtBottom
+              className={`absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 px-2 py-3 rounded-full bg-slate-900/75 hover:bg-slate-900/95 backdrop-blur-md border border-white/15 hover:border-[#C89B57]/60 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 cursor-pointer ${isAtBottom
                   ? "opacity-0 pointer-events-none scale-95"
                   : "opacity-100 scale-100"
-              } ${
-                isPhoneScreen
+                } ${isPhoneScreen
                   ? "right-3"
                   : showPhoneFrame
                     ? "left-full ml-4"
                     : showTabletFrame
                       ? "right-4 lg:right-auto lg:left-full lg:ml-4"
                       : "left-[calc(96.5%+12px)]"
-              }`}
+                }`}
             >
               <span className="w-[18px] h-[28px] rounded-full border-[1.75px] border-[#C89B57] flex justify-center pt-1.5">
                 <span className="w-[3px] h-[6px] rounded-full bg-[#C89B57] animate-mouse-wheel" />
