@@ -92,14 +92,14 @@ export function injectInvitationIntoIframe(
   const brideInfoText =
     invitation.couple.bride.info?.trim() ||
     (invitation.couple.bride.fatherName.trim() ||
-    invitation.couple.bride.motherName.trim()
+      invitation.couple.bride.motherName.trim()
       ? `Putri dari ${invitation.couple.bride.fatherName} & ${invitation.couple.bride.motherName}`
       : "Info orang tua mempelai wanita belum diisi")
 
   const groomInfoText =
     invitation.couple.groom.info?.trim() ||
     (invitation.couple.groom.fatherName.trim() ||
-    invitation.couple.groom.motherName.trim()
+      invitation.couple.groom.motherName.trim()
       ? `Putra dari ${invitation.couple.groom.fatherName} & ${invitation.couple.groom.motherName}`
       : "Info orang tua mempelai pria belum diisi")
 
@@ -127,8 +127,8 @@ export function injectInvitationIntoIframe(
       }
     })
 
-  // Footer eyebrow couple name (black-diamond, midnight-celestial, obsidian-smoke, golden-regeria)
-  doc.querySelectorAll("footer .eyebrow").forEach((el) => {
+  // Footer eyebrow & label couple name (black-diamond, midnight-celestial, obsidian-smoke, golden-regeria, emerald)
+  doc.querySelectorAll("footer .eyebrow, footer .label").forEach((el) => {
     const txt = (el.textContent || "").toLowerCase()
     if (txt.includes("unnamed") || txt.includes("&")) {
       el.textContent = coupleShort
@@ -301,9 +301,9 @@ export function injectInvitationIntoIframe(
     const p = famBox.querySelector("p")
     const combined = [brideInfoText, groomInfoText].filter(Boolean)
     if (combined.length === 0) {
-      ;(famBox as HTMLElement).style.display = "none"
+      ; (famBox as HTMLElement).style.display = "none"
     } else {
-      ;(famBox as HTMLElement).style.display = ""
+      ; (famBox as HTMLElement).style.display = ""
       if (p) p.innerHTML = combined.join("<br>serta<br>")
     }
   })
@@ -335,11 +335,28 @@ export function injectInvitationIntoIframe(
           el.style.setProperty("--bgi", `url('${coverUrl}')`)
         }
       })
+
+    // Themes using CSS background-image directly on .hero-bg and #cover (emerald, blue-water, blush-bloom, midnight-sapphire)
+    doc.querySelectorAll<HTMLElement>(".hero-bg").forEach((el) => {
+      el.style.backgroundImage = `url('${coverUrl}')`
+    })
+    const coverDiv = doc.getElementById("cover")
+    if (
+      coverDiv &&
+      !coverDiv.querySelector("img") &&
+      !coverDiv.style.getPropertyValue("--bg") &&
+      !coverDiv.style.getPropertyValue("--bgi")
+    ) {
+      coverDiv.style.backgroundImage = `radial-gradient(ellipse at center, rgba(7, 26, 21, 0.5) 0%, rgba(7, 26, 21, 0.92) 78%), url('${coverUrl}')`
+    }
   }
 
   if (invitation.meta.audio.url) {
     const audioEl = doc.getElementById("myAudio") as HTMLAudioElement | null
-    if (audioEl) audioEl.src = invitation.meta.audio.url
+    if (audioEl) {
+      audioEl.src = invitation.meta.audio.url
+      audioEl.currentTime = 0
+    }
     if (win?.CONFIG) win.CONFIG.audioStart = 0
   }
 
@@ -350,27 +367,27 @@ export function injectInvitationIntoIframe(
     invitation.eventList && invitation.eventList.length > 0
       ? invitation.eventList
       : [
-          {
-            name: invitation.events.akad.title || "Akad Nikah",
-            date: invitation.events.akad.date,
-            startTime: invitation.events.akad.startTime,
-            endTime: invitation.events.akad.endTime,
-            locationName: invitation.events.akad.locationName || "",
-            locationAddress: invitation.events.akad.address,
-            locationUrl: invitation.events.akad.mapsUrl,
-            sortOrder: 1,
-          },
-          {
-            name: invitation.events.resepsi.title || "Resepsi",
-            date: invitation.events.resepsi.date,
-            startTime: invitation.events.resepsi.startTime,
-            endTime: invitation.events.resepsi.endTime,
-            locationName: invitation.events.resepsi.locationName || "",
-            locationAddress: invitation.events.resepsi.address,
-            locationUrl: invitation.events.resepsi.mapsUrl,
-            sortOrder: 2,
-          },
-        ]
+        {
+          name: invitation.events.akad.title || "Akad Nikah",
+          date: invitation.events.akad.date,
+          startTime: invitation.events.akad.startTime,
+          endTime: invitation.events.akad.endTime,
+          locationName: invitation.events.akad.locationName || "",
+          locationAddress: invitation.events.akad.address,
+          locationUrl: invitation.events.akad.mapsUrl,
+          sortOrder: 1,
+        },
+        {
+          name: invitation.events.resepsi.title || "Resepsi",
+          date: invitation.events.resepsi.date,
+          startTime: invitation.events.resepsi.startTime,
+          endTime: invitation.events.resepsi.endTime,
+          locationName: invitation.events.resepsi.locationName || "",
+          locationAddress: invitation.events.resepsi.address,
+          locationUrl: invitation.events.resepsi.mapsUrl,
+          sortOrder: 2,
+        },
+      ]
 
   const filledEvents = rawEvents.filter(
     (ev) =>
@@ -392,8 +409,29 @@ export function injectInvitationIntoIframe(
   }
 
   setDateWidgetText(
-    ".date-big, .stub-date, .bigday, .bigd b, .big-date b, .plaque b, .sun b, .acara-side .big-date, .hero-date strong, .stadium .badge b, #acara .big",
+    ".date-big, .stub-date, .bigday, .bigd b, .big-date b, .plaque b, .sun b, .acara-side .big-date, .hero-date strong, .hero-date .d-mid, .stadium .badge b, #acara .big",
     dateParts ? dateParts.dayNum : "--"
+  )
+
+  // Emerald .hero-date .d-side (left: dayName, right: MM · YYYY)
+  const heroDateSides = doc.querySelectorAll(".hero-date .d-side")
+  if (heroDateSides.length >= 1) {
+    heroDateSides[0].textContent = dateParts ? dateParts.dayName : "Tanggal"
+  }
+  if (heroDateSides.length >= 2) {
+    heroDateSides[1].textContent = dateParts
+      ? `${dateParts.monthNum} · ${dateParts.yearNum}`
+      : "-- · ----"
+  }
+
+  // Emerald .event-date-block (.day-name, .big, .month-year)
+  setDateWidgetText(
+    ".event-date-block .day-name",
+    dateParts ? dateParts.dayName : "Tanggal"
+  )
+  setDateWidgetText(
+    ".event-date-block .month-year",
+    dateParts ? dateParts.monthYear : "Belum Diatur"
   )
 
   doc
@@ -473,7 +511,7 @@ export function injectInvitationIntoIframe(
   const addrParagraphs = new Set<Element>()
   doc
     .querySelectorAll(
-      ".addr p, .date-loc p, .venue p, .acara-card p, .loc p, .address p"
+      ".addr p, .date-loc p, .venue p, .acara-card p, .event-address p, .loc p, .address p"
     )
     .forEach((p) => addrParagraphs.add(p))
 
@@ -507,6 +545,7 @@ export function injectInvitationIntoIframe(
   // Update Event Items across ALL 20 themes
   const eventsToRender = filledEvents.length > 0 ? filledEvents : []
   const eventCardSelectors = [
+    "#acara .event-times > div",
     "#acara .event-item",
     "#acara .event-card",
     "#acara .ev2 > div",
@@ -520,6 +559,11 @@ export function injectInvitationIntoIframe(
     if (cards.length > 0) {
       const parent = cards[0].parentElement
       if (!parent) break
+      if (sel === "#acara .event-times > div" && eventsToRender.length === 1) {
+        ; (parent as HTMLElement).style.gridTemplateColumns = "1fr"
+      } else if (sel === "#acara .event-times > div") {
+        ; (parent as HTMLElement).style.gridTemplateColumns = ""
+      }
       const templateCard = cards[0].cloneNode(true) as HTMLElement
       const actionsEl = parent.querySelector(".event-actions")
 
@@ -532,13 +576,16 @@ export function injectInvitationIntoIframe(
           parent.appendChild(doc.createElement("hr"))
         }
         const clone = templateCard.cloneNode(true) as HTMLElement
+        clone.classList.add("aos-animate")
         const titleEl = clone.querySelector("h4, h3, strong, b")
         if (titleEl) titleEl.textContent = ev.name || `Acara ${idx + 1}`
 
         const timeText = ev.startTime
           ? `${ev.startTime} WIB${ev.endTime ? ` — ${ev.endTime} WIB` : " — Selesai"}`
           : "-"
-        const timeEl = clone.querySelector(".t, .time, .event-time, span")
+        const timeEl = clone.querySelector(
+          ".t, .time, .event-time, span:not(.corner)"
+        )
         if (timeEl) timeEl.textContent = timeText
 
         const evDateParts = formatIndonesianDateParts(ev.date)
@@ -566,9 +613,8 @@ export function injectInvitationIntoIframe(
       acaraTimes.forEach((el) => el.remove())
       eventsToRender.forEach((ev) => {
         const clone = tpl.cloneNode(true) as HTMLElement
-        clone.textContent = `${ev.name} · ${ev.startTime || ""}${
-          ev.endTime ? ` — ${ev.endTime}` : ""
-        }`
+        clone.textContent = `${ev.name} · ${ev.startTime || ""}${ev.endTime ? ` — ${ev.endTime}` : ""
+          }`
         parent.appendChild(clone)
       })
     }
@@ -576,7 +622,7 @@ export function injectInvitationIntoIframe(
 
   // Clear ALL hardcoded June 14, 2026 countdown intervals and replace with real date
   if (win) {
-    const sentinel = win.setInterval(() => {}, 999999)
+    const sentinel = win.setInterval(() => { }, 999999)
     for (let id = 1; id <= sentinel; id++) {
       win.clearInterval(id)
     }
@@ -587,16 +633,14 @@ export function injectInvitationIntoIframe(
     const sEl = doc.getElementById("cd-sec")
 
     if (primaryEvent?.date) {
-      const startIso = `${primaryEvent.date}T${
-        primaryEvent.startTime && primaryEvent.startTime.length >= 5
+      const startIso = `${primaryEvent.date}T${primaryEvent.startTime && primaryEvent.startTime.length >= 5
           ? primaryEvent.startTime.slice(0, 5)
           : "09:00"
-      }:00+07:00`
-      const endIso = `${primaryEvent.date}T${
-        primaryEvent.endTime && primaryEvent.endTime.length >= 5
+        }:00+07:00`
+      const endIso = `${primaryEvent.date}T${primaryEvent.endTime && primaryEvent.endTime.length >= 5
           ? primaryEvent.endTime.slice(0, 5)
           : "14:00"
-      }:00+07:00`
+        }:00+07:00`
 
       if (win.CONFIG) {
         win.CONFIG.eventStart = startIso
@@ -615,12 +659,12 @@ export function injectInvitationIntoIframe(
         `${fmtCal(startIso)}/${fmtCal(endIso)}` +
         "&location=" +
         encodeURIComponent(fullLocation || "")
-      ;["btn-calendar", "btn-calendar-cd", "btn-calendar-hero"].forEach(
-        (id) => {
-          const a = doc.getElementById(id) as HTMLAnchorElement | null
-          if (a) a.href = calUrl
-        }
-      )
+        ;["btn-calendar", "btn-calendar-cd", "btn-calendar-hero"].forEach(
+          (id) => {
+            const a = doc.getElementById(id) as HTMLAnchorElement | null
+            if (a) a.href = calUrl
+          }
+        )
 
       // Override saveCal (.ics download)
       win.saveCal = () => {
@@ -736,7 +780,7 @@ export function injectInvitationIntoIframe(
 
             invitation.stories.forEach((st, idx) => {
               const clone = templateItem.cloneNode(true) as HTMLElement
-              clone.classList.add("in") // ensure reveal-visible if IntersectionObserver missed it
+              clone.classList.add("in", "aos-animate") // ensure reveal-visible if IntersectionObserver/AOS missed it
               if (clone.classList.contains("ai")) {
                 clone.classList.toggle("on", idx === 0)
                 clone.onclick = () => {
@@ -960,7 +1004,7 @@ export function injectInvitationIntoIframe(
             if (numEl) numEl.textContent = acc.accountNumber
 
             const ownerEl = cardEl.querySelector(
-              ".gift-bot b, .c-bot b, .gift-owner, p"
+              ".gift-bot b, .gift-bottom b, .c-bot b, .gift-owner, p"
             )
             if (ownerEl) {
               ownerEl.textContent = ownerEl.classList.contains("gift-owner")
@@ -1152,4 +1196,11 @@ export function injectInvitationIntoIframe(
       tNode.nodeValue = val
     }
   })
+
+  // Refresh AOS in iframe so dynamically cloned elements reveal cleanly
+  if (typeof win?.AOS?.refreshHard === "function") {
+    win.AOS.refreshHard()
+  } else if (typeof win?.AOS?.refresh === "function") {
+    win.AOS.refresh()
+  }
 }
