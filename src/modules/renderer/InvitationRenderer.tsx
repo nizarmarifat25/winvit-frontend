@@ -13,6 +13,8 @@ import {
   ExternalLink,
   Laptop,
   MessageSquareHeart,
+  PanelLeftClose,
+  PanelLeftOpen,
   X,
   Send,
   Loader2,
@@ -61,6 +63,31 @@ function parseIsoDateAndTime(isoStr?: string | null): {
 
 type ViewportMode = "mobile" | "tablet" | "desktop"
 type ScreenCategory = "phone" | "tablet" | "desktop"
+type PreviewZoomMode = "fit" | "actual"
+
+const DEVICE_FRAME_SPECS: Record<
+  ViewportMode,
+  { width: number; height: number; deviceName: string; screenLabel: string }
+> = {
+  mobile: {
+    width: 416,
+    height: 866,
+    deviceName: "iPhone 17 Pro",
+    screenLabel: "390 × 840",
+  },
+  tablet: {
+    width: 802,
+    height: 1060,
+    deviceName: "iPad Pro M3",
+    screenLabel: "768 × 1024",
+  },
+  desktop: {
+    width: 1320,
+    height: 830,
+    deviceName: "MacBook Pro",
+    screenLabel: "1206 × 756",
+  },
+}
 
 function getScreenCategory(): ScreenCategory {
   if (typeof window === "undefined") return "desktop"
@@ -94,6 +121,10 @@ export default function InvitationRenderer({
     const initial = getScreenCategory()
     return initial === "phone" ? "mobile" : initial
   })
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [zoomMode, setZoomMode] = useState<PreviewZoomMode>("fit")
+  const stageRef = useRef<HTMLDivElement>(null)
+  const [stageSize, setStageSize] = useState({ width: 1000, height: 800 })
   const [isAtBottom, setIsAtBottom] = useState(false)
   const scrollCleanupRef = useRef<(() => void) | null>(null)
   const [wishes, setWishes] = useState<any[]>([])
@@ -476,6 +507,18 @@ export default function InvitationRenderer({
   }, [])
 
   useEffect(() => {
+    const el = stageRef.current
+    if (!el || !isPreviewMode || screenCategory === "phone") return
+    const updateSize = () => {
+      setStageSize({ width: el.clientWidth, height: el.clientHeight })
+    }
+    updateSize()
+    const observer = new ResizeObserver(updateSize)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [isPreviewMode, screenCategory, loadingPublic, publicError, sidebarCollapsed])
+
+  useEffect(() => {
     return () => {
       scrollCleanupRef.current?.()
     }
@@ -603,80 +646,252 @@ export default function InvitationRenderer({
   const showTabletFrame = !isPhoneScreen && effectiveViewport === "tablet"
   const showLaptopFrame = !isPhoneScreen && effectiveViewport === "desktop"
 
-  return (
-    <div className="relative w-screen h-dvh overflow-hidden bg-slate-950 flex flex-col">
-      {/* Top SaaS Bar with Device Frame Switcher (Laptop: All 3 | Tablet: Phone+Tablet | Phone: Mobile only) */}
-      <div className="relative z-40 shrink-0 bg-slate-900/95 backdrop-blur-md border-b border-white/10 px-3 sm:px-5 h-13 flex items-center justify-between gap-2 text-xs text-white">
-        <div className="flex items-center gap-2 min-w-0">
-          <span
-            className={`inline-block h-2 w-2 rounded-full animate-pulse shrink-0 ${isDraftPreview ? "bg-amber-400" : "bg-emerald-400"
-              }`}
-          />
-          <span className="font-semibold truncate">/{activeSlug}</span>
-          {isDraftPreview && (
-            <span className="rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 text-[10px] font-semibold shrink-0">
-              Preview (Belum Publish)
-            </span>
-          )}
-          <span className="hidden md:inline text-slate-500">|</span>
-          <span className="hidden md:inline text-amber-300 font-bold truncate">
-            {activeTheme.title}
-          </span>
-        </div>
+  const activeSpec = DEVICE_FRAME_SPECS[effectiveViewport]
+  const availWidth = Math.max(240, stageSize.width - 124)
+  const availHeight = Math.max(240, stageSize.height - 32)
+  const fitScale = Math.min(
+    1,
+    availWidth / activeSpec.width,
+    availHeight / activeSpec.height
+  )
+  const appliedScale = zoomMode === "actual" ? 1 : fitScale
+  const fitPercent = Math.round(fitScale * 100)
 
-        {/* Device Viewport Switcher (hidden extra tabs on mobile screens) */}
-        {availableModes.length > 1 && (
-          <div className="flex items-center gap-1 rounded-full bg-white/10 p-1 border border-white/10">
-            {availableModes.map(({ id, label, Icon }) => {
-              const active = effectiveViewport === id
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setViewportMode(id)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer ${active
-                      ? "bg-[#C89B57] text-slate-950 shadow-xs"
-                      : "text-slate-300 hover:text-white hover:bg-white/10"
+  return (
+    <div className="relative w-screen h-dvh overflow-hidden bg-slate-950 flex">
+      {/* Left Studio Sidebar (Tablet & Desktop only — zero top navbar stealing height) */}
+      {!isPhoneScreen && (
+        <aside
+          className={`relative z-40 h-full shrink-0 bg-slate-900/95 backdrop-blur-md border-r border-white/10 text-white flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? "w-16 px-2 py-4" : "w-60 px-4 py-5"
+            }`}
+        >
+          <div className="space-y-5 min-w-0">
+            {/* Brand + Collapse Toggle */}
+            <div
+              className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between gap-2"
+                }`}
+            >
+              {!sidebarCollapsed && (
+                <div className="min-w-0">
+                  <Link
+                    to="/"
+                    className="font-serif text-lg font-bold tracking-tight text-white block leading-none"
+                  >
+                    In<span className="text-[#C89B57]">vitaa</span>
+                  </Link>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mt-1">
+                    Preview Studio
+                  </p>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed((prev) => !prev)}
+                title={sidebarCollapsed ? "Buka sidebar" : "Lipat sidebar"}
+                aria-label={sidebarCollapsed ? "Buka sidebar" : "Lipat sidebar"}
+                className="w-8 h-8 rounded-lg bg-white/8 hover:bg-white/15 text-slate-300 hover:text-white grid place-items-center transition shrink-0 cursor-pointer"
+              >
+                {sidebarCollapsed ? (
+                  <PanelLeftOpen className="w-4 h-4" />
+                ) : (
+                  <PanelLeftClose className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+
+            {/* Active Invitation Info */}
+            {!sidebarCollapsed && (
+              <div className="rounded-xl bg-white/5 border border-white/10 p-3 space-y-1.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={`inline-block h-2 w-2 rounded-full animate-pulse shrink-0 ${isDraftPreview ? "bg-amber-400" : "bg-emerald-400"
+                      }`}
+                  />
+                  <span className="text-xs font-semibold text-white truncate">
+                    /{activeSlug}
+                  </span>
+                </div>
+                <p className="text-[11px] font-medium text-[#E5C27A] truncate">
+                  {activeTheme.title}
+                </p>
+                <span
+                  className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold border ${isDraftPreview
+                      ? "bg-amber-500/15 text-amber-300 border-amber-400/30"
+                      : "bg-emerald-500/15 text-emerald-300 border-emerald-400/30"
                     }`}
                 >
-                  <Icon className="h-3.5 w-3.5" />
-                  <span>{label}</span>
-                </button>
-              )
-            })}
+                  {isDraftPreview ? "Draft (Belum Publish)" : "Published (Live)"}
+                </span>
+              </div>
+            )}
+
+            {/* Vertical Device Viewport Switcher */}
+            {availableModes.length > 1 && (
+              <div className="space-y-1.5">
+                {!sidebarCollapsed && (
+                  <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Perangkat
+                  </p>
+                )}
+                <div className="space-y-1">
+                  {availableModes.map(({ id, label, Icon }) => {
+                    const active = effectiveViewport === id
+                    const spec = DEVICE_FRAME_SPECS[id]
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        title={`${label} — ${spec.deviceName} (${spec.screenLabel})`}
+                        onClick={() => setViewportMode(id)}
+                        className={`w-full flex items-center ${sidebarCollapsed
+                            ? "justify-center h-10 rounded-xl"
+                            : "justify-between px-3 py-2.5 rounded-xl"
+                          } text-xs font-semibold transition cursor-pointer ${active
+                            ? "bg-[#C89B57] text-slate-950 shadow-sm"
+                            : "text-slate-300 hover:text-white hover:bg-white/10"
+                          }`}
+                      >
+                        <span className="inline-flex items-center gap-2.5 min-w-0">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          {!sidebarCollapsed && (
+                            <span className="truncate">{label}</span>
+                          )}
+                        </span>
+                        {!sidebarCollapsed && (
+                          <span
+                            className={`text-[10px] font-mono ${active ? "text-slate-900/75" : "text-slate-500"
+                              }`}
+                          >
+                            {spec.screenLabel}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Zoom Scale Switcher (Auto Fit vs 100% Actual Size) */}
+            {!sidebarCollapsed && (
+              <div className="space-y-1.5">
+                <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  Skala Frame
+                </p>
+                <div className="grid grid-cols-2 gap-1 rounded-xl bg-white/8 p-1 border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setZoomMode("fit")}
+                    className={`rounded-lg py-1.5 text-[11px] font-semibold transition cursor-pointer ${zoomMode === "fit"
+                        ? "bg-white text-slate-950 shadow-xs"
+                        : "text-slate-300 hover:text-white"
+                      }`}
+                  >
+                    Fit ({fitPercent}%)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoomMode("actual")}
+                    className={`rounded-lg py-1.5 text-[11px] font-semibold transition cursor-pointer ${zoomMode === "actual"
+                        ? "bg-white text-slate-950 shadow-xs"
+                        : "text-slate-300 hover:text-white"
+                      }`}
+                  >
+                    100% Asli
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
 
-        <div className="flex items-center gap-1.5 shrink-0">
-          {authUser && (
-            <Link
-              to={authUser.role === "admin" ? "/admin" : "/customer"}
-              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 hover:bg-white/20 transition"
+          {/* Bottom Actions */}
+          <div className="space-y-1.5 pt-4 border-t border-white/10">
+            <button
+              type="button"
+              title={`Ucapan & Doa (${wishes.length})`}
+              onClick={() => setWishesOpen(true)}
+              className={`w-full flex items-center ${sidebarCollapsed
+                  ? "justify-center h-10 rounded-xl"
+                  : "justify-between px-3 py-2.5 rounded-xl"
+                } bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition cursor-pointer`}
             >
-              <ArrowLeft className="h-3 w-3" /> Dashboard
-            </Link>
-          )}
-          {!isDraftPreview && (
+              <span className="inline-flex items-center gap-2 min-w-0">
+                <MessageSquareHeart className="w-4 h-4 text-[#C89B57] shrink-0" />
+                {!sidebarCollapsed && (
+                  <span className="truncate">Ucapan & Doa</span>
+                )}
+              </span>
+              {!sidebarCollapsed && (
+                <span className="rounded-full bg-[#C89B57]/20 text-[#E5C27A] px-2 py-0.5 text-[10px] font-bold">
+                  {wishes.length}
+                </span>
+              )}
+            </button>
+
+            {!isDraftPreview && (
+              <Link
+                to={`/u/${activeSlug}`}
+                target="_blank"
+                title="Buka Link Public"
+                className={`w-full flex items-center ${sidebarCollapsed
+                    ? "justify-center h-10 rounded-xl"
+                    : "gap-2 px-3 py-2 rounded-xl"
+                  } text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10 transition`}
+              >
+                <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                {!sidebarCollapsed && <span>Link Public</span>}
+              </Link>
+            )}
+
             <Link
-              to={`/u/${activeSlug}`}
-              target="_blank"
-              className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 hover:bg-white/20 transition"
+              to={
+                authUser
+                  ? authUser.role === "admin"
+                    ? "/admin"
+                    : "/customer"
+                  : "/"
+              }
+              title={authUser ? "Kembali ke Dashboard" : "Kembali ke Beranda"}
+              className={`w-full flex items-center ${sidebarCollapsed
+                  ? "justify-center h-10 rounded-xl"
+                  : "gap-2 px-3 py-2 rounded-xl"
+                } text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10 transition`}
             >
-              Link Public <ExternalLink className="h-3 w-3" />
+              <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
+              {!sidebarCollapsed && (
+                <span>{authUser ? "Dashboard" : "Beranda"}</span>
+              )}
             </Link>
-          )}
+          </div>
+        </aside>
+      )}
+
+      {/* Actual Mobile Screen Floating Action Pill (zero navbar, full 100dvh canvas) */}
+      {isPhoneScreen && (
+        <div className="fixed bottom-4 left-4 z-50 flex items-center gap-1.5 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 p-1 shadow-xl text-white text-xs">
+          <Link
+            to={
+              authUser
+                ? authUser.role === "admin"
+                  ? "/admin"
+                  : "/customer"
+                : "/"
+            }
+            aria-label="Kembali"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 grid place-items-center transition"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setWishesOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-[#C89B57] text-slate-950 px-3 py-1.5 font-semibold cursor-pointer"
+          >
+            <MessageSquareHeart className="w-3.5 h-3.5" />
+            <span>Ucapan ({wishes.length})</span>
+          </button>
         </div>
-      </div>
-
-      {/* Floating Wishes Button */}
-      <button
-        type="button"
-        onClick={() => setWishesOpen(true)}
-        className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#2C2018] text-white px-4 py-2.5 text-xs font-semibold shadow-xl border border-[#C89B57]/40 hover:bg-[#3d2d22] transition cursor-pointer"
-      >
-        <MessageSquareHeart className="w-4 h-4 text-[#C89B57]" />
-        <span>Ucapan & Doa ({wishes.length})</span>
-      </button>
+      )}
 
       {/* Slide-over Drawer for Wishes */}
       {wishesOpen && (
@@ -830,141 +1045,157 @@ export default function InvitationRenderer({
         </div>
       ) : (
         <div
-          className={`flex-1 w-full min-h-0 overflow-hidden flex items-center justify-center transition-all duration-300 ${isPhoneScreen
-              ? "p-0 bg-black"
-              : "px-4 py-4 sm:px-14 sm:py-5 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_60%,_#03050a_100%)]"
+          ref={stageRef}
+          className={`flex-1 h-full min-w-0 flex transition-all duration-300 ${isPhoneScreen
+              ? "p-0 bg-black overflow-hidden"
+              : `${zoomMode === "actual" ? "overflow-auto" : "overflow-hidden"} px-6 py-4 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_60%,_#03050a_100%)]`
             }`}
         >
           <div
-            className={`relative flex flex-col items-center transition-all duration-300 ${isPhoneScreen
-                ? "w-full h-full"
-                : showPhoneFrame
-                  ? "w-[396px] max-w-full h-full max-h-[820px]"
-                  : showTabletFrame
-                    ? "w-[768px] max-w-full h-full max-h-[880px]"
-                    : "w-full max-w-[1160px] h-full max-h-[760px]"
-              }`}
+            className={`relative shrink-0 ${isPhoneScreen ? "w-full h-full" : "m-auto"}`}
+            style={
+              isPhoneScreen
+                ? undefined
+                : {
+                    width: activeSpec.width * appliedScale,
+                    height: activeSpec.height * appliedScale,
+                  }
+            }
           >
-            {/* Hardware Metallic Chassis / Display Lid */}
             <div
-              className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${isPhoneScreen
-                  ? "w-full h-full bg-black"
-                  : showPhoneFrame
-                    ? "w-full rounded-[52px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.14)_inset]"
-                    : showTabletFrame
-                      ? "w-full rounded-[34px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.12)_inset]"
-                      : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
-                }`}
+              className="relative flex flex-col items-center"
+              style={
+                isPhoneScreen
+                  ? { width: "100%", height: "100%" }
+                  : {
+                      width: activeSpec.width,
+                      height: activeSpec.height,
+                      transform: `scale(${appliedScale})`,
+                      transformOrigin: "top left",
+                    }
+              }
             >
-              {/* iPhone 17 Pro Titanium Side Buttons */}
-              {showPhoneFrame && (
-                <>
-                  <span className="pointer-events-none absolute -left-[3px] top-[106px] w-[3px] h-[24px] rounded-l-sm bg-[#6e6963]" />
-                  <span className="pointer-events-none absolute -left-[3px] top-[148px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
-                  <span className="pointer-events-none absolute -left-[3px] top-[204px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
-                  <span className="pointer-events-none absolute -right-[3px] top-[168px] w-[3px] h-[68px] rounded-r-sm bg-[#6e6963]" />
-                  <span className="pointer-events-none absolute -right-[3px] bottom-[180px] w-[3px] h-[42px] rounded-r-sm bg-[#5b5752]" />
-                </>
-              )}
-
-              {/* iPad Pro M3 Side Buttons */}
-              {showTabletFrame && (
-                <>
-                  <span className="pointer-events-none absolute -top-[3px] right-[44px] h-[3px] w-[34px] rounded-t-sm bg-[#5c6069]" />
-                  <span className="pointer-events-none absolute -right-[3px] top-[64px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
-                  <span className="pointer-events-none absolute -right-[3px] top-[106px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
-                </>
-              )}
-
-              {/* Inner Black Glass Bezel */}
+              {/* Hardware Metallic Chassis / Display Lid */}
               <div
-                className={`relative w-full h-full flex flex-col transition-all duration-300 ${isPhoneScreen
-                    ? "bg-black"
+                className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${isPhoneScreen
+                    ? "w-full h-full bg-black"
                     : showPhoneFrame
-                      ? "rounded-[49px] bg-[#08080a] p-[10px]"
+                      ? "w-full rounded-[52px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.14)_inset]"
                       : showTabletFrame
-                        ? "rounded-[31px] bg-[#08080a] p-[14px] pt-[18px]"
-                        : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
+                        ? "w-full rounded-[34px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-[0_30px_70px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.12)_inset]"
+                        : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-[0_20px_60px_rgba(0,0,0,0.65)]"
                   }`}
               >
-                {/* iPad Pro M3 Center Stage Camera Sensor */}
-                {showTabletFrame && (
-                  <div className="pointer-events-none absolute top-[6px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#1a1c24] ring-1 ring-white/10" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#111827] ring-1 ring-indigo-400/25 flex items-center justify-center">
-                      <span className="w-1 h-1 rounded-full bg-indigo-400/40" />
-                    </span>
-                  </div>
+                {/* iPhone 17 Pro Titanium Side Buttons */}
+                {showPhoneFrame && (
+                  <>
+                    <span className="pointer-events-none absolute -left-[3px] top-[106px] w-[3px] h-[24px] rounded-l-sm bg-[#6e6963]" />
+                    <span className="pointer-events-none absolute -left-[3px] top-[148px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
+                    <span className="pointer-events-none absolute -left-[3px] top-[204px] w-[3px] h-[46px] rounded-l-sm bg-[#6e6963]" />
+                    <span className="pointer-events-none absolute -right-[3px] top-[168px] w-[3px] h-[68px] rounded-r-sm bg-[#6e6963]" />
+                    <span className="pointer-events-none absolute -right-[3px] bottom-[180px] w-[3px] h-[42px] rounded-r-sm bg-[#5b5752]" />
+                  </>
                 )}
 
-                {/* Display Screen Container (keeps iframe continuously mounted across device switches) */}
+                {/* iPad Pro M3 Side Buttons */}
+                {showTabletFrame && (
+                  <>
+                    <span className="pointer-events-none absolute -top-[3px] right-[44px] h-[3px] w-[34px] rounded-t-sm bg-[#5c6069]" />
+                    <span className="pointer-events-none absolute -right-[3px] top-[64px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
+                    <span className="pointer-events-none absolute -right-[3px] top-[106px] w-[3px] h-[34px] rounded-r-sm bg-[#5c6069]" />
+                  </>
+                )}
+
+                {/* Inner Black Glass Bezel */}
                 <div
-                  className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black transition-all duration-300 ${isPhoneScreen
-                      ? ""
+                  className={`relative w-full h-full flex flex-col transition-all duration-300 ${isPhoneScreen
+                      ? "bg-black"
                       : showPhoneFrame
-                        ? "rounded-[40px]"
+                        ? "rounded-[49px] bg-[#08080a] p-[10px]"
                         : showTabletFrame
-                          ? "rounded-[18px]"
-                          : "rounded-[8px]"
+                          ? "rounded-[31px] bg-[#08080a] p-[14px] pt-[18px]"
+                          : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
                     }`}
                 >
-                  {/* iPhone 17 Pro Dynamic Island */}
-                  {showPhoneFrame && (
-                    <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-20 w-[104px] h-[27px] rounded-full bg-black shadow-[0_2px_8px_rgba(0,0,0,0.6)] flex items-center justify-end pr-2.5">
-                      <span className="w-3 h-3 rounded-full bg-[#101422] ring-1 ring-white/10 flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/35" />
+                  {/* iPad Pro M3 Center Stage Camera Sensor */}
+                  {showTabletFrame && (
+                    <div className="pointer-events-none absolute top-[6px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1a1c24] ring-1 ring-white/10" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#111827] ring-1 ring-indigo-400/25 flex items-center justify-center">
+                        <span className="w-1 h-1 rounded-full bg-indigo-400/40" />
                       </span>
                     </div>
                   )}
 
-                  {/* MacBook Pro Display Notch */}
-                  {showLaptopFrame && (
-                    <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[116px] h-[18px] rounded-b-[10px] bg-[#08080a] flex items-center justify-center">
-                      <span className="w-2 h-2 rounded-full bg-[#141926] ring-1 ring-white/10 flex items-center justify-center">
-                        <span className="w-0.5 h-0.5 rounded-full bg-emerald-400/45" />
-                      </span>
-                    </div>
-                  )}
+                  {/* Display Screen Container (keeps iframe continuously mounted across device switches) */}
+                  <div
+                    className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black transition-all duration-300 ${isPhoneScreen
+                        ? ""
+                        : showPhoneFrame
+                          ? "rounded-[40px]"
+                          : showTabletFrame
+                            ? "rounded-[18px]"
+                            : "rounded-[8px]"
+                      }`}
+                  >
+                    {/* iPhone 17 Pro Dynamic Island */}
+                    {showPhoneFrame && (
+                      <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-20 w-[104px] h-[27px] rounded-full bg-black shadow-[0_2px_8px_rgba(0,0,0,0.6)] flex items-center justify-end pr-2.5">
+                        <span className="w-3 h-3 rounded-full bg-[#101422] ring-1 ring-white/10 flex items-center justify-center">
+                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400/35" />
+                        </span>
+                      </div>
+                    )}
 
-                  <iframe
-                    key={publicInvitation?.id || "public"}
-                    ref={iframeRef}
-                    src={targetUrl}
-                    onLoad={handleIframeLoad}
-                    title={invitation.meta.title || activeTheme.title}
-                    className="w-full h-full border-0 block"
-                  />
+                    {/* MacBook Pro Display Notch */}
+                    {showLaptopFrame && (
+                      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[116px] h-[18px] rounded-b-[10px] bg-[#08080a] flex items-center justify-center">
+                        <span className="w-2 h-2 rounded-full bg-[#141926] ring-1 ring-white/10 flex items-center justify-center">
+                          <span className="w-0.5 h-0.5 rounded-full bg-emerald-400/45" />
+                        </span>
+                      </div>
+                    )}
 
-                  {/* iPhone 17 Pro / iPad Pro M3 Home Indicator */}
-                  {(showPhoneFrame || showTabletFrame) && (
-                    <div
-                      className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 shadow-xs ${showPhoneFrame ? "w-[120px]" : "w-[144px]"
-                        }`}
+                    <iframe
+                      key={publicInvitation?.id || "public"}
+                      ref={iframeRef}
+                      src={targetUrl}
+                      onLoad={handleIframeLoad}
+                      title={invitation.meta.title || activeTheme.title}
+                      className="w-full h-full border-0 block"
                     />
+
+                    {/* iPhone 17 Pro / iPad Pro M3 Home Indicator */}
+                    {(showPhoneFrame || showTabletFrame) && (
+                      <div
+                        className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 shadow-xs ${showPhoneFrame ? "w-[120px]" : "w-[144px]"
+                          }`}
+                      />
+                    )}
+                  </div>
+
+                  {/* MacBook Pro Chin Label */}
+                  {showLaptopFrame && (
+                    <p className="text-[9px] font-medium uppercase tracking-[0.26em] text-white/30 text-center pt-1.5 pb-0.5 select-none">
+                      MacBook Pro
+                    </p>
                   )}
                 </div>
-
-                {/* MacBook Pro Chin Label */}
-                {showLaptopFrame && (
-                  <p className="text-[9px] font-medium uppercase tracking-[0.26em] text-white/30 text-center pt-1.5 pb-0.5 select-none">
-                    MacBook Pro
-                  </p>
-                )}
               </div>
+
+              {/* MacBook Pro Aluminum Unibody Hinge & Base */}
+              {showLaptopFrame && (
+                <div className="w-full flex flex-col items-center shrink-0 pointer-events-none select-none">
+                  <div className="w-[84%] h-[5px] bg-gradient-to-r from-[#14151a] via-[#2c2f37] to-[#14151a] rounded-b-xs" />
+                  <div className="relative w-full h-[17px] rounded-b-[14px] rounded-t-[2px] bg-gradient-to-b from-[#9498a1] via-[#5d616a] to-[#32353c] shadow-[0_24px_48px_rgba(0,0,0,0.85)] flex justify-center">
+                    <div className="w-[126px] h-[5px] rounded-b-full bg-gradient-to-b from-[#2b2d34] to-[#4a4e57] shadow-inner" />
+                  </div>
+                  <div className="w-[92%] h-[3px] rounded-b-full bg-black/70 blur-[1px]" />
+                </div>
+              )}
             </div>
 
-            {/* MacBook Pro Aluminum Unibody Hinge & Base */}
-            {showLaptopFrame && (
-              <div className="w-full flex flex-col items-center shrink-0 pointer-events-none select-none">
-                <div className="w-[84%] h-[5px] bg-gradient-to-r from-[#14151a] via-[#2c2f37] to-[#14151a] rounded-b-xs" />
-                <div className="relative w-full h-[17px] rounded-b-[14px] rounded-t-[2px] bg-gradient-to-b from-[#9498a1] via-[#5d616a] to-[#32353c] shadow-[0_24px_48px_rgba(0,0,0,0.85)] flex justify-center">
-                  <div className="w-[126px] h-[5px] rounded-b-full bg-gradient-to-b from-[#2b2d34] to-[#4a4e57] shadow-inner" />
-                </div>
-                <div className="w-[92%] h-[3px] rounded-b-full bg-black/70 blur-[1px]" />
-              </div>
-            )}
-
-            {/* Animated Mouse Scroll Indicator at the right edge */}
+            {/* Animated Mouse Scroll Indicator at the right edge (unscaled & crisp) */}
             <button
               type="button"
               onClick={handleScrollDown}
@@ -973,14 +1204,7 @@ export default function InvitationRenderer({
               className={`absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 px-2 py-3 rounded-full bg-slate-900/75 hover:bg-slate-900/95 backdrop-blur-md border border-white/15 hover:border-[#C89B57]/60 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 cursor-pointer ${isAtBottom
                   ? "opacity-0 pointer-events-none scale-95"
                   : "opacity-100 scale-100"
-                } ${isPhoneScreen
-                  ? "right-3"
-                  : showPhoneFrame
-                    ? "left-full ml-4"
-                    : showTabletFrame
-                      ? "right-4 lg:right-auto lg:left-full lg:ml-4"
-                      : "left-[calc(96.5%+12px)]"
-                }`}
+                } ${isPhoneScreen ? "right-3" : "left-full ml-4"}`}
             >
               <span className="w-[18px] h-[28px] rounded-full border-[1.75px] border-[#C89B57] flex justify-center pt-1.5">
                 <span className="w-[3px] h-[6px] rounded-full bg-[#C89B57] animate-mouse-wheel" />

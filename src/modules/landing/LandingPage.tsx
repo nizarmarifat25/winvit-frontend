@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import AOS from "aos"
 import "aos/dist/aos.css"
@@ -39,6 +39,8 @@ import {
   MessageSquareHeart,
   Music,
   Palette,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Send,
   ShieldCheck,
@@ -53,6 +55,30 @@ import {
 import { getAuthUser, clearTokens, type AuthUser } from "@/lib/api"
 
 type ModalDevice = "mobile" | "tablet" | "desktop"
+
+const MODAL_FRAME_SPECS: Record<
+  ModalDevice,
+  { width: number; height: number; label: string; screenLabel: string }
+> = {
+  mobile: {
+    width: 416,
+    height: 866,
+    label: "iPhone 17 Pro",
+    screenLabel: "390 × 840",
+  },
+  tablet: {
+    width: 802,
+    height: 1060,
+    label: "iPad Pro M3",
+    screenLabel: "768 × 1024",
+  },
+  desktop: {
+    width: 1320,
+    height: 830,
+    label: "MacBook Pro",
+    screenLabel: "1206 × 756",
+  },
+}
 
 const ALL_INCLUSIVE_PERKS = [
   "Masa aktif undangan selamanya (tanpa biaya bulanan)",
@@ -118,9 +144,25 @@ export default function LandingPage() {
   // Device Preview Modal
   const [previewTheme, setPreviewTheme] = useState<ThemeItem | null>(null)
   const [modalDevice, setModalDevice] = useState<ModalDevice>("mobile")
+  const [modalSidebarCollapsed, setModalSidebarCollapsed] = useState(false)
+  const [modalZoomMode, setModalZoomMode] = useState<"fit" | "actual">("fit")
+  const modalStageRef = useRef<HTMLDivElement>(null)
+  const [modalStageSize, setModalStageSize] = useState({ width: 1000, height: 800 })
   const [windowWidth, setWindowWidth] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth : 1280
   )
+
+  useEffect(() => {
+    const el = modalStageRef.current
+    if (!el || !previewTheme || windowWidth < 768) return
+    const update = () => {
+      setModalStageSize({ width: el.clientWidth, height: el.clientHeight })
+    }
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [previewTheme, windowWidth, modalSidebarCollapsed])
 
   // Toast
   const [toastMsg, setToastMsg] = useState<string | null>(null)
@@ -1529,168 +1571,350 @@ export default function LandingPage() {
       </footer>
 
       {/* ==================== MODAL APPLE DEVICE PREVIEW ==================== */}
-      {previewTheme && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col">
-          {/* Top Bar */}
-          <div className="shrink-0 bg-slate-900/95 border-b border-white/10 px-4 sm:px-6 h-14 flex items-center justify-between gap-2 text-white">
-            <div className="min-w-0">
-              <h3 className="font-serif-display font-bold text-sm sm:text-base truncate">
-                {previewTheme.title}
-              </h3>
-              <p className="text-[11px] text-slate-400 truncate">
-                {previewTheme.categoryName} · Tamu: {appliedGuest}
-              </p>
-            </div>
+      {previewTheme && (() => {
+        const isModalPhone = windowWidth < 768
+        const spec = MODAL_FRAME_SPECS[effectiveModalDevice]
+        const modalAvailW = Math.max(240, modalStageSize.width - 48)
+        const modalAvailH = Math.max(240, modalStageSize.height - 32)
+        const modalFitScale = Math.min(
+          1,
+          modalAvailW / spec.width,
+          modalAvailH / spec.height
+        )
+        const modalScale = modalZoomMode === "actual" ? 1 : modalFitScale
+        const modalFitPct = Math.round(modalFitScale * 100)
 
-            {windowWidth >= 768 && (
-              <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setModalDevice("mobile")}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition cursor-pointer ${effectiveModalDevice === "mobile"
-                      ? "bg-[#C89B57] text-slate-950"
-                      : "text-slate-300 hover:text-white"
-                    }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" /> iPhone 17 Pro
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setModalDevice("tablet")}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition cursor-pointer ${effectiveModalDevice === "tablet"
-                      ? "bg-[#C89B57] text-slate-950"
-                      : "text-slate-300 hover:text-white"
-                    }`}
-                >
-                  <Tablet className="w-3.5 h-3.5" /> iPad Pro M3
-                </button>
-                {windowWidth >= 1024 && (
-                  <button
-                    type="button"
-                    onClick={() => setModalDevice("desktop")}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition cursor-pointer ${effectiveModalDevice === "desktop"
-                        ? "bg-[#C89B57] text-slate-950"
-                        : "text-slate-300 hover:text-white"
+        return (
+          <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex">
+            {/* Left Sidebar Controls (Tablet & Desktop — zero top navbar stealing height) */}
+            {!isModalPhone && (
+              <aside
+                className={`relative z-40 h-full shrink-0 bg-slate-900/95 border-r border-white/10 text-white flex flex-col justify-between transition-all duration-300 ${modalSidebarCollapsed ? "w-16 px-2 py-4" : "w-60 px-4 py-5"
+                  }`}
+              >
+                <div className="space-y-5 min-w-0">
+                  <div
+                    className={`flex items-center ${modalSidebarCollapsed
+                        ? "justify-center"
+                        : "justify-between gap-2"
                       }`}
                   >
-                    <Laptop className="w-3.5 h-3.5" /> MacBook Pro
+                    {!modalSidebarCollapsed && (
+                      <div className="min-w-0">
+                        <h3 className="font-serif-display font-bold text-base truncate text-white">
+                          {previewTheme.title}
+                        </h3>
+                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                          {previewTheme.categoryName}
+                        </p>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setModalSidebarCollapsed((p) => !p)}
+                      title={
+                        modalSidebarCollapsed ? "Buka sidebar" : "Lipat sidebar"
+                      }
+                      aria-label={
+                        modalSidebarCollapsed ? "Buka sidebar" : "Lipat sidebar"
+                      }
+                      className="w-8 h-8 rounded-lg bg-white/8 hover:bg-white/15 text-slate-300 hover:text-white grid place-items-center transition shrink-0 cursor-pointer"
+                    >
+                      {modalSidebarCollapsed ? (
+                        <PanelLeftOpen className="w-4 h-4" />
+                      ) : (
+                        <PanelLeftClose className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {!modalSidebarCollapsed && (
+                    <div className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-[11px] text-slate-300">
+                      <span className="text-slate-400 block text-[10px] uppercase tracking-wider">
+                        Simulasi Tamu
+                      </span>
+                      <span className="font-semibold text-[#E5C27A] truncate block mt-0.5">
+                        {appliedGuest}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Vertical Device Switcher */}
+                  <div className="space-y-1.5">
+                    {!modalSidebarCollapsed && (
+                      <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        Perangkat
+                      </p>
+                    )}
+                    <div className="space-y-1">
+                      {(
+                        [
+                          { id: "mobile" as const, Icon: Smartphone },
+                          { id: "tablet" as const, Icon: Tablet },
+                          ...(windowWidth >= 1024
+                            ? [{ id: "desktop" as const, Icon: Laptop }]
+                            : []),
+                        ] as const
+                      ).map(({ id, Icon }) => {
+                        const active = effectiveModalDevice === id
+                        const itemSpec = MODAL_FRAME_SPECS[id]
+                        return (
+                          <button
+                            key={id}
+                            type="button"
+                            title={`${itemSpec.label} (${itemSpec.screenLabel})`}
+                            onClick={() => setModalDevice(id)}
+                            className={`w-full flex items-center ${modalSidebarCollapsed
+                                ? "justify-center h-10 rounded-xl"
+                                : "justify-between px-3 py-2.5 rounded-xl"
+                              } text-xs font-semibold transition cursor-pointer ${active
+                                ? "bg-[#C89B57] text-slate-950 shadow-sm"
+                                : "text-slate-300 hover:text-white hover:bg-white/10"
+                              }`}
+                          >
+                            <span className="inline-flex items-center gap-2 min-w-0">
+                              <Icon className="w-4 h-4 shrink-0" />
+                              {!modalSidebarCollapsed && (
+                                <span className="truncate">
+                                  {itemSpec.label}
+                                </span>
+                              )}
+                            </span>
+                            {!modalSidebarCollapsed && (
+                              <span
+                                className={`text-[10px] font-mono ${active
+                                    ? "text-slate-900/75"
+                                    : "text-slate-500"
+                                  }`}
+                              >
+                                {itemSpec.screenLabel}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Scale Mode Toggle */}
+                  {!modalSidebarCollapsed && (
+                    <div className="space-y-1.5">
+                      <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        Skala Frame
+                      </p>
+                      <div className="grid grid-cols-2 gap-1 rounded-xl bg-white/8 p-1 border border-white/10">
+                        <button
+                          type="button"
+                          onClick={() => setModalZoomMode("fit")}
+                          className={`rounded-lg py-1.5 text-[11px] font-semibold transition cursor-pointer ${modalZoomMode === "fit"
+                              ? "bg-white text-slate-950 shadow-xs"
+                              : "text-slate-300 hover:text-white"
+                            }`}
+                        >
+                          Fit ({modalFitPct}%)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setModalZoomMode("actual")}
+                          className={`rounded-lg py-1.5 text-[11px] font-semibold transition cursor-pointer ${modalZoomMode === "actual"
+                              ? "bg-white text-slate-950 shadow-xs"
+                              : "text-slate-300 hover:text-white"
+                            }`}
+                        >
+                          100% Asli
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 pt-4 border-t border-white/10">
+                  {!modalSidebarCollapsed ? (
+                    <Button
+                      variant="gold"
+                      size="sm"
+                      className="w-full rounded-xl"
+                      onClick={() => {
+                        const chosen = previewTheme
+                        setPreviewTheme(null)
+                        handleOpenOrder(chosen)
+                      }}
+                    >
+                      Pesan Tema Ini
+                    </Button>
+                  ) : (
+                    <button
+                      type="button"
+                      title="Pesan Tema Ini"
+                      onClick={() => {
+                        const chosen = previewTheme
+                        setPreviewTheme(null)
+                        handleOpenOrder(chosen)
+                      }}
+                      className="w-full h-10 rounded-xl bg-[#C89B57] text-slate-950 grid place-items-center cursor-pointer"
+                    >
+                      <Heart className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    aria-label="Tutup preview"
+                    title="Tutup preview"
+                    onClick={() => setPreviewTheme(null)}
+                    className={`w-full flex items-center ${modalSidebarCollapsed
+                        ? "justify-center h-10 rounded-xl"
+                        : "justify-center gap-1.5 py-2 rounded-xl"
+                      } bg-white/10 hover:bg-red-500 text-white text-xs font-semibold transition cursor-pointer`}
+                  >
+                    <X className="w-4 h-4" />
+                    {!modalSidebarCollapsed && <span>Tutup Preview</span>}
                   </button>
-                )}
+                </div>
+              </aside>
+            )}
+
+            {/* Mobile Screen Floating Close & CTA Pill (full 100dvh canvas) */}
+            {isModalPhone && (
+              <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 p-1.5 shadow-xl text-white text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const chosen = previewTheme
+                    setPreviewTheme(null)
+                    handleOpenOrder(chosen)
+                  }}
+                  className="rounded-full bg-[#C89B57] text-slate-950 px-3.5 py-1.5 font-semibold cursor-pointer"
+                >
+                  Pesan Tema Ini
+                </button>
+                <button
+                  type="button"
+                  aria-label="Tutup preview"
+                  onClick={() => setPreviewTheme(null)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-red-500 text-white grid place-items-center cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             )}
 
-            <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="gold"
-                size="sm"
-                onClick={() => {
-                  const chosen = previewTheme
-                  setPreviewTheme(null)
-                  handleOpenOrder(chosen)
-                }}
-              >
-                Pesan Tema Ini
-              </Button>
-              <button
-                type="button"
-                aria-label="Tutup preview"
-                onClick={() => setPreviewTheme(null)}
-                className="w-8 h-8 rounded-full bg-white/10 text-white grid place-items-center hover:bg-red-500 transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Hardware Stage */}
-          <div
-            className={`flex-1 min-h-0 flex items-center justify-center overflow-hidden ${windowWidth < 768
-                ? "p-0"
-                : "p-4 sm:p-6 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_65%,_#03050a_100%)]"
-              }`}
-          >
+            {/* Hardware Stage (proportional scaling preserves real mobile 390x840 height) */}
             <div
-              className={`relative flex flex-col items-center transition-all duration-300 animate-modal-pop ${windowWidth < 768
-                  ? "w-full h-full"
-                  : effectiveModalDevice === "mobile"
-                    ? "w-[396px] max-w-full h-full max-h-[820px]"
-                    : effectiveModalDevice === "tablet"
-                      ? "w-[768px] max-w-full h-full max-h-[860px]"
-                      : "w-full max-w-[1140px] h-full max-h-[750px]"
+              ref={modalStageRef}
+              className={`flex-1 h-full min-w-0 flex ${isModalPhone
+                  ? "p-0 overflow-hidden bg-black"
+                  : `${modalZoomMode === "actual" ? "overflow-auto" : "overflow-hidden"} p-4 bg-[radial-gradient(ellipse_at_top,_#1e293b_0%,_#090d16_65%,_#03050a_100%)]`
                 }`}
             >
               <div
-                className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${windowWidth < 768
-                    ? "w-full h-full bg-black"
-                    : effectiveModalDevice === "mobile"
-                      ? "w-full rounded-[50px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-2xl"
-                      : effectiveModalDevice === "tablet"
-                        ? "w-full rounded-[32px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-2xl"
-                        : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-2xl"
-                  }`}
+                className={`relative shrink-0 animate-modal-pop ${isModalPhone ? "w-full h-full" : "m-auto"}`}
+                style={
+                  isModalPhone
+                    ? undefined
+                    : {
+                        width: spec.width * modalScale,
+                        height: spec.height * modalScale,
+                      }
+                }
               >
                 <div
-                  className={`relative w-full h-full flex flex-col ${windowWidth < 768
-                      ? "bg-black"
-                      : effectiveModalDevice === "mobile"
-                        ? "rounded-[47px] bg-[#08080a] p-[10px]"
-                        : effectiveModalDevice === "tablet"
-                          ? "rounded-[29px] bg-[#08080a] p-[14px]"
-                          : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
-                    }`}
+                  className="relative flex flex-col items-center"
+                  style={
+                    isModalPhone
+                      ? { width: "100%", height: "100%" }
+                      : {
+                          width: spec.width,
+                          height: spec.height,
+                          transform: `scale(${modalScale})`,
+                          transformOrigin: "top left",
+                        }
+                  }
                 >
                   <div
-                    className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black ${windowWidth < 768
-                        ? ""
+                    className={`relative flex-1 min-h-0 flex flex-col transition-all duration-300 ${isModalPhone
+                        ? "w-full h-full bg-black"
                         : effectiveModalDevice === "mobile"
-                          ? "rounded-[38px]"
+                          ? "w-full rounded-[50px] p-[3px] bg-gradient-to-b from-[#635e59] via-[#2b2927] to-[#4b4743] shadow-2xl"
                           : effectiveModalDevice === "tablet"
-                            ? "rounded-[18px]"
-                            : "rounded-[8px]"
+                            ? "w-full rounded-[32px] p-[3px] bg-gradient-to-b from-[#51555e] via-[#22242a] to-[#3a3d45] shadow-2xl"
+                            : "w-[93%] rounded-t-[20px] p-[2.5px] pb-0 bg-gradient-to-b from-[#626670] via-[#2c2f36] to-[#1c1e24] shadow-2xl"
                       }`}
                   >
-                    {windowWidth >= 768 && effectiveModalDevice === "mobile" && (
-                      <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-20 w-[100px] h-[25px] rounded-full bg-black" />
-                    )}
-                    {windowWidth >= 768 && effectiveModalDevice === "desktop" && (
-                      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[110px] h-[16px] rounded-b-[10px] bg-[#08080a]" />
-                    )}
-                    <iframe
-                      src={`${previewTheme.path}?to=${encodeURIComponent(appliedGuest)}`}
-                      title={previewTheme.title}
-                      onLoad={(e) => {
-                        const doc = e.currentTarget.contentDocument
-                        if (doc && !doc.getElementById("wv-hide-scrollbar")) {
-                          const styleEl = doc.createElement("style")
-                          styleEl.id = "wv-hide-scrollbar"
-                          styleEl.textContent =
-                            "html,body,*{-ms-overflow-style:none!important;scrollbar-width:none!important;}html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}"
-                          doc.head?.appendChild(styleEl)
-                        }
-                      }}
-                      className="w-full h-full border-0 block"
-                    />
+                    <div
+                      className={`relative w-full h-full flex flex-col ${isModalPhone
+                          ? "bg-black"
+                          : effectiveModalDevice === "mobile"
+                            ? "rounded-[47px] bg-[#08080a] p-[10px]"
+                            : effectiveModalDevice === "tablet"
+                              ? "rounded-[29px] bg-[#08080a] p-[14px]"
+                              : "rounded-t-[18px] bg-[#08080a] p-[10px] pb-[6px]"
+                        }`}
+                    >
+                      <div
+                        className={`relative w-full flex-1 min-h-0 overflow-hidden bg-black ${isModalPhone
+                            ? ""
+                            : effectiveModalDevice === "mobile"
+                              ? "rounded-[38px]"
+                              : effectiveModalDevice === "tablet"
+                                ? "rounded-[18px]"
+                                : "rounded-[8px]"
+                          }`}
+                      >
+                        {!isModalPhone && effectiveModalDevice === "mobile" && (
+                          <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-20 w-[100px] h-[25px] rounded-full bg-black" />
+                        )}
+                        {!isModalPhone && effectiveModalDevice === "desktop" && (
+                          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[110px] h-[16px] rounded-b-[10px] bg-[#08080a]" />
+                        )}
+                        <iframe
+                          src={`${previewTheme.path}?to=${encodeURIComponent(appliedGuest)}`}
+                          title={previewTheme.title}
+                          onLoad={(e) => {
+                            const doc = e.currentTarget.contentDocument
+                            if (doc && !doc.getElementById("wv-hide-scrollbar")) {
+                              const styleEl = doc.createElement("style")
+                              styleEl.id = "wv-hide-scrollbar"
+                              styleEl.textContent =
+                                "html,body,*{-ms-overflow-style:none!important;scrollbar-width:none!important;}html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}"
+                              doc.head?.appendChild(styleEl)
+                            }
+                          }}
+                          className="w-full h-full border-0 block"
+                        />
+                        {!isModalPhone &&
+                          (effectiveModalDevice === "mobile" ||
+                            effectiveModalDevice === "tablet") && (
+                            <div
+                              className={`pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-20 h-[4px] rounded-full bg-white/70 ${effectiveModalDevice === "mobile"
+                                  ? "w-[120px]"
+                                  : "w-[144px]"
+                                }`}
+                            />
+                          )}
+                      </div>
+                      {!isModalPhone && effectiveModalDevice === "desktop" && (
+                        <p className="text-[9px] font-medium uppercase tracking-[0.24em] text-white/30 text-center pt-1.5 pb-0.5 select-none">
+                          MacBook Pro
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {windowWidth >= 768 && effectiveModalDevice === "desktop" && (
-                    <p className="text-[9px] font-medium uppercase tracking-[0.24em] text-white/30 text-center pt-1.5 pb-0.5 select-none">
-                      MacBook Pro
-                    </p>
+
+                  {!isModalPhone && effectiveModalDevice === "desktop" && (
+                    <div className="w-full flex flex-col items-center shrink-0 pointer-events-none">
+                      <div className="w-[84%] h-[5px] bg-gradient-to-r from-[#14151a] via-[#2c2f37] to-[#14151a]" />
+                      <div className="relative w-full h-[16px] rounded-b-[14px] rounded-t-[2px] bg-gradient-to-b from-[#9498a1] via-[#5d616a] to-[#32353c] shadow-2xl flex justify-center">
+                        <div className="w-[120px] h-[5px] rounded-b-full bg-gradient-to-b from-[#2b2d34] to-[#4a4e57]" />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
-
-              {windowWidth >= 768 && effectiveModalDevice === "desktop" && (
-                <div className="w-full flex flex-col items-center shrink-0 pointer-events-none">
-                  <div className="w-[84%] h-[5px] bg-gradient-to-r from-[#14151a] via-[#2c2f37] to-[#14151a]" />
-                  <div className="relative w-full h-[16px] rounded-b-[14px] rounded-t-[2px] bg-gradient-to-b from-[#9498a1] via-[#5d616a] to-[#32353c] shadow-2xl flex justify-center">
-                    <div className="w-[120px] h-[5px] rounded-b-full bg-gradient-to-b from-[#2b2d34] to-[#4a4e57]" />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
 
       {/* Toast */}
       {toastMsg && (
