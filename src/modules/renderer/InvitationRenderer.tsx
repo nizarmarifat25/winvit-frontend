@@ -222,14 +222,14 @@ export default function InvitationRenderer({
             groom: {
               ...DEFAULT_INVITATION.couple.groom,
               fullName: inv.groom_name || "",
-              nickname: inv.groom_name?.split(" ")[0] || "",
+              nickname: inv.groom_nickname || inv.groom_name?.split(" ")[0] || "",
               info: inv.groom_info || "",
               photo: inv.groom_photo_url || "",
             },
             bride: {
               ...DEFAULT_INVITATION.couple.bride,
               fullName: inv.bride_name || "",
-              nickname: inv.bride_name?.split(" ")[0] || "",
+              nickname: inv.bride_nickname || inv.bride_name?.split(" ")[0] || "",
               info: inv.bride_info || "",
               photo: inv.bride_photo_url || "",
             },
@@ -359,14 +359,20 @@ export default function InvitationRenderer({
                   groom: {
                     ...DEFAULT_INVITATION.couple.groom,
                     fullName: ownerInv.groom_name || "",
-                    nickname: ownerInv.groom_name?.split(" ")[0] || "",
+                    nickname:
+                      ownerInv.groom_nickname ||
+                      ownerInv.groom_name?.split(" ")[0] ||
+                      "",
                     info: ownerInv.groom_info || "",
                     photo: ownerInv.groom_photo_url || "",
                   },
                   bride: {
                     ...DEFAULT_INVITATION.couple.bride,
                     fullName: ownerInv.bride_name || "",
-                    nickname: ownerInv.bride_name?.split(" ")[0] || "",
+                    nickname:
+                      ownerInv.bride_nickname ||
+                      ownerInv.bride_name?.split(" ")[0] ||
+                      "",
                     info: ownerInv.bride_info || "",
                     photo: ownerInv.bride_photo_url || "",
                   },

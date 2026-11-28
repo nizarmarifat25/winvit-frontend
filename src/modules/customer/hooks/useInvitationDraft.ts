@@ -8,6 +8,7 @@ import type {
   GiftBankAccount,
 } from "@/types/winvit"
 import { DEFAULT_INVITATION } from "@/data/themes"
+import { buildCoupleSlug } from "@/lib/slug"
 import {
   getAccessToken,
   uploadMediaFile,
@@ -154,11 +155,17 @@ export function useInvitationDraft(
 
         const akadEv = mappedEvents[0]
         const resepsiEv = mappedEvents[1]
+        const loadedBrideNickname =
+          invItem.bride_nickname || invItem.bride_name?.split(" ")[0] || ""
+        const loadedGroomNickname =
+          invItem.groom_nickname || invItem.groom_name?.split(" ")[0] || ""
 
         const updated: InvitationData = {
           ...DEFAULT_INVITATION,
           id: invId,
-          slug: invItem.slug || "",
+          slug:
+            invItem.slug ||
+            buildCoupleSlug(loadedGroomNickname, loadedBrideNickname),
           themeId: invItem.theme_id || DEFAULT_INVITATION.themeId,
           quotePreset: invItem.quote_preset || "islam-ar-rum-21",
           isPublished: Boolean(invItem.is_published),
@@ -175,14 +182,14 @@ export function useInvitationDraft(
             bride: {
               ...DEFAULT_INVITATION.couple.bride,
               fullName: invItem.bride_name || "",
-              nickname: invItem.bride_name?.split(" ")[0] || "",
+              nickname: loadedBrideNickname,
               info: invItem.bride_info || "",
               photo: invItem.bride_photo_url || "",
             },
             groom: {
               ...DEFAULT_INVITATION.couple.groom,
               fullName: invItem.groom_name || "",
-              nickname: invItem.groom_name?.split(" ")[0] || "",
+              nickname: loadedGroomNickname,
               info: invItem.groom_info || "",
               photo: invItem.groom_photo_url || "",
             },
@@ -376,8 +383,14 @@ export function useInvitationDraft(
     const list = draft.eventList || []
     const akadItem = list[0]
     const resepsiItem = list[1]
+    const groomNicknameVal = draft.couple.groom.nickname.trim()
+    const brideNicknameVal = draft.couple.bride.nickname.trim()
+    const derivedSlug =
+      buildCoupleSlug(groomNicknameVal, brideNicknameVal) || draft.slug
+
     const syncedDraft: InvitationData = {
       ...draft,
+      slug: derivedSlug,
       events: {
         ...draft.events,
         akad: akadItem
@@ -452,14 +465,16 @@ export function useInvitationDraft(
             .join(" & ")
 
         // 1. Update Main Invitation (Couple + Cover + Music + Slug)
-        await updateInvitationApi(invId, {
+        const updatedInvRes = await updateInvitationApi(invId, {
           slug: syncedDraft.slug,
           groom_name:
             syncedDraft.couple.groom.fullName || syncedDraft.couple.groom.nickname,
+          groom_nickname: syncedDraft.couple.groom.nickname.trim(),
           groom_info: groomInfo,
           groom_photo_url: syncedDraft.couple.groom.photo || "",
           bride_name:
             syncedDraft.couple.bride.fullName || syncedDraft.couple.bride.nickname,
+          bride_nickname: syncedDraft.couple.bride.nickname.trim(),
           bride_info: brideInfo,
           bride_photo_url: syncedDraft.couple.bride.photo || "",
           cover_photo_url: syncedDraft.meta.coverPhoto || "",
@@ -469,6 +484,9 @@ export function useInvitationDraft(
             syncedDraft.isPublished || syncedDraft.status === "PUBLISHED"
           ),
         })
+        if (updatedInvRes?.slug) {
+          syncedDraft.slug = updatedInvRes.slug
+        }
 
         // 2. Sync Events (Create / Update / Delete)
         const currentEventIds = new Set(
@@ -675,14 +693,22 @@ export function useInvitationDraft(
           .filter(Boolean)
           .join(" & ")
 
+      const groomNickname = draft.couple.groom.nickname.trim()
+      const brideNickname = draft.couple.bride.nickname.trim()
+      const resolvedSlug =
+        buildCoupleSlug(groomNickname, brideNickname) || draft.slug
+
       try {
+        let finalSlug = resolvedSlug
         if (token && invId) {
-          await updateInvitationApi(invId, {
-            slug: draft.slug,
+          const updatedInvRes = await updateInvitationApi(invId, {
+            slug: resolvedSlug,
             groom_name: draft.couple.groom.fullName || draft.couple.groom.nickname,
+            groom_nickname: groomNickname,
             groom_info: groomInfo,
             groom_photo_url: draft.couple.groom.photo || "",
             bride_name: draft.couple.bride.fullName || draft.couple.bride.nickname,
+            bride_nickname: brideNickname,
             bride_info: brideInfo,
             bride_photo_url: draft.couple.bride.photo || "",
             cover_photo_url: draft.meta.coverPhoto || "",
@@ -690,15 +716,20 @@ export function useInvitationDraft(
             quote_preset: draft.quotePreset || "islam-ar-rum-21",
             is_published: nextPublished,
           })
+          if (updatedInvRes?.slug) {
+            finalSlug = updatedInvRes.slug
+          }
         }
         const nextStatus = nextPublished ? "PUBLISHED" : "ACTIVE_DRAFT"
         setDraft((prev) => ({
           ...prev,
+          slug: finalSlug,
           status: nextStatus,
           isPublished: nextPublished,
         }))
         setInvitation((prev) => ({
           ...prev,
+          slug: finalSlug,
           status: nextStatus,
           isPublished: nextPublished,
         }))

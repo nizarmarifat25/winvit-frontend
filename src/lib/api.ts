@@ -291,9 +291,11 @@ export async function uploadMediaFile(file: File): Promise<string> {
 export interface BackendInvitationPayload {
   slug: string
   groom_name: string
+  groom_nickname: string
   groom_info: string
   groom_photo_url: string
   bride_name: string
+  bride_nickname: string
   bride_info: string
   bride_photo_url: string
   cover_photo_url: string

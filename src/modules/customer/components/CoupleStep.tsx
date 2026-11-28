@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Camera, ImagePlus, Music, Loader2, Quote, Check } from "lucide-react"
 import { QUOTE_CATEGORIES, QUOTE_PRESETS, getQuotePreset } from "@/data/quotes"
+import { buildCoupleSlug } from "@/lib/slug"
 
 export default function CoupleStep({
   detailTab,
@@ -25,17 +26,21 @@ export default function CoupleStep({
             Slug URL Undangan (/u/slug)
           </label>
           <Input
-            disabled={isLocked}
-            value={draft.slug}
-            placeholder="contoh: ani-budi"
-            className="h-11 sm:h-10 rounded-xl"
-            onChange={(e) =>
-              setDraft((prev) => ({
-                ...prev,
-                slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
-              }))
+            disabled
+            readOnly
+            value={
+              draft.slug ||
+              buildCoupleSlug(
+                draft.couple.groom.nickname,
+                draft.couple.bride.nickname
+              )
             }
+            placeholder="otomatis dari nama panggilan pria & wanita"
+            className="h-11 sm:h-10 rounded-xl bg-[#FAF6F1] text-[#6B5B4E] cursor-not-allowed"
           />
+          <p className="text-[11px] text-[#8A796B] mt-1">
+            Terisi otomatis dari gabungan nama panggilan mempelai pria dan wanita.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -44,7 +49,7 @@ export default function CoupleStep({
             <h4 className="font-semibold text-sm">Mempelai Pria</h4>
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Nama Mempelai Pria
+                Nama Lengkap Mempelai Pria
               </label>
               <Input
                 disabled={isLocked}
@@ -59,11 +64,36 @@ export default function CoupleStep({
                       groom: {
                         ...prev.couple.groom,
                         fullName: e.target.value,
-                        nickname: e.target.value.split(" ")[0] || e.target.value,
                       },
                     },
                   }))
                 }
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-[#6B5B4E] mb-1">
+                Nama Panggilan Pria
+              </label>
+              <Input
+                disabled={isLocked}
+                placeholder="Contoh: Budi"
+                className="h-11 sm:h-10 bg-white rounded-xl"
+                value={draft.couple.groom.nickname}
+                onChange={(e) => {
+                  const nextNick = e.target.value
+                  setDraft((prev) => ({
+                    ...prev,
+                    slug: buildCoupleSlug(nextNick, prev.couple.bride.nickname),
+                    couple: {
+                      ...prev.couple,
+                      groom: {
+                        ...prev.couple.groom,
+                        nickname: nextNick,
+                      },
+                    },
+                  }))
+                }}
               />
             </div>
 
@@ -143,7 +173,7 @@ export default function CoupleStep({
             <h4 className="font-semibold text-sm">Mempelai Wanita</h4>
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Nama Mempelai Wanita
+                Nama Lengkap Mempelai Wanita
               </label>
               <Input
                 disabled={isLocked}
@@ -158,11 +188,36 @@ export default function CoupleStep({
                       bride: {
                         ...prev.couple.bride,
                         fullName: e.target.value,
-                        nickname: e.target.value.split(" ")[0] || e.target.value,
                       },
                     },
                   }))
                 }
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-[#6B5B4E] mb-1">
+                Nama Panggilan Wanita
+              </label>
+              <Input
+                disabled={isLocked}
+                placeholder="Contoh: Ani"
+                className="h-11 sm:h-10 bg-white rounded-xl"
+                value={draft.couple.bride.nickname}
+                onChange={(e) => {
+                  const nextNick = e.target.value
+                  setDraft((prev) => ({
+                    ...prev,
+                    slug: buildCoupleSlug(prev.couple.groom.nickname, nextNick),
+                    couple: {
+                      ...prev.couple,
+                      bride: {
+                        ...prev.couple.bride,
+                        nickname: nextNick,
+                      },
+                    },
+                  }))
+                }}
               />
             </div>
 
