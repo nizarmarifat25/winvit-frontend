@@ -100,10 +100,6 @@ export default function InvitationRenderer({
   const [wishesOpen, setWishesOpen] = useState(false)
   const [wishName, setWishName] = useState(searchParams.get("to") || "")
   const [wishMessage, setWishMessage] = useState("")
-  const [wishStatus, setWishStatus] = useState<"attending" | "not_attending">(
-    "attending"
-  )
-  const [wishPax, setWishPax] = useState(1)
   const [submittingWish, setSubmittingWish] = useState(false)
   const [wishError, setWishError] = useState("")
 
@@ -368,7 +364,7 @@ export default function InvitationRenderer({
       })
 
     getWishesBySlugApi(slug)
-      .then((res) => {
+      .then((res: any) => {
         if (!isMounted) return
         const list = Array.isArray(res)
           ? res
@@ -492,28 +488,18 @@ export default function InvitationRenderer({
     setSubmittingWish(true)
     setWishError("")
 
-    const guestSlug = wishName
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-
     try {
       const created = await createWishApi({
         slug: activeSlug,
         guest_name: wishName.trim(),
         message: wishMessage.trim(),
-        guest_slug: guestSlug,
-        status: wishStatus,
-        pax: Number(wishPax) || 1,
       })
       setWishes((prev) => [
         created || {
           id: `wish-${Date.now()}`,
           guest_name: wishName.trim(),
           message: wishMessage.trim(),
-          status: wishStatus,
-          pax: Number(wishPax) || 1,
+          created_at: new Date().toISOString(),
         },
         ...prev,
       ])
@@ -682,25 +668,25 @@ export default function InvitationRenderer({
         </div>
       </div>
 
-      {/* Floating Wishes & RSVP Button */}
+      {/* Floating Wishes Button */}
       <button
         type="button"
         onClick={() => setWishesOpen(true)}
         className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#2C2018] text-white px-4 py-2.5 text-xs font-semibold shadow-xl border border-[#C89B57]/40 hover:bg-[#3d2d22] transition cursor-pointer"
       >
         <MessageSquareHeart className="w-4 h-4 text-[#C89B57]" />
-        <span>Ucapan & RSVP ({wishes.length})</span>
+        <span>Ucapan & Doa ({wishes.length})</span>
       </button>
 
-      {/* Slide-over Drawer for Wishes & RSVP */}
+      {/* Slide-over Drawer for Wishes */}
       {wishesOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end">
           <div className="w-full max-w-md bg-[#FAF6F1] text-[#2C2018] h-full flex flex-col shadow-2xl">
             <div className="p-4 bg-white border-b border-[#E5DDD5] flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-sm">Ucapan Doa & RSVP</h3>
+                <h3 className="font-bold text-sm">Ucapan & Doa</h3>
                 <p className="text-[11px] text-[#6B5B4E]">
-                  Kirimkan doa restu & konfirmasi kehadiran Anda
+                  Kirimkan doa restu & ucapan terbaik Anda
                 </p>
               </div>
               <button
@@ -731,39 +717,6 @@ export default function InvitationRenderer({
                     }}
                     className="h-9 text-xs rounded-xl"
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[11px] font-medium text-[#6B5B4E] mb-1">
-                      Kehadiran
-                    </label>
-                    <select
-                      value={wishStatus}
-                      onChange={(e) =>
-                        setWishStatus(
-                          e.target.value as "attending" | "not_attending"
-                        )
-                      }
-                      className="flex h-9 w-full rounded-xl border border-[#E5DDD5] bg-white px-2.5 text-xs"
-                    >
-                      <option value="attending">Hadir</option>
-                      <option value="not_attending">Tidak Hadir</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-[#6B5B4E] mb-1">
-                      Jumlah Tamu (Pax)
-                    </label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={wishPax}
-                      onChange={(e) => setWishPax(Number(e.target.value) || 1)}
-                      className="h-9 text-xs rounded-xl"
-                    />
-                  </div>
                 </div>
 
                 <div>
@@ -817,20 +770,19 @@ export default function InvitationRenderer({
                       key={w.id || idx}
                       className="p-3 rounded-2xl bg-white border border-[#E5DDD5] space-y-1 text-xs"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#2C2018]">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-[#2C2018] truncate">
                           {w.guest_name || "Tamu Undangan"}
                         </span>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${w.status === "attending"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-slate-100 text-slate-600"
-                            }`}
-                        >
-                          {w.status === "attending"
-                            ? `Hadir (${w.pax || 1})`
-                            : "Tidak Hadir"}
-                        </span>
+                        {w.created_at && (
+                          <span className="text-[10px] text-[#8A796B] shrink-0">
+                            {new Intl.DateTimeFormat("id-ID", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }).format(new Date(w.created_at))}
+                          </span>
+                        )}
                       </div>
                       <p className="text-[#6B5B4E] leading-relaxed">
                         {w.message}

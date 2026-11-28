@@ -82,6 +82,7 @@ export interface GuestItem {
   id: string
   invitation_id?: string
   name: string
+  created_at?: string
   slug?: string
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useSearchParams } from "react-router-dom"
 import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input, Label } from "@/components/ui/input"
@@ -16,6 +16,7 @@ interface PublicThemeItem {
 
 export default function RegistrationPage() {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const routeState = location.state as { themeId?: string } | null
 
   const [apiThemes, setApiThemes] = useState<PublicThemeItem[]>([])
@@ -24,6 +25,9 @@ export default function RegistrationPage() {
   const [customerName, setCustomerName] = useState("")
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
+  const [referralCode, setReferralCode] = useState(
+    () => (searchParams.get("ref") || searchParams.get("referral_code") || "").trim().toUpperCase()
+  )
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [orderSuccess, setOrderSuccess] = useState(false)
@@ -79,11 +83,13 @@ export default function RegistrationPage() {
     setSubmitting(true)
 
     try {
+      const trimmedReferral = referralCode.trim().toUpperCase()
       await placeOrderApi({
         theme_id: selectedThemeId,
         customer_name: customerName.trim(),
         email: email.trim(),
         whatsapp: whatsapp.trim(),
+        ...(trimmedReferral ? { referral_code: trimmedReferral } : {}),
       })
 
       setOrderSuccess(true)
@@ -227,6 +233,23 @@ export default function RegistrationPage() {
                     className={`mt-1 h-11 rounded-xl ${
                       errorMsg ? "border-red-400 focus-visible:ring-red-400" : ""
                     }`}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="referralCode" className="text-xs text-[#6B5B4E]">
+                    Kode Referral <span className="text-[#8A796B] font-normal">(Opsional)</span>
+                  </Label>
+                  <Input
+                    id="referralCode"
+                    type="text"
+                    placeholder="Contoh: WDNGDN"
+                    value={referralCode}
+                    onChange={(event) => {
+                      setReferralCode(event.target.value.toUpperCase())
+                      if (errorMsg) setErrorMsg("")
+                    }}
+                    className="mt-1 h-11 rounded-xl uppercase tracking-wider font-mono placeholder:normal-case placeholder:tracking-normal placeholder:font-sans"
                   />
                   {errorMsg && (
                     <p className="mt-1.5 text-xs font-medium text-red-600">

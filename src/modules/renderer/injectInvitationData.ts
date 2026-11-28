@@ -114,10 +114,14 @@ export function injectInvitationIntoIframe(
   // Standard name containers across all themes
   doc
     .querySelectorAll(
-      ".cover-names, .cover-title, .c-names, .names, .letter b, .footer-names, footer .chip, [data-wv='meta.title']"
+      ".cover-names, .cover-title, .cv-names, .c-names, .names, .letter b, .footer-names, footer .chip, [data-wv='meta.title']"
     )
     .forEach((el) => {
-      if (el.querySelector("span") && el.classList.contains("cover-title")) {
+      if (
+        el.querySelector("span") &&
+        (el.classList.contains("cover-title") ||
+          el.classList.contains("cv-names"))
+      ) {
         el.innerHTML = `${displayGroomShort}<span>&amp;</span>${displayBrideShort}`
       } else if (el.querySelector("i") || el.querySelector("em")) {
         const tag = el.querySelector("i") ? "i" : "em"
@@ -188,10 +192,10 @@ export function injectInvitationIntoIframe(
     marqueeEl.innerHTML = item.repeat(8)
   }
 
-  // Monograms (seal, cover-monogram, mono foil, dome-in, SVG data-wreath)
+  // Monograms (seal, cover-monogram, mono foil, dome-in, SVG seal & data-wreath)
   doc
     .querySelectorAll(
-      ".seal span, .mono .foil, .cover-monogram span, .dome-in span"
+      ".seal span, svg.seal > text, .mono .foil, .cover-monogram span, .dome-in span"
     )
     .forEach((el) => {
       el.textContent = monogramText
@@ -213,7 +217,7 @@ export function injectInvitationIntoIframe(
   let groomCard: Element | null = null
 
   const personCards = doc.querySelectorAll(
-    "#mempelai .person, #mempelai .cp, #mempelai .half, .mempelai-section .col-md-4, .couple > article, .couple > .person"
+    "#mempelai .person, #mempelai .cp, #mempelai .half, #mempelai .p-tile, .mempelai-section .col-md-4, .couple > article, .couple > .person"
   )
   if (personCards.length >= 2) {
     brideCard = personCards[0]
@@ -235,7 +239,7 @@ export function injectInvitationIntoIframe(
     initialChar: string
   ) => {
     if (!card) return
-    const nickEl = card.querySelector(".nick")
+    const nickEl = card.querySelector(".nick, .script")
     const fullEl = card.querySelector(".full")
     const h3El = card.querySelector("h3, .person-name, .couple-name")
     const sealEl = card.querySelector(".seal")
@@ -260,6 +264,12 @@ export function injectInvitationIntoIframe(
       const htmlCard = card as HTMLElement
       if (htmlCard.style.getPropertyValue("--bg")) {
         htmlCard.style.setProperty("--bg", `url('${photoUrl}')`)
+      }
+      if (
+        htmlCard.classList.contains("p-tile") ||
+        htmlCard.style.backgroundImage
+      ) {
+        htmlCard.style.backgroundImage = `url('${photoUrl}')`
       }
     }
   }
@@ -336,8 +346,8 @@ export function injectInvitationIntoIframe(
         }
       })
 
-    // Themes using CSS background-image directly on .hero-bg and #cover (emerald, blue-water, blush-bloom, midnight-sapphire)
-    doc.querySelectorAll<HTMLElement>(".hero-bg").forEach((el) => {
+    // Themes using CSS background-image directly on .hero-bg, .c-photo, .stadium, and #cover
+    doc.querySelectorAll<HTMLElement>(".hero-bg, .c-photo, .stadium").forEach((el) => {
       el.style.backgroundImage = `url('${coverUrl}')`
     })
     const coverDiv = doc.getElementById("cover")
@@ -409,7 +419,7 @@ export function injectInvitationIntoIframe(
   }
 
   setDateWidgetText(
-    ".date-big, .stub-date, .bigday, .bigd b, .big-date b, .plaque b, .sun b, .acara-side .big-date, .hero-date strong, .hero-date .d-mid, .stadium .badge b, #acara .big",
+    ".date-big, .stub-date, .bigday, .bigd b, .big-date b, .dateb b, .tgl b, .dateline b, .plaque b, .sun b, .acara-side .big-date, .hero-date strong, .hero-date .d-mid, .stadium .badge b, #acara .big",
     dateParts ? dateParts.dayNum : "--"
   )
 
@@ -424,6 +434,38 @@ export function injectInvitationIntoIframe(
       : "-- · ----"
   }
 
+  // Botanica .hero-date (<strong>14</strong><span>Juni 2026<br>Minggu</span>) & .ticket-stub
+  doc.querySelectorAll(".hero-date").forEach((hd) => {
+    const strongEl = hd.querySelector("strong")
+    const spans = hd.querySelectorAll(":scope > span")
+    if (strongEl && spans.length === 1) {
+      spans[0].innerHTML = dateParts
+        ? `${dateParts.monthYear}<br>${dateParts.dayName}`
+        : "Belum Diatur"
+    } else if (
+      !strongEl &&
+      !hd.querySelector(".d-mid") &&
+      !hd.querySelector("b") &&
+      hd.querySelector("small")
+    ) {
+      // Kraton: <div class="hero-date">Tanggal belum diatur<small>Minggu Pahing</small></div>
+      hd.innerHTML = dateParts
+        ? `${dateParts.dayNumShort} ${dateParts.monthYear}<small>${dateParts.dayName}</small>`
+        : "Tanggal belum diatur"
+    }
+  })
+
+  setDateWidgetText(".stub-day", dateParts ? dateParts.dayName : "Tanggal")
+  setDateWidgetText(".stub-month", dateParts ? dateParts.monthName : "")
+  setDateWidgetText(".stub-year", dateParts ? dateParts.yearNum : "")
+
+  // Pantai-frangipani .invite .big & .invite .day
+  setDateWidgetText(
+    ".invite .big",
+    dateParts ? `${dateParts.dayNumShort} ${dateParts.monthYear}` : "Tanggal belum diatur"
+  )
+  setDateWidgetText(".invite .day", dateParts ? dateParts.dayName : "")
+
   // Emerald .event-date-block (.day-name, .big, .month-year)
   setDateWidgetText(
     ".event-date-block .day-name",
@@ -435,12 +477,17 @@ export function injectInvitationIntoIframe(
   )
 
   doc
-    .querySelectorAll(".bigd, .big-date, .plaque, .sun, #acara .date")
+    .querySelectorAll(
+      ".bigd, .big-date, .dateb, .tgl, .dateline, .plaque, .sun, #acara .date, #acara .bento > .tile.dark"
+    )
     .forEach((box) => {
       const smalls = box.querySelectorAll("small, span")
       if (smalls.length >= 2) {
         smalls[0].textContent = dateParts ? dateParts.dayName : "Tanggal"
         smalls[1].textContent = dateParts ? dateParts.monthYear : "Segera Hadir"
+        if (box.classList.contains("tgl") && smalls.length >= 3) {
+          smalls[2].textContent = ""
+        }
       }
     })
 
@@ -511,7 +558,7 @@ export function injectInvitationIntoIframe(
   const addrParagraphs = new Set<Element>()
   doc
     .querySelectorAll(
-      ".addr p, .date-loc p, .venue p, .acara-card p, .event-address p, .loc p, .address p"
+      ".addr p, p.addr, .ticket-addr p, .date-loc p, .venue p, .acara-card p, .event-address p, .loc p, .address p"
     )
     .forEach((p) => addrParagraphs.add(p))
 
@@ -524,7 +571,15 @@ export function injectInvitationIntoIframe(
   })
 
   addrParagraphs.forEach((p) => {
-    p.textContent = fullLocation || "Lokasi acara belum diisi"
+    const icon = p.querySelector(":scope > i")
+    const locText = fullLocation || "Lokasi acara belum diisi"
+    if (icon) {
+      p.innerHTML = ""
+      p.appendChild(icon)
+      p.appendChild(doc.createTextNode(` ${locText}`))
+    } else {
+      p.textContent = locText
+    }
   })
 
   // Update Maps URL
@@ -542,12 +597,16 @@ export function injectInvitationIntoIframe(
       }
     })
 
-  // Update Event Items across ALL 20 themes
+  // Update Event Items across ALL 21 themes
   const eventsToRender = filledEvents.length > 0 ? filledEvents : []
   const eventCardSelectors = [
     "#acara .event-times > div",
     "#acara .event-item",
     "#acara .event-card",
+    "#acara .acara-top > .lontar",
+    "#acara .evi > .step",
+    "#acara .ev-row > .ev",
+    "#acara .bento > .tile",
     "#acara .ev2 > div",
     "#acara .ev3 > .ec",
     "#acara .ev > .ec",
@@ -555,7 +614,17 @@ export function injectInvitationIntoIframe(
     "#acara .ticket-row > div",
   ]
   for (const sel of eventCardSelectors) {
-    const cards = doc.querySelectorAll(sel)
+    const rawCards = Array.from(doc.querySelectorAll(sel))
+    const cards = rawCards.filter((card) => {
+      if (sel === "#acara .ev3 > .ec") {
+        return !card.querySelector("#btn-maps, .fa-map-marker-alt")
+      }
+      if (sel === "#acara .bento > .tile") {
+        return Boolean(card.querySelector(".time"))
+      }
+      return true
+    })
+
     if (cards.length > 0) {
       const parent = cards[0].parentElement
       if (!parent) break
@@ -564,29 +633,70 @@ export function injectInvitationIntoIframe(
       } else if (sel === "#acara .event-times > div") {
         ; (parent as HTMLElement).style.gridTemplateColumns = ""
       }
-      const templateCard = cards[0].cloneNode(true) as HTMLElement
-      const actionsEl = parent.querySelector(".event-actions")
+      if (sel === "#acara .ev-row > .ev") {
+        ; (parent as HTMLElement).style.gridTemplateColumns =
+          eventsToRender.length === 1
+            ? "1fr"
+            : eventsToRender.length === 2
+              ? ""
+              : `repeat(${eventsToRender.length}, 1fr)`
+      }
 
-      // Remove old cards and divider <hr>
+      const templateCard = cards[0].cloneNode(true) as HTMLElement
+      // Anchor element to insert cloned event cards before (preserving Lokasi / address / actions)
+      const lastCard = cards[cards.length - 1]
+      const anchorEl =
+        lastCard.nextElementSibling ||
+        parent.querySelector(".event-actions, p.addr, #btn-maps")
+
+      // Remove old event cards and divider <hr>
       cards.forEach((c) => c.remove())
       parent.querySelectorAll(":scope > hr").forEach((hr) => hr.remove())
 
       eventsToRender.forEach((ev, idx) => {
-        if (idx > 0 && sel.includes(".ev2")) {
-          parent.appendChild(doc.createElement("hr"))
+        const needsHr =
+          idx > 0 &&
+          (sel.includes(".ev2") ||
+            (sel === "#acara .ev-row > .ev" && eventsToRender.length === 2))
+        if (needsHr) {
+          const hr = doc.createElement("hr")
+          if (anchorEl && anchorEl.parentElement === parent) {
+            parent.insertBefore(hr, anchorEl)
+          } else {
+            parent.appendChild(hr)
+          }
         }
         const clone = templateCard.cloneNode(true) as HTMLElement
         clone.classList.add("aos-animate")
-        const titleEl = clone.querySelector("h4, h3, strong, b")
+        const titleEl =
+          clone.querySelector("h4, h3") || clone.querySelector("strong, b")
         if (titleEl) titleEl.textContent = ev.name || `Acara ${idx + 1}`
 
         const timeText = ev.startTime
           ? `${ev.startTime} WIB${ev.endTime ? ` — ${ev.endTime} WIB` : " — Selesai"}`
           : "-"
-        const timeEl = clone.querySelector(
-          ".t, .time, .event-time, span:not(.corner)"
-        )
-        if (timeEl) timeEl.textContent = timeText
+        const rangeSuffix = ev.startTime
+          ? `WIB${ev.endTime ? ` — ${ev.endTime} WIB` : " — Selesai"}`
+          : ""
+
+        if (clone.classList.contains("lontar")) {
+          // Kraton: <h4>Title</h4><div class="jw">...</div><b>08.00</b><span>WIB — Selesai</span>
+          const bEl = clone.querySelector("b")
+          const spanEl = clone.querySelector("span")
+          if (bEl) bEl.textContent = ev.startTime || "-"
+          if (spanEl) spanEl.textContent = rangeSuffix
+        } else if (clone.querySelector(".time") && clone.querySelector("small")) {
+          // Batik (.ec) & Tideline-Bento (.tile): <div class="time">08.00</div><small>WIB</small>
+          const bigTimeEl = clone.querySelector(".time")
+          const smallEl = clone.querySelector("small")
+          if (bigTimeEl) bigTimeEl.textContent = ev.startTime || "-"
+          if (smallEl) smallEl.textContent = rangeSuffix
+        } else {
+          const timeEl = clone.querySelector(
+            ".t, .time, .event-time, span:not(.corner)"
+          )
+          if (timeEl) timeEl.textContent = timeText
+        }
 
         const evDateParts = formatIndonesianDateParts(ev.date)
         const dayEl = clone.querySelector(".event-day")
@@ -594,8 +704,8 @@ export function injectInvitationIntoIframe(
           dayEl.textContent = evDateParts ? evDateParts.fullDateDot : ""
         }
 
-        if (actionsEl) {
-          parent.insertBefore(clone, actionsEl)
+        if (anchorEl && anchorEl.parentElement === parent) {
+          parent.insertBefore(clone, anchorEl)
         } else {
           parent.appendChild(clone)
         }
@@ -1030,8 +1140,49 @@ export function injectInvitationIntoIframe(
   }
 
   // =========================================================================
-  // 8. HOOK UP BUILT-IN #ucapan TO BACKEND WISHES API
+  // 8. HOOK UP BUILT-IN #ucapan TO BACKEND WISHES API (SIMPLE: SLUG + NAME + MESSAGE)
   // =========================================================================
+  if (!doc.getElementById("wv-wishes-simple-style")) {
+    const wishStyle = doc.createElement("style")
+    wishStyle.id = "wv-wishes-simple-style"
+    wishStyle.textContent = `
+      #uc-attend,
+      #uc-pax,
+      label[for="uc-attend"],
+      label[for="uc-pax"],
+      .attend-opts,
+      #ucapan .stats,
+      #ucapan-list .wish-attend,
+      #ucapan-list .uc-attend,
+      #ucapan-list .tag {
+        display: none !important;
+      }
+      #ucapan .compose .two {
+        grid-template-columns: 1fr !important;
+      }
+    `
+    doc.head?.appendChild(wishStyle)
+  }
+
+  // Hide legacy "Kehadiran" labels & RSVP helper copy inside #ucapan
+  const ucapanSection = doc.getElementById("ucapan")
+  if (ucapanSection) {
+    ucapanSection
+      .querySelectorAll<HTMLElement>(".field-label, label, span")
+      .forEach((el) => {
+        const txt = (el.textContent || "").trim().toLowerCase()
+        if (txt === "kehadiran" || txt.startsWith("jumlah tamu")) {
+          el.style.display = "none"
+        }
+      })
+    ucapanSection.querySelectorAll<HTMLElement>("p, small").forEach((el) => {
+      const txt = (el.textContent || "").toLowerCase()
+      if (txt.includes("konfirmasi kehadiran")) {
+        el.textContent = "Titipkan ucapan dan doa terbaikmu untuk kami."
+      }
+    })
+  }
+
   if (win) {
     if (!win.__origRenderUcapan && typeof win.renderUcapan === "function") {
       win.__origRenderUcapan = win.renderUcapan
@@ -1044,7 +1195,7 @@ export function injectInvitationIntoIframe(
 
     const syncWishesToIframe = async () => {
       try {
-        const res = await getWishesBySlugApi(activeSlug)
+        const res: any = await getWishesBySlugApi(activeSlug)
         const list = Array.isArray(res)
           ? res
           : res?.items || res?.wishes || res?.data || []
@@ -1054,12 +1205,7 @@ export function injectInvitationIntoIframe(
             win.__origRenderUcapan(
               list.map((w: any) => ({
                 nama: w.guest_name || "Tamu",
-                kehadiran:
-                  w.status === "not_attending" || w.status === "tidak"
-                    ? "tidak"
-                    : w.status === "maybe" || w.status === "mungkin"
-                      ? "mungkin"
-                      : "hadir",
+                kehadiran: "hadir",
                 pesan: w.message || "",
               }))
             )
@@ -1079,24 +1225,12 @@ export function injectInvitationIntoIframe(
       const nameInput = doc.getElementById(
         "uc-name"
       ) as HTMLInputElement | null
-      const paxInput = doc.getElementById(
-        "uc-pax"
-      ) as HTMLInputElement | null
       const msgInput = doc.getElementById(
         "uc-msg"
       ) as HTMLTextAreaElement | null
-      const radioAttend = doc.querySelector<HTMLInputElement>(
-        'input[name="attend"]:checked'
-      )
-      const selectAttend = doc.getElementById(
-        "uc-attend"
-      ) as HTMLSelectElement | null
 
       const guestNameVal = nameInput?.value?.trim() || ""
-      const paxVal = Math.max(1, Number(paxInput?.value) || 1)
       const msgVal = msgInput?.value?.trim() || ""
-      const attendVal =
-        radioAttend?.value || selectAttend?.value || "attending"
 
       if (!guestNameVal || !msgVal) {
         if (typeof win.showToast === "function") {
@@ -1109,31 +1243,14 @@ export function injectInvitationIntoIframe(
       if (btn) btn.disabled = true
 
       try {
-        const guestSlug = guestNameVal
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "")
-        const statusMapped =
-          attendVal === "tidak"
-            ? "not_attending"
-            : attendVal === "mungkin"
-              ? "maybe"
-              : "attending"
-
         await createWishApi({
           slug: activeSlug,
           guest_name: guestNameVal,
           message: msgVal,
-          guest_slug: guestSlug,
-          status: statusMapped,
-          pax: paxVal,
         })
 
         if (nameInput) nameInput.value = ""
-        if (paxInput) paxInput.value = "1"
         if (msgInput) msgInput.value = ""
-        if (radioAttend) radioAttend.checked = false
-        if (selectAttend) selectAttend.value = ""
 
         await syncWishesToIframe()
         if (typeof win.showToast === "function") {

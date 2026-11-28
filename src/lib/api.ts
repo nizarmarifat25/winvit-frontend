@@ -454,11 +454,18 @@ export async function deleteGiftApi(id: string) {
 // ==========================================
 // 8. GUEST API
 // ==========================================
+export interface BackendGuest {
+  id: string
+  invitation_id: string
+  name: string
+  created_at: string
+}
+
 export async function getGuestsApi(invitationId: string) {
   const res = await apiClient.get("/api/v1/guests", {
     params: { invitation_id: invitationId },
   })
-  return unwrap<any[]>(res.data)
+  return unwrap<BackendGuest[]>(res.data)
 }
 
 export async function createGuestApi(invitationId: string, name: string) {
@@ -466,7 +473,7 @@ export async function createGuestApi(invitationId: string, name: string) {
     invitation_id: invitationId,
     name,
   })
-  return unwrap<any>(res.data)
+  return unwrap<BackendGuest>(res.data)
 }
 
 export async function deleteGuestApi(id: string) {
@@ -529,6 +536,7 @@ export interface PlaceOrderPayload {
   customer_name: string
   email: string
   whatsapp: string
+  referral_code?: string
 }
 
 export async function placeOrderApi(payload: PlaceOrderPayload) {
@@ -622,25 +630,30 @@ export async function updateThemeApi(
 }
 
 // ==========================================
-// 12. WISH API (PUBLIC RSVP & UCAPAN)
+// 12. WISH API (PUBLIC UCAPAN & DOA)
 // ==========================================
+export interface BackendWish {
+  id: string
+  invitation_id: string
+  guest_name: string
+  message: string
+  created_at: string
+}
+
 export interface CreateWishPayload {
   slug: string
   guest_name: string
   message: string
-  guest_slug: string
-  status: "attending" | "not_attending" | "maybe" | string
-  pax: number
 }
 
 export async function getWishesBySlugApi(slug: string) {
   const res = await apiClient.get(
     `/api/v1/public/wishes/${encodeURIComponent(slug)}`
   )
-  return unwrap<any>(res.data)
+  return unwrap<BackendWish[]>(res.data)
 }
 
 export async function createWishApi(payload: CreateWishPayload) {
   const res = await apiClient.post("/api/v1/public/wishes", payload)
-  return unwrap<any>(res.data)
+  return unwrap<BackendWish>(res.data)
 }

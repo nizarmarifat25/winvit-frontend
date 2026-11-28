@@ -27,19 +27,24 @@ export default function ShareInvitation({
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [loadingGuests, setLoadingGuests] = useState(false)
   const [addingGuest, setAddingGuest] = useState(false)
+  const [guestError, setGuestError] = useState("")
 
   const baseInviteUrl = `${window.location.origin}/u/${slugPath}`
 
   useEffect(() => {
     if (!isActive || !invitation.id || !getAccessToken()) return
     setLoadingGuests(true)
+    setGuestError("")
     getGuestsApi(invitation.id)
       .then((res) => {
-        if (Array.isArray(res)) {
-          setGuests(res)
+        const list = Array.isArray(res) ? res : (res as any)?.data || []
+        if (Array.isArray(list)) {
+          setGuests(list)
         }
       })
-      .catch(() => {})
+      .catch((err: any) => {
+        setGuestError(err?.message || "Gagal memuat daftar tamu.")
+      })
       .finally(() => setLoadingGuests(false))
   }, [isActive, invitation.id])
 
@@ -71,15 +76,16 @@ export default function ShareInvitation({
     const trimmed = guestName.trim()
     if (!trimmed) return
 
+    setGuestError("")
     setAddingGuest(true)
     try {
       if (getAccessToken() && invitation.id) {
         const created = await createGuestApi(invitation.id, trimmed)
         const newGuest: GuestItem = {
           id: created?.id || `local-${Date.now()}`,
-          invitation_id: invitation.id,
+          invitation_id: created?.invitation_id || invitation.id,
           name: created?.name || trimmed,
-          slug: created?.slug,
+          created_at: created?.created_at,
         }
         setGuests((prev) => [newGuest, ...prev])
       } else {
@@ -92,24 +98,24 @@ export default function ShareInvitation({
         ])
       }
       setGuestName("")
-    } catch {
-      setGuests((prev) => [
-        {
-          id: `local-${Date.now()}`,
-          name: trimmed,
-        },
-        ...prev,
-      ])
-      setGuestName("")
+    } catch (err: any) {
+      setGuestError(err?.message || "Gagal menambahkan tamu.")
     } finally {
       setAddingGuest(false)
     }
   }
 
   const handleDeleteGuest = async (guestId: string) => {
-    setGuests((prev) => prev.filter((g) => g.id !== guestId))
+    setGuestError("")
     if (getAccessToken() && !guestId.startsWith("local-")) {
-      await deleteGuestApi(guestId).catch(() => {})
+      try {
+        await deleteGuestApi(guestId)
+        setGuests((prev) => prev.filter((g) => g.id !== guestId))
+      } catch (err: any) {
+        setGuestError(err?.message || "Gagal menghapus tamu.")
+      }
+    } else {
+      setGuests((prev) => prev.filter((g) => g.id !== guestId))
     }
   }
 
@@ -146,6 +152,9 @@ export default function ShareInvitation({
                 Simpan Tamu
               </Button>
             </div>
+            {guestError && (
+              <p className="text-xs font-medium text-red-600">{guestError}</p>
+            )}
           </form>
 
           {guestName.trim() && (
