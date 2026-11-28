@@ -207,6 +207,7 @@ export default function InvitationRenderer({
           id: inv.id || "",
           slug: inv.slug || slug,
           themeId: inv.theme?.tag || inv.theme_id || DEFAULT_INVITATION.themeId,
+          quotePreset: inv.quote_preset || "islam-ar-rum-21",
           meta: {
             ...DEFAULT_INVITATION.meta,
             coverPhoto: inv.cover_photo_url || "",
@@ -343,6 +344,7 @@ export default function InvitationRenderer({
                 id: ownerInv.id,
                 slug: ownerInv.slug || slug,
                 themeId: ownerInv.theme_id || DEFAULT_INVITATION.themeId,
+                quotePreset: ownerInv.quote_preset || "islam-ar-rum-21",
                 meta: {
                   ...DEFAULT_INVITATION.meta,
                   coverPhoto: ownerInv.cover_photo_url || "",

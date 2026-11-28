@@ -298,6 +298,7 @@ export interface BackendInvitationPayload {
   bride_photo_url: string
   cover_photo_url: string
   music_url: string
+  quote_preset?: string
   is_published: boolean
 }
 

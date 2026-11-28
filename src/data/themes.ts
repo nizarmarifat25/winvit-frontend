@@ -386,6 +386,7 @@ export const DEFAULT_INVITATION: InvitationData = {
   slug: "",
   status: "ACTIVE_DRAFT",
   themeId: "botanica",
+  quotePreset: "islam-ar-rum-21",
   customer: {
     orderName: "",
     phone: "",

@@ -1,5 +1,6 @@
 import type { InvitationData, EventItem } from "@/types/winvit"
 import { getWishesBySlugApi, createWishApi } from "@/lib/api"
+import { getQuotePreset } from "@/data/quotes"
 
 export function formatIndonesianDateParts(dateStr?: string) {
   if (!dateStr) return null
@@ -369,6 +370,147 @@ export function injectInvitationIntoIframe(
     }
     if (win?.CONFIG) win.CONFIG.audioStart = 0
   }
+
+  // =========================================================================
+  // 3B. QUOTE PRESET (AYAT / KUTIPAN PEMBUKA) & GREETINGS ACROSS ALL 21 THEMES
+  // =========================================================================
+  const quotePreset = getQuotePreset(invitation.quotePreset)
+  const isIslamicPreset = quotePreset.category === "islam"
+
+  // Hide Islamic Bismillah headers (e.g. melati-prada) for non-Islamic presets
+  doc
+    .querySelectorAll<HTMLElement>(".cover-bismillah, .hero-bismillah")
+    .forEach((el) => {
+      el.style.display = isIslamicPreset ? "" : "none"
+    })
+
+  const arabicEl = doc.querySelector<HTMLElement>(".arabic, .arabic-text")
+  const quoteContainer = (arabicEl?.closest(
+    ".ayat-card, .ayat-box, .ayat-wrap, .ayat, .deco-card, .paper-card"
+  ) || null) as HTMLElement | null
+
+  let quoteHideTarget: HTMLElement | null = quoteContainer
+  if (quoteContainer) {
+    const parentTile = quoteContainer.closest<HTMLElement>(".tile.dark")
+    const parentSec = quoteContainer.closest<HTMLElement>(
+      "section, .section-pad"
+    )
+    if (parentTile) {
+      quoteHideTarget = parentTile
+    } else if (
+      parentSec &&
+      parentSec.id !== "mempelai" &&
+      parentSec.id !== "salam" &&
+      !parentSec.classList.contains("salam") &&
+      !parentSec.querySelector("#mempelai, .salam, .salam-title, .lead")
+    ) {
+      quoteHideTarget = parentSec
+    }
+  }
+
+  if (quoteHideTarget) {
+    quoteHideTarget.style.display = quotePreset.hidden ? "none" : ""
+  }
+
+  if (!quotePreset.hidden && quoteContainer) {
+    if (arabicEl) {
+      if (quotePreset.arabic) {
+        arabicEl.textContent = quotePreset.arabic
+        arabicEl.style.display = ""
+      } else {
+        arabicEl.style.display = "none"
+      }
+    }
+
+    const batikOrb = quoteContainer.querySelector<HTMLElement>(".orb")
+    if (batikOrb) {
+      batikOrb.style.display = quotePreset.arabic ? "" : "none"
+      const orbNum = batikOrb.querySelector<HTMLElement>("b")
+      if (orbNum && quotePreset.arabic) {
+        const verseMatch = quotePreset.source.match(/(\d+)\s*$/)
+        if (verseMatch) {
+          const arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"]
+          orbNum.textContent = verseMatch[1].replace(
+            /\d/g,
+            (d) => arabicDigits[Number(d)]
+          )
+        }
+      }
+    }
+
+    const crescentIcon = quoteContainer.querySelector<HTMLElement>(
+      ".fa-star-and-crescent, .wv-quote-icon"
+    )
+    if (crescentIcon) {
+      crescentIcon.className = quotePreset.arabic
+        ? "fas fa-star-and-crescent wv-quote-icon"
+        : "fas fa-heart wv-quote-icon"
+    }
+
+    if (
+      quoteContainer.classList.contains("ayat") &&
+      (batikOrb || quoteContainer.closest(".tile.dark"))
+    ) {
+      quoteContainer.style.gridTemplateColumns = quotePreset.arabic ? "" : "1fr"
+      quoteContainer.style.textAlign = quotePreset.arabic ? "" : "center"
+    }
+
+    const quoteTextEl = quoteContainer.querySelector<HTMLElement>(
+      ".ayat-quote, .ayat-trans, q, .font-serif-italic"
+    )
+    if (quoteTextEl) {
+      quoteTextEl.textContent =
+        quoteTextEl.tagName === "Q"
+          ? quotePreset.translation
+          : `“${quotePreset.translation}”`
+    }
+
+    const sourceEl =
+      quoteContainer.querySelector<HTMLElement>(
+        '[data-wv-role="quote-source"], .ayat-src, cite'
+      ) ||
+      Array.from(
+        quoteContainer.querySelectorAll<HTMLElement>("p, span, small")
+      ).find((el) =>
+        /ar-?rum|an-?nisa|dzariyat|matius|pengkhotbah|korintus|kolose|rgveda|atharvaveda|anguttara|sabbe|saint-exup|gibran|janji pernikahan/i.test(
+          el.textContent || ""
+        )
+      )
+    if (sourceEl) {
+      sourceEl.dataset.wvRole = "quote-source"
+      sourceEl.textContent = quotePreset.source
+    }
+  }
+
+  // Adapt opening/closing greetings & intro sentence for selected quote preset
+  // IMPORTANT: skip container elements (like <section class="section salam">)
+  // so only leaf greeting text nodes are replaced.
+  doc
+    .querySelectorAll<HTMLElement>(
+      ".salam, .salam-title, .wassalam, .footer-wassalam, footer .script, section.salam em, #salam em"
+    )
+    .forEach((el) => {
+      if (el.tagName === "SECTION" || el.children.length > 0) return
+      const txt = (el.textContent || "").trim()
+      if (/^wassalam/i.test(txt) || el.dataset.wvRole === "closing-salam") {
+        el.dataset.wvRole = "closing-salam"
+        el.textContent = quotePreset.closingGreeting
+      } else if (/^assalam/i.test(txt) || el.dataset.wvRole === "opening-salam") {
+        el.dataset.wvRole = "opening-salam"
+        el.textContent = quotePreset.openingGreeting
+      }
+    })
+
+  doc.querySelectorAll<HTMLElement>("p").forEach((p) => {
+    const txt = (p.textContent || "").trim()
+    if (
+      p.dataset.wvRole === "couple-intro" ||
+      /dengan memohon rahmat dan ridho allah swt/i.test(txt)
+    ) {
+      p.dataset.wvRole = "couple-intro"
+      p.textContent = quotePreset.introText
+    }
+  })
 
   // =========================================================================
   // 4. EVENTS (#acara), DATES, ADDRESS, GOOGLE MAPS, CALENDAR & COUNTDOWN

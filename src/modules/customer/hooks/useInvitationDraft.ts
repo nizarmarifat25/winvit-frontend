@@ -160,6 +160,7 @@ export function useInvitationDraft(
           id: invId,
           slug: invItem.slug || "",
           themeId: invItem.theme_id || DEFAULT_INVITATION.themeId,
+          quotePreset: invItem.quote_preset || "islam-ar-rum-21",
           isPublished: Boolean(invItem.is_published),
           status: invItem.is_published ? "PUBLISHED" : "ACTIVE_DRAFT",
           meta: {
@@ -463,6 +464,7 @@ export function useInvitationDraft(
           bride_photo_url: syncedDraft.couple.bride.photo || "",
           cover_photo_url: syncedDraft.meta.coverPhoto || "",
           music_url: syncedDraft.meta.audio.url || "",
+          quote_preset: syncedDraft.quotePreset || "islam-ar-rum-21",
           is_published: Boolean(
             syncedDraft.isPublished || syncedDraft.status === "PUBLISHED"
           ),
@@ -685,6 +687,7 @@ export function useInvitationDraft(
             bride_photo_url: draft.couple.bride.photo || "",
             cover_photo_url: draft.meta.coverPhoto || "",
             music_url: draft.meta.audio.url || "",
+            quote_preset: draft.quotePreset || "islam-ar-rum-21",
             is_published: nextPublished,
           })
         }

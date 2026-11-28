@@ -169,7 +169,7 @@ export default function EventsStep({
 
               <Input
                 disabled={isLocked}
-                placeholder="Nama Gedung / Tempat (location_name)"
+                placeholder="Nama Gedung / Tempat"
                 className="h-11 sm:h-10 bg-white rounded-xl"
                 value={ev.locationName}
                 onChange={(e) =>
@@ -179,7 +179,7 @@ export default function EventsStep({
 
               <Input
                 disabled={isLocked}
-                placeholder="Alamat Lengkap Lokasi (location_address)"
+                placeholder="Alamat Lengkap Lokasi"
                 className="h-11 sm:h-10 bg-white rounded-xl"
                 value={ev.locationAddress}
                 onChange={(e) =>
@@ -189,7 +189,7 @@ export default function EventsStep({
 
               <Input
                 disabled={isLocked}
-                placeholder="Link Google Maps (location_url)"
+                placeholder="Link Google Maps"
                 className="h-11 sm:h-10 bg-white rounded-xl"
                 value={ev.locationUrl}
                 onChange={(e) =>

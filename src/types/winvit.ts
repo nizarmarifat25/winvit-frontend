@@ -92,6 +92,7 @@ export interface InvitationData {
   status: "PENDING_PAYMENT" | "WAITING_APPROVAL" | "ACTIVE_DRAFT" | "PUBLISHED"
   isPublished?: boolean
   themeId: string
+  quotePreset?: string
   customer: {
     userId?: string
     orderName: string

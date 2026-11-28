@@ -92,7 +92,7 @@ export default function GiftStep({
               <div className="flex gap-1.5">
                 <Input
                   disabled={isLocked}
-                  placeholder="Atas Nama (on_behalf_of)"
+                  placeholder="Atas Nama"
                   className="h-11 sm:h-10 bg-white rounded-xl"
                   value={acc.accountHolder}
                   onChange={(e) => {

@@ -1,7 +1,8 @@
 import type { CustomerEditorStepProps } from "../types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Camera, ImagePlus, Music, Loader2 } from "lucide-react"
+import { Camera, ImagePlus, Music, Loader2, Quote, Check } from "lucide-react"
+import { QUOTE_CATEGORIES, QUOTE_PRESETS, getQuotePreset } from "@/data/quotes"
 
 export default function CoupleStep({
   detailTab,
@@ -43,7 +44,7 @@ export default function CoupleStep({
             <h4 className="font-semibold text-sm">Mempelai Pria</h4>
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Nama Mempelai Pria (groom_name)
+                Nama Mempelai Pria
               </label>
               <Input
                 disabled={isLocked}
@@ -68,7 +69,7 @@ export default function CoupleStep({
 
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Info Orang Tua / Keterangan (groom_info)
+                Info Orang Tua / Keterangan
               </label>
               <Input
                 disabled={isLocked}
@@ -142,7 +143,7 @@ export default function CoupleStep({
             <h4 className="font-semibold text-sm">Mempelai Wanita</h4>
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Nama Mempelai Wanita (bride_name)
+                Nama Mempelai Wanita
               </label>
               <Input
                 disabled={isLocked}
@@ -167,7 +168,7 @@ export default function CoupleStep({
 
             <div>
               <label className="block text-[11px] text-[#6B5B4E] mb-1">
-                Info Orang Tua / Keterangan (bride_info)
+                Info Orang Tua / Keterangan
               </label>
               <Input
                 disabled={isLocked}
@@ -241,7 +242,7 @@ export default function CoupleStep({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#E5DDD5]">
           <div className="space-y-2 p-3.5 rounded-2xl bg-[#FAF6F1] border border-[#E5DDD5]">
             <label className="block text-xs font-semibold">
-              Foto Sampul Undangan (cover_photo_url)
+              Foto Sampul Undangan
             </label>
             <label className="flex items-center justify-center gap-2 w-full h-11 px-3 rounded-xl border border-dashed border-[#C89B57] bg-white text-xs font-medium text-[#2C2018] cursor-pointer">
               {uploadingField === "cover_photo" ? (
@@ -287,7 +288,7 @@ export default function CoupleStep({
 
           <div className="space-y-2 p-3.5 rounded-2xl bg-[#FAF6F1] border border-[#E5DDD5]">
             <label className="block text-xs font-semibold">
-              Musik Latar / Backsound (music_url)
+              Musik Latar / Backsound
             </label>
             <label className="flex items-center justify-center gap-2 w-full h-11 px-3 rounded-xl border border-dashed border-[#C89B57] bg-white text-xs font-medium text-[#2C2018] cursor-pointer">
               {uploadingField === "music_url" ? (
@@ -325,6 +326,153 @@ export default function CoupleStep({
             />
           </div>
         </div>
+
+        {/* Kutipan / Ayat Pembuka (quote_preset) */}
+        {(() => {
+          const activePreset = getQuotePreset(draft.quotePreset)
+          const activeCategory = activePreset.category
+          const categoryPresets = QUOTE_PRESETS.filter(
+            (p) => p.category === activeCategory
+          )
+
+          return (
+            <div className="space-y-3 pt-4 border-t border-[#E5DDD5]">
+              <div>
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-[#2C2018]">
+                  <Quote className="w-3.5 h-3.5 text-[#A8763E]" />
+                  Kutipan / Ayat Pembuka
+                </label>
+                <p className="text-[11px] text-[#6B5B4E] mt-0.5">
+                  Pilih kategori lalu tentukan ayat atau kutipan favorit Anda. Pilihan non-Muslim otomatis menyembunyikan teks Arab dan menyesuaikan salam.
+                </p>
+              </div>
+
+              {/* Step 1: Pilih Kategori (Islam, Kristen, Katolik, Hindu, Buddha, Umum, Tanpa Kutipan) */}
+              <div className="flex flex-wrap gap-1.5">
+                {QUOTE_CATEGORIES.map((cat) => {
+                  const count = QUOTE_PRESETS.filter(
+                    (p) => p.category === cat.id
+                  ).length
+                  const isCatActive = activeCategory === cat.id
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      disabled={isLocked}
+                      onClick={() => {
+                        const firstInCat = QUOTE_PRESETS.find(
+                          (p) => p.category === cat.id
+                        )
+                        if (firstInCat) {
+                          setDraft((prev) => ({
+                            ...prev,
+                            quotePreset: firstInCat.id,
+                          }))
+                        }
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer disabled:opacity-60 ${
+                        isCatActive
+                          ? "bg-[#2C2018] text-white border-[#2C2018]"
+                          : "bg-white text-[#6B5B4E] border-[#E5DDD5] hover:border-[#C89B57] hover:text-[#2C2018]"
+                      }`}
+                    >
+                      <span>{cat.label}</span>
+                      {cat.id !== "none" && (
+                        <span
+                          className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                            isCatActive
+                              ? "bg-white/15 text-[#E5C27A]"
+                              : "bg-[#FAF6F1] text-[#8A796B]"
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Step 2: Pilih Opsi Kutipan dalam Kategori Aktif */}
+              {categoryPresets.length > 1 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {categoryPresets.map((preset) => {
+                    const selected = activePreset.id === preset.id
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        disabled={isLocked}
+                        onClick={() =>
+                          setDraft((prev) => ({
+                            ...prev,
+                            quotePreset: preset.id,
+                          }))
+                        }
+                        className={`text-left p-3 rounded-xl border transition cursor-pointer disabled:opacity-60 flex flex-col justify-between gap-1.5 ${
+                          selected
+                            ? "bg-[#2C2018] text-white border-[#2C2018] shadow-xs"
+                            : "bg-[#FAF6F1] text-[#2C2018] border-[#E5DDD5] hover:border-[#C89B57]"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <span className="text-xs font-bold block truncate">
+                              {preset.label}
+                            </span>
+                            <span
+                              className={`text-[10px] block truncate ${
+                                selected ? "text-[#E5C27A]" : "text-[#A8763E]"
+                              }`}
+                            >
+                              {preset.subtitle}
+                            </span>
+                          </div>
+                          {selected && (
+                            <Check className="w-3.5 h-3.5 text-[#E5C27A] shrink-0 mt-0.5" />
+                          )}
+                        </div>
+                        <p
+                          className={`text-[11px] line-clamp-2 leading-relaxed ${
+                            selected ? "text-white/75" : "text-[#6B5B4E]"
+                          }`}
+                        >
+                          “{preset.translation}”
+                        </p>
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Preview Lengkap Kutipan Terpilih */}
+              <div className="p-4 rounded-2xl bg-[#FAF6F1] border border-[#E5DDD5] space-y-1.5 text-center">
+                {activePreset.hidden ? (
+                  <p className="text-xs text-[#6B5B4E] italic">
+                    Section ayat/kutipan akan disembunyikan dari undangan, dengan salam netral (“{activePreset.openingGreeting}”).
+                  </p>
+                ) : (
+                  <>
+                    {activePreset.arabic && (
+                      <p
+                        dir="rtl"
+                        className="text-sm leading-relaxed text-[#2C2018] font-serif"
+                      >
+                        {activePreset.arabic}
+                      </p>
+                    )}
+                    <p className="text-xs text-[#6B5B4E] italic leading-relaxed max-w-2xl mx-auto">
+                      “{activePreset.translation}”
+                    </p>
+                    <p className="text-[11px] font-semibold text-[#A8763E]">
+                      {activePreset.source}
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          )
+        })()}
       </CardContent>
     </Card>
   )
