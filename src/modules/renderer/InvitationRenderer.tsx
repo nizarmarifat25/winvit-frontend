@@ -37,6 +37,7 @@ import {
 } from "@/lib/api"
 import { DEFAULT_INVITATION } from "@/data/themes"
 import { injectInvitationIntoIframe } from "./injectInvitationData"
+import { InvitationLoader } from "@/components/InvitationLoader"
 
 interface InvitationRendererProps {
   mode?: "public" | "preview"
@@ -107,7 +108,7 @@ export default function InvitationRenderer({
   const { slug } = useParams<{ slug: string }>()
   const [searchParams] = useSearchParams()
   const guestNameParam = searchParams.get("to") || "Bapak / Ibu / Saudara/i"
-  const { invitation: ctxInvitation, themes } = useWinvit()
+  const { invitation: ctxInvitation, themes, themesLoaded } = useWinvit()
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const [publicInvitation, setPublicInvitation] =
@@ -115,6 +116,7 @@ export default function InvitationRenderer({
   const [isDraftPreview, setIsDraftPreview] = useState(false)
   const [loadingPublic, setLoadingPublic] = useState(!embedded && Boolean(slug))
   const [publicError, setPublicError] = useState<string | null>(null)
+  const [iframeReady, setIframeReady] = useState(false)
   const [screenCategory, setScreenCategory] =
     useState<ScreenCategory>(getScreenCategory)
   const [viewportMode, setViewportMode] = useState<ViewportMode>(() => {
@@ -412,17 +414,42 @@ export default function InvitationRenderer({
   }, [embedded, slug, isPreviewMode])
 
   const invitation = previewData || publicInvitation || ctxInvitation
-  const activeTheme =
-    themes.find(
-      (t) =>
-        t.id === invitation.themeId ||
-        t.backendId === invitation.themeId ||
-        t.tag === invitation.themeId
-    ) || themes[0]
+  const matchedTheme = themes.find(
+    (t) =>
+      t.id === invitation.themeId ||
+      t.backendId === invitation.themeId ||
+      t.tag === invitation.themeId
+  )
+  const activeTheme = matchedTheme || themes[0]
+  const isWaitingTheme =
+    !embedded && !previewThemePath && !matchedTheme && !themesLoaded
+  const isWaitingData = loadingPublic || isWaitingTheme
 
   const rawPath = previewThemePath || activeTheme.path
   const normalizedPath = rawPath.startsWith("/") ? rawPath : `/${rawPath}`
   const targetUrl = `${normalizedPath}?to=${encodeURIComponent(guestNameParam)}`
+
+  const groomShort =
+    invitation.couple.groom.nickname.trim() ||
+    invitation.couple.groom.fullName.trim().split(" ")[0] ||
+    ""
+  const brideShort =
+    invitation.couple.bride.nickname.trim() ||
+    invitation.couple.bride.fullName.trim().split(" ")[0] ||
+    ""
+  const hasRealCoupleNames = Boolean(!isWaitingData && (groomShort || brideShort))
+  const loaderTitle = hasRealCoupleNames
+    ? `${groomShort || "Mempelai"} & ${brideShort || "Mempelai"}`
+    : "Menyiapkan Undangan"
+  const loaderMonogram =
+    hasRealCoupleNames && groomShort && brideShort
+      ? `${groomShort[0].toUpperCase()}&${brideShort[0].toUpperCase()}`
+      : undefined
+  const loaderEyebrow = !isWaitingData ? activeTheme.title : "Invitaa"
+  const loaderSubtitle = isWaitingData
+    ? "Mengambil data undangan Anda..."
+    : "Menata tampilan undangan..."
+  const showLoader = isWaitingData || !iframeReady
 
   const attachIframeScrollListener = () => {
     scrollCleanupRef.current?.()
@@ -468,8 +495,8 @@ export default function InvitationRenderer({
     })
   }
 
-  const handleIframeLoad = () => {
-    if (!iframeRef.current) return
+  const injectCurrentData = () => {
+    if (!iframeRef.current || isWaitingData) return
     injectInvitationIntoIframe(
       iframeRef.current,
       invitation,
@@ -477,14 +504,43 @@ export default function InvitationRenderer({
       (list) => setWishes(list),
       isPreviewMode
     )
+  }
+
+  const handleIframeLoad = () => {
+    if (!iframeRef.current || isWaitingData) return
+    injectCurrentData()
     if (isPreviewMode) {
       attachIframeScrollListener()
     }
+    window.requestAnimationFrame(() => {
+      setIframeReady(true)
+    })
   }
 
+  // Keep loading curtain up whenever source URL, invitation ID, or data state resets
   useEffect(() => {
-    handleIframeLoad()
-  }, [invitation, renderKey])
+    setIframeReady(false)
+  }, [targetUrl, publicInvitation?.id, renderKey, isWaitingData])
+
+  // Live-update injected fields once the iframe has finished its initial load
+  useEffect(() => {
+    if (iframeReady && !isWaitingData) {
+      injectCurrentData()
+    }
+  }, [invitation])
+
+  // Safety failsafe so a stalled third-party CDN asset never traps the preloader
+  useEffect(() => {
+    if (isWaitingData || publicError || iframeReady) return
+    const failsafe = window.setTimeout(() => {
+      injectCurrentData()
+      if (isPreviewMode) {
+        attachIframeScrollListener()
+      }
+      setIframeReady(true)
+    }, 5500)
+    return () => window.clearTimeout(failsafe)
+  }, [isWaitingData, publicError, iframeReady, targetUrl])
 
   useEffect(() => {
     setIsAtBottom(false)
@@ -558,29 +614,32 @@ export default function InvitationRenderer({
 
   if (embedded) {
     return (
-      <iframe
-        key={renderKey}
-        ref={iframeRef}
-        src={targetUrl}
-        onLoad={handleIframeLoad}
-        title={invitation.meta.title || activeTheme.title}
-        className="w-full h-full border-0 block bg-black"
-      />
+      <div className="relative w-full h-full overflow-hidden bg-[#0D0F16]">
+        <iframe
+          key={renderKey}
+          ref={iframeRef}
+          src={targetUrl}
+          onLoad={handleIframeLoad}
+          title={invitation.meta.title || activeTheme.title}
+          className={`w-full h-full border-0 block transition-opacity duration-500 ${
+            iframeReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+        <InvitationLoader
+          visible={!iframeReady}
+          variant="dark"
+          eyebrow={loaderEyebrow}
+          title={loaderTitle}
+          subtitle={loaderSubtitle}
+          monogram={loaderMonogram}
+        />
+      </div>
     )
   }
 
   // PUBLIC GUEST VIEW (/u/:slug): 100% clean full-screen invitation without SaaS chrome or device frames
   if (!isPreviewMode) {
-    if (loadingPublic) {
-      return (
-        <div className="w-screen h-dvh bg-[#FAF6F1] text-[#2C2018] flex items-center justify-center text-sm gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-[#C89B57]" />
-          <span>Memuat undangan...</span>
-        </div>
-      )
-    }
-
-    if (publicError) {
+    if (!loadingPublic && publicError) {
       return (
         <div className="w-screen h-dvh flex items-center justify-center p-6 bg-[#FAF6F1] text-[#2C2018]">
           <div className="max-w-md w-full rounded-3xl bg-white border border-[#E5DDD5] p-6 sm:p-8 text-center space-y-4 shadow-xs">
@@ -612,14 +671,26 @@ export default function InvitationRenderer({
     }
 
     return (
-      <div className="w-screen h-dvh overflow-hidden bg-black">
-        <iframe
-          key={publicInvitation?.id || "public"}
-          ref={iframeRef}
-          src={targetUrl}
-          onLoad={handleIframeLoad}
-          title={invitation.meta.title || activeTheme.title}
-          className="w-full h-full border-0 block"
+      <div className="relative w-screen h-dvh overflow-hidden bg-[#FAF6F1]">
+        {!isWaitingData && (
+          <iframe
+            key={`${publicInvitation?.id || "public"}-${normalizedPath}`}
+            ref={iframeRef}
+            src={targetUrl}
+            onLoad={handleIframeLoad}
+            title={invitation.meta.title || activeTheme.title}
+            className={`w-full h-full border-0 block transition-opacity duration-500 ${
+              iframeReady ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
+        <InvitationLoader
+          visible={showLoader}
+          variant="light"
+          eyebrow={loaderEyebrow}
+          title={loaderTitle}
+          subtitle={loaderSubtitle}
+          monogram={loaderMonogram}
         />
       </div>
     )
@@ -714,15 +785,21 @@ export default function InvitationRenderer({
                   </span>
                 </div>
                 <p className="text-[11px] font-medium text-[#E5C27A] truncate">
-                  {activeTheme.title}
+                  {isWaitingData ? "Memuat tema..." : activeTheme.title}
                 </p>
                 <span
-                  className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold border ${isDraftPreview
-                      ? "bg-amber-500/15 text-amber-300 border-amber-400/30"
-                      : "bg-emerald-500/15 text-emerald-300 border-emerald-400/30"
+                  className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold border ${isWaitingData
+                      ? "bg-white/10 text-slate-300 border-white/15"
+                      : isDraftPreview
+                        ? "bg-amber-500/15 text-amber-300 border-amber-400/30"
+                        : "bg-emerald-500/15 text-emerald-300 border-emerald-400/30"
                     }`}
                 >
-                  {isDraftPreview ? "Draft (Belum Publish)" : "Published (Live)"}
+                  {isWaitingData
+                    ? "Menyelaraskan..."
+                    : isDraftPreview
+                      ? "Draft (Belum Publish)"
+                      : "Published (Live)"}
                 </span>
               </div>
             )}
@@ -1013,12 +1090,7 @@ export default function InvitationRenderer({
         </div>
       )}
 
-      {loadingPublic ? (
-        <div className="flex-1 w-full flex items-center justify-center text-white text-sm gap-2">
-          <Loader2 className="w-5 h-5 animate-spin text-[#C89B57]" />
-          <span>Memuat data undangan dari server...</span>
-        </div>
-      ) : publicError ? (
+      {!loadingPublic && publicError ? (
         <div className="flex-1 w-full flex items-center justify-center p-6 bg-[#FAF6F1] text-[#2C2018]">
           <div className="max-w-md w-full rounded-3xl bg-white border border-[#E5DDD5] p-6 sm:p-8 text-center space-y-4 shadow-xs">
             <h2 className="text-lg font-bold text-[#2C2018]">
@@ -1158,13 +1230,26 @@ export default function InvitationRenderer({
                       </div>
                     )}
 
-                    <iframe
-                      key={publicInvitation?.id || "public"}
-                      ref={iframeRef}
-                      src={targetUrl}
-                      onLoad={handleIframeLoad}
-                      title={invitation.meta.title || activeTheme.title}
-                      className="w-full h-full border-0 block"
+                    {!isWaitingData && (
+                      <iframe
+                        key={`${publicInvitation?.id || "public"}-${normalizedPath}`}
+                        ref={iframeRef}
+                        src={targetUrl}
+                        onLoad={handleIframeLoad}
+                        title={invitation.meta.title || activeTheme.title}
+                        className={`w-full h-full border-0 block transition-opacity duration-500 ${
+                          iframeReady ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    )}
+
+                    <InvitationLoader
+                      visible={showLoader}
+                      variant="dark"
+                      eyebrow={loaderEyebrow}
+                      title={loaderTitle}
+                      subtitle={loaderSubtitle}
+                      monogram={loaderMonogram}
                     />
 
                     {/* iPhone 17 Pro / iPad Pro M3 Home Indicator */}
@@ -1203,7 +1288,7 @@ export default function InvitationRenderer({
               onClick={handleScrollDown}
               title="Scroll ke bawah"
               aria-label="Scroll ke bawah"
-              className={`absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 px-2 py-3 rounded-full bg-slate-900/75 hover:bg-slate-900/95 backdrop-blur-md border border-white/15 hover:border-[#C89B57]/60 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 cursor-pointer ${isAtBottom
+              className={`absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 px-2 py-3 rounded-full bg-slate-900/75 hover:bg-slate-900/95 backdrop-blur-md border border-white/15 hover:border-[#C89B57]/60 text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-300 cursor-pointer ${showLoader || isAtBottom
                   ? "opacity-0 pointer-events-none scale-95"
                   : "opacity-100 scale-100"
                 } ${isPhoneScreen ? "right-3" : "left-full ml-4"}`}

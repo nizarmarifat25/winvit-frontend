@@ -14,6 +14,7 @@ import { getPublicThemesApi } from "@/lib/api"
 
 interface WinvitContextType {
   themes: ThemeItem[]
+  themesLoaded: boolean
   setThemes: React.Dispatch<React.SetStateAction<ThemeItem[]>>
   addTheme: (theme: ThemeItem) => void
   refreshPublicThemes: () => Promise<void>
@@ -45,6 +46,7 @@ function mapTagToCategory(tag?: string): {
 
 export function WinvitProvider({ children }: { children: React.ReactNode }) {
   const [themes, setThemes] = useState<ThemeItem[]>(INITIAL_THEMES)
+  const [themesLoaded, setThemesLoaded] = useState(false)
   const [orders, setOrders] = useState<CustomerOrder[]>(INITIAL_ORDERS)
   const [invitation, setInvitation] =
     useState<InvitationData>(DEFAULT_INVITATION)
@@ -148,6 +150,8 @@ export function WinvitProvider({ children }: { children: React.ReactNode }) {
       })
     } catch {
       // Keep local INITIAL_THEMES if backend is unreachable
+    } finally {
+      setThemesLoaded(true)
     }
   }
 
@@ -182,6 +186,7 @@ export function WinvitProvider({ children }: { children: React.ReactNode }) {
     <WinvitContext.Provider
       value={{
         themes,
+        themesLoaded,
         setThemes,
         addTheme,
         refreshPublicThemes,

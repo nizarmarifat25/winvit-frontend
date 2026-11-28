@@ -6,6 +6,7 @@ import { useWinvit } from "@/context/WinvitContext"
 import type { ThemeItem } from "@/types/winvit"
 import { DEFAULT_INVITATION } from "@/data/themes"
 import { LogoutConfirmDialog } from "@/components/LogoutConfirmDialog"
+import { InvitationLoader } from "@/components/InvitationLoader"
 import { Button } from "@/components/ui/button"
 import {
   Accordion,
@@ -146,11 +147,16 @@ export default function LandingPage() {
   const [modalDevice, setModalDevice] = useState<ModalDevice>("mobile")
   const [modalSidebarCollapsed, setModalSidebarCollapsed] = useState(false)
   const [modalZoomMode, setModalZoomMode] = useState<"fit" | "actual">("fit")
+  const [modalIframeReady, setModalIframeReady] = useState(false)
   const modalStageRef = useRef<HTMLDivElement>(null)
   const [modalStageSize, setModalStageSize] = useState({ width: 1000, height: 800 })
   const [windowWidth, setWindowWidth] = useState(() =>
     typeof window !== "undefined" ? window.innerWidth : 1280
   )
+
+  useEffect(() => {
+    setModalIframeReady(false)
+  }, [previewTheme?.id, appliedGuest])
 
   useEffect(() => {
     const el = modalStageRef.current
@@ -1868,6 +1874,7 @@ export default function LandingPage() {
                           <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 z-20 w-[110px] h-[16px] rounded-b-[10px] bg-[#08080a]" />
                         )}
                         <iframe
+                          key={`${previewTheme.id}-${appliedGuest}`}
                           src={`${previewTheme.path}?to=${encodeURIComponent(appliedGuest)}`}
                           title={previewTheme.title}
                           onLoad={(e) => {
@@ -1879,8 +1886,20 @@ export default function LandingPage() {
                                 "html,body,*{-ms-overflow-style:none!important;scrollbar-width:none!important;}html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;}"
                               doc.head?.appendChild(styleEl)
                             }
+                            window.requestAnimationFrame(() => {
+                              setModalIframeReady(true)
+                            })
                           }}
-                          className="w-full h-full border-0 block"
+                          className={`w-full h-full border-0 block transition-opacity duration-500 ${
+                            modalIframeReady ? "opacity-100" : "opacity-0"
+                          }`}
+                        />
+                        <InvitationLoader
+                          visible={!modalIframeReady}
+                          variant="dark"
+                          eyebrow="Preview Tema"
+                          title={previewTheme.title}
+                          subtitle="Menyiapkan pratinjau undangan..."
                         />
                         {!isModalPhone &&
                           (effectiveModalDevice === "mobile" ||

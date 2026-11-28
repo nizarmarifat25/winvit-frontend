@@ -488,3 +488,44 @@
 .animate-toast-up {
   animation: toast-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes inv-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes inv-breathe {
+  0%, 100% {
+    opacity: 0.55;
+    transform: rotate(45deg) scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.03);
+  }
+}
+
+@keyframes inv-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+
+.animate-inv-orbit {
+  animation: inv-orbit 9s linear infinite;
+}
+
+.animate-inv-breathe {
+  animation: inv-breathe 3.2s ease-in-out infinite;
+}
+
+.animate-inv-shimmer {
+  animation: inv-shimmer 1.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
