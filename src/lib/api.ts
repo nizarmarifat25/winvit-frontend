@@ -300,7 +300,7 @@ export interface BackendInvitationPayload {
   bride_photo_url: string
   cover_photo_url: string
   music_url: string
-  quote_preset?: string
+  quote_preset: string
   is_published: boolean
 }
 
@@ -311,7 +311,7 @@ export async function getInvitationsApi() {
 
 export async function updateInvitationApi(
   id: string,
-  payload: Partial<BackendInvitationPayload>
+  payload: BackendInvitationPayload
 ) {
   const res = await apiClient.patch(`/api/v1/invitations/${id}`, payload)
   return unwrap<any>(res.data)

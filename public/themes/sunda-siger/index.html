@@ -2755,12 +2755,7 @@
         const target = new Date(CONFIG.eventStart).getTime();
         let cdTimer;
         function tick() {
-            const diff = target - Date.now();
-            if (diff < 0) {
-                document.getElementById('countdown').innerHTML = '<p class="cd-done">Hari bahagia telah tiba</p>';
-                clearInterval(cdTimer);
-                return;
-            }
+            const diff = isNaN(target) ? 0 : Math.max(0, target - Date.now());
             const pad = n => String(n).padStart(2, '0');
             document.getElementById('cd-days').textContent = pad(Math.floor(diff / 86400000));
             document.getElementById('cd-hours').textContent = pad(Math.floor((diff % 86400000) / 3600000));

@@ -286,13 +286,26 @@ export default function InvitationRenderer({
               list.find((item: any) => item?.slug === slug) || list[0]
 
             if (ownerInv?.id && isMounted) {
+              const hasEmbeddedRelations =
+                Array.isArray(ownerInv.events) ||
+                Array.isArray(ownerInv.stories) ||
+                Array.isArray(ownerInv.galleries) ||
+                Array.isArray(ownerInv.gifts)
+
               const [eventsRes, storiesRes, galleriesRes, giftsRes] =
-                await Promise.all([
-                  getEventsApi(ownerInv.id).catch(() => []),
-                  getStoriesApi(ownerInv.id).catch(() => []),
-                  getGalleriesApi(ownerInv.id).catch(() => []),
-                  getGiftsApi(ownerInv.id).catch(() => []),
-                ])
+                hasEmbeddedRelations
+                  ? [
+                      ownerInv.events || [],
+                      ownerInv.stories || [],
+                      ownerInv.galleries || [],
+                      ownerInv.gifts || [],
+                    ]
+                  : await Promise.all([
+                      getEventsApi(ownerInv.id).catch(() => []),
+                      getStoriesApi(ownerInv.id).catch(() => []),
+                      getGalleriesApi(ownerInv.id).catch(() => []),
+                      getGiftsApi(ownerInv.id).catch(() => []),
+                    ])
               if (!isMounted) return
 
               const mappedEvents: EventItem[] = (

@@ -93,12 +93,26 @@ export function useInvitationDraft(
 
         const invId: string = invItem.id
 
-        const [eventsRes, storiesRes, galleriesRes, giftsRes] = await Promise.all([
-          getEventsApi(invId).catch(() => []),
-          getStoriesApi(invId).catch(() => []),
-          getGalleriesApi(invId).catch(() => []),
-          getGiftsApi(invId).catch(() => []),
-        ])
+        const hasEmbeddedRelations =
+          Array.isArray(invItem.events) ||
+          Array.isArray(invItem.stories) ||
+          Array.isArray(invItem.galleries) ||
+          Array.isArray(invItem.gifts)
+
+        const [eventsRes, storiesRes, galleriesRes, giftsRes] =
+          hasEmbeddedRelations
+            ? [
+                invItem.events || [],
+                invItem.stories || [],
+                invItem.galleries || [],
+                invItem.gifts || [],
+              ]
+            : await Promise.all([
+                getEventsApi(invId).catch(() => []),
+                getStoriesApi(invId).catch(() => []),
+                getGalleriesApi(invId).catch(() => []),
+                getGiftsApi(invId).catch(() => []),
+              ])
 
         if (!isMounted) return
 

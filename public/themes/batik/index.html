@@ -1674,11 +1674,7 @@
         const target = new Date('June 14, 2026 07:00:00').getTime();
         let cdTimer;
         function tick() {
-            const d = target - Date.now();
-            if (d < 0) {
-                document.getElementById('countdown').innerHTML = '<p class="cd-done">Hari bahagia telah tiba</p>';
-                clearInterval(cdTimer); return;
-            }
+            const d = isNaN(target) ? 0 : Math.max(0, target - Date.now());
             const p = n => String(n).padStart(2, '0');
             document.getElementById('cd-days').textContent = p(Math.floor(d / 864e5));
             document.getElementById('cd-hours').textContent = p(Math.floor(d % 864e5 / 36e5));

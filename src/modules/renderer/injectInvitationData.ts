@@ -189,8 +189,13 @@ export function injectInvitationIntoIframe(
 
   const marqueeEl = doc.getElementById("marquee")
   if (marqueeEl) {
-    const item = `<span>${coupleShort}</span><span class="dot">✦</span>`
-    marqueeEl.innerHTML = item.repeat(8)
+    if (marqueeEl.classList.contains("marquee-track")) {
+      const item = `<span>${coupleShort}</span><span>Save The Date</span>`
+      marqueeEl.innerHTML = item.repeat(6)
+    } else {
+      const item = `<span>${coupleShort}</span><span class="dot">✦</span>`
+      marqueeEl.innerHTML = item.repeat(8)
+    }
   }
 
   // Monograms (seal, cover-monogram, mono foil, dome-in, SVG seal & data-wreath)
@@ -320,19 +325,31 @@ export function injectInvitationIntoIframe(
   })
 
   // =========================================================================
-  // 3. COVER PHOTO & BACKSOUND MUSIC
+  // 3. COVER PHOTO, PARALLAX, CLOSING/FOOTER PHOTOS & BACKSOUND MUSIC
   // =========================================================================
-  if (
-    invitation.meta.coverPhoto &&
-    invitation.meta.coverPhoto !== "placeholder.png"
-  ) {
-    const coverUrl = invitation.meta.coverPhoto
+  const validCoverPhoto =
+    invitation.meta.coverPhoto && invitation.meta.coverPhoto !== "placeholder.png"
+      ? invitation.meta.coverPhoto
+      : ""
+  const validGalleryPhotos = (invitation.media.gallery || []).filter(
+    (u) => u && u !== "placeholder.png"
+  )
+  const primaryPhoto = validCoverPhoto || validGalleryPhotos[0] || ""
+  const secondaryPhoto = validGalleryPhotos[0] || validCoverPhoto || ""
+  const closingPhoto =
+    validGalleryPhotos[validGalleryPhotos.length - 1] || validCoverPhoto || ""
+
+  if (primaryPhoto) {
+    doc.documentElement.style.setProperty(
+      "--wv-cover-photo",
+      `url('${primaryPhoto}')`
+    )
     doc
       .querySelectorAll<HTMLImageElement>(
-        "#cover img, .hero img, .hero-visual img, .hero-tampah img, .hero-photo img, footer .footer-photo img"
+        "#cover img, .hero img, .hero-visual img, .hero-tampah img, .hero-photo img"
       )
       .forEach((img) => {
-        img.src = coverUrl
+        img.src = primaryPhoto
       })
     doc
       .querySelectorAll<HTMLElement>(
@@ -340,16 +357,16 @@ export function injectInvitationIntoIframe(
       )
       .forEach((el) => {
         if (el.style.getPropertyValue("--bg")) {
-          el.style.setProperty("--bg", `url('${coverUrl}')`)
+          el.style.setProperty("--bg", `url('${primaryPhoto}')`)
         }
         if (el.style.getPropertyValue("--bgi")) {
-          el.style.setProperty("--bgi", `url('${coverUrl}')`)
+          el.style.setProperty("--bgi", `url('${primaryPhoto}')`)
         }
       })
 
     // Themes using CSS background-image directly on .hero-bg, .c-photo, .stadium, and #cover
     doc.querySelectorAll<HTMLElement>(".hero-bg, .c-photo, .stadium").forEach((el) => {
-      el.style.backgroundImage = `url('${coverUrl}')`
+      el.style.backgroundImage = `url('${primaryPhoto}')`
     })
     const coverDiv = doc.getElementById("cover")
     if (
@@ -358,8 +375,42 @@ export function injectInvitationIntoIframe(
       !coverDiv.style.getPropertyValue("--bg") &&
       !coverDiv.style.getPropertyValue("--bgi")
     ) {
-      coverDiv.style.backgroundImage = `radial-gradient(ellipse at center, rgba(7, 26, 21, 0.5) 0%, rgba(7, 26, 21, 0.92) 78%), url('${coverUrl}')`
+      coverDiv.style.backgroundImage = `radial-gradient(ellipse at center, rgba(7, 26, 21, 0.5) 0%, rgba(7, 26, 21, 0.92) 78%), url('${primaryPhoto}')`
     }
+
+    // Golden-hour & full-scene parallax sections using inline --bg
+    const sceneEls = Array.from(
+      doc.querySelectorAll<HTMLElement>("section.scene[style*='--bg'], footer.scene[style*='--bg']")
+    )
+    sceneEls.forEach((el, idx) => {
+      if (el.tagName === "FOOTER") {
+        el.style.setProperty("--bg", `url('${closingPhoto || primaryPhoto}')`)
+      } else {
+        const pool = validGalleryPhotos.length > 0 ? validGalleryPhotos : [primaryPhoto]
+        el.style.setProperty("--bg", `url('${pool[idx % pool.length]}')`)
+      }
+    })
+  }
+
+  if (secondaryPhoto) {
+    doc.documentElement.style.setProperty(
+      "--wv-parallax-photo",
+      `url('${secondaryPhoto}')`
+    )
+  }
+
+  if (closingPhoto) {
+    doc.documentElement.style.setProperty(
+      "--wv-footer-photo",
+      `url('${closingPhoto}')`
+    )
+    // Replace ALL closing/footer portrait images across every theme (blue-water, blush-bloom, emerald, aurora, batik, etc.)
+    doc.querySelectorAll<HTMLImageElement>("footer img").forEach((img) => {
+      const src = (img.getAttribute("src") || "").toLowerCase()
+      if (!src.includes("bca")) {
+        img.src = closingPhoto
+      }
+    })
   }
 
   if (invitation.meta.audio.url) {
@@ -1012,7 +1063,20 @@ export function injectInvitationIntoIframe(
           clone.classList.toggle("on", idx === 0)
           const nEl = clone.querySelector(".n")
           if (nEl) nEl.textContent = String(idx + 1).padStart(2, "0")
-          const hEl = clone.querySelector("h4, h3")
+          const hEl = clone.querySelector<HTMLElement>("h4, h3")
+          const panelBadgeText = (st.badge || "").trim()
+          const existingPanelBadge = clone.querySelector<HTMLElement>("small, .wv-story-badge")
+          if (existingPanelBadge) {
+            existingPanelBadge.textContent = panelBadgeText
+            existingPanelBadge.style.display = panelBadgeText ? "" : "none"
+          } else if (panelBadgeText && hEl && hEl.parentElement) {
+            const b = doc.createElement("small")
+            b.className = "wv-story-badge"
+            b.textContent = panelBadgeText
+            b.style.cssText =
+              "display:block;font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.78;margin-bottom:0.35rem;font-weight:600;"
+            hEl.parentElement.insertBefore(b, hEl)
+          }
           if (hEl) hEl.textContent = st.title
           const pEl = clone.querySelector("p")
           if (pEl) pEl.textContent = st.content
@@ -1043,21 +1107,34 @@ export function injectInvitationIntoIframe(
               }
 
               const numEl = clone.querySelector(
-                ".story-node, .chapter-no, .lembar-no, .story-step, .n, .no"
+                ".story-node, .chapter-no, .chapter-num, .lembar-no, .story-step, .n, .no"
               )
               if (numEl) {
                 numEl.textContent = String(idx + 1).padStart(2, "0")
               }
 
-              const badgeEl = clone.querySelector(
-                "small, .year, .story-date, .eyebrow"
+              const titleEl = clone.querySelector<HTMLElement>("h4, h3")
+              if (titleEl) titleEl.textContent = st.title
+
+              const badgeText = (st.badge || "").trim()
+              const badgeEl = clone.querySelector<HTMLElement>(
+                "small, .year, .story-date, .eyebrow, .pola .script, .wv-story-badge"
               )
               if (badgeEl) {
-                badgeEl.textContent = st.badge || `Bab ${idx + 1}`
+                if (badgeText) {
+                  badgeEl.textContent = badgeText
+                  badgeEl.style.display = ""
+                } else {
+                  badgeEl.style.display = "none"
+                }
+              } else if (badgeText && titleEl && titleEl.parentElement) {
+                const newBadge = doc.createElement("small")
+                newBadge.className = "wv-story-badge"
+                newBadge.textContent = badgeText
+                newBadge.style.cssText =
+                  "display:block;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.76;margin-bottom:0.35rem;font-weight:600;line-height:1.35;"
+                titleEl.parentElement.insertBefore(newBadge, titleEl)
               }
-
-              const titleEl = clone.querySelector("h4, h3")
-              if (titleEl) titleEl.textContent = st.title
 
               const contentEl = clone.querySelector("p")
               if (contentEl) contentEl.textContent = st.content

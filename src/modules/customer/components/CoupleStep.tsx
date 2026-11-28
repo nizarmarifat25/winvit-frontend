@@ -293,7 +293,7 @@ export default function CoupleStep({
           </div>
         </div>
 
-        {/* Cover Photo & Backsound Music (Sesuai PATCH /api/v1/invitations/:id) */}
+        {/* Cover Photo & Backsound Music (Sesuai PUT /api/v1/invitations/:id) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#E5DDD5]">
           <div className="space-y-2 p-3.5 rounded-2xl bg-[#FAF6F1] border border-[#E5DDD5]">
             <label className="block text-xs font-semibold">
